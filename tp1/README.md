@@ -4,8 +4,8 @@
 
 | Name             | Number    | E-Mail             |
 | ---------------- | --------- | ------------------ |
-| John Doe         | 201801010 | ...                |
-| Jane Doe         | 201801011 | ...                |
+| António Ribeiro         | 201906761 | up201906761@edu.fe.up.pt|
+| Pedro Pinheiro         | 201906788 | up201906788@edu.fe.up.pt|
 
 ----
 ## Project information
