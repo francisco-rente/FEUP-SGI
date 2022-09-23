@@ -53,6 +53,11 @@
         <primitive id="aSphere">
             <sphere radius="1" slices="12" stacks="12" />
         </primitive>
+
+
+        <primitive id="aCylinder">
+            <cylinder base="1" top="3" height="5" slices="16" stacks="20" />
+        </primitive>
     </primitives>
 
     <components>

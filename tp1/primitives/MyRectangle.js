@@ -2,9 +2,9 @@ import { CGFobject } from '../../lib/CGF.js';
 /**
  * MyRectangle
  * @constructor
- * @param scene - Reference to MyScene object
- * @param x - Scale of rectangle in X
- * @param y - Scale of rectangle in Y
+ * @param scene 
+ * @param x 
+ * @param y 
  */
 export class MyRectangle extends CGFobject {
 	constructor(scene, id, x1, x2, y1, y2) {

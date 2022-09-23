@@ -1,6 +1,7 @@
 import { CGFXMLreader } from '../lib/CGF.js';
 import { MyRectangle } from './primitives/MyRectangle.js';
 import { MySphere } from './primitives/MySphere.js';
+import { MyCylinder } from './primitives/MyCylinder.js';
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -584,6 +585,38 @@ export class MySceneGraph {
                 this.primitives[primitiveId] = sphere;
 
             }
+            else if(primitiveType == 'cylinder'){
+                //base
+                var base = this.reader.getFloat(grandChildren[0], 'base');
+                if (!(base != null && !isNaN(base) && base != 0))
+                    return "unable to parse base of the primitive coordinates for ID = " + primitiveId;
+
+                //top
+                var top = this.reader.getFloat(grandChildren[0], 'top');
+                if (!(top != null && !isNaN(top) && top != 0))
+                    return "unable to parse top of the primitive coordinates for ID = " + primitiveId;
+
+                //height
+                var height = this.reader.getFloat(grandChildren[0], 'height');
+                if (!(height != null && !isNaN(height) && height != 0))
+                    return "unable to parse height of the primitive coordinates for ID = " + primitiveId;
+
+                //slices
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices != 0))
+                    return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+
+                //stacks
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks != 0))
+                    return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
+
+
+                var cylinder = new MyCylinder(this.scene, primitiveId, base, top, height, slices, stacks);
+
+                this.primitives[primitiveId] = cylinder;
+
+            }
             else {
                 console.warn("To do: Parse other primitives.");
             }
@@ -765,7 +798,7 @@ export class MySceneGraph {
 
         //To test the parsing/creation of the primitives, call the display function directly
         this.primitives['aSphere'].display();
-        //console.log(this.primitives)
+        this.primitives['aCylinder'].display();
 
         this.primitives['demoRectangle'].display();
   
