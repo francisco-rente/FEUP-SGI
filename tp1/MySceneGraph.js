@@ -1,5 +1,6 @@
 import { CGFXMLreader } from '../lib/CGF.js';
-import { MyRectangle } from './MyRectangle.js';
+import { MyRectangle } from './primitives/MyRectangle.js';
+import { MySphere } from './primitives/MySphere.js';
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -562,11 +563,31 @@ export class MySceneGraph {
 
                 this.primitives[primitiveId] = rect;
             }
+            else if(primitiveType == 'sphere'){
+                //radius
+                var radius = this.reader.getFloat(grandChildren[0], 'radius');
+                if (!(radius != null && !isNaN(radius) && radius != 0))
+                    return "unable to parse radius of the primitive coordinates for ID = " + primitiveId;
+
+                //slices
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices != 0))
+                    return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+
+                //stacks
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks != 0))
+                    return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
+
+                var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
+
+                this.primitives[primitiveId] = sphere;
+
+            }
             else {
                 console.warn("To do: Parse other primitives.");
             }
         }
-
         this.log("Parsed primitives");
         return null;
     }
@@ -743,6 +764,10 @@ export class MySceneGraph {
         //To do: Create display loop for transversing the scene graph
 
         //To test the parsing/creation of the primitives, call the display function directly
+        this.primitives['aSphere'].display();
+        //console.log(this.primitives)
+
         this.primitives['demoRectangle'].display();
+  
     }
 }
