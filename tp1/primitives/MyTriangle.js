@@ -42,6 +42,9 @@ P
 
     initBuffers() {
 
+        //TODO: see if tilt of triangle needs side correction
+        // ex: <triangle x1="0" y1="0" z1="1" x2="-1" y2="3" z2="1" x3="0" y3="4" z3="1" />
+        // or even if both sides should be done already
         /*            v3
 
             v1              v2
@@ -60,17 +63,20 @@ P
         // All normals are the same
         // Calculate normal by cross product of two vectors (normal to the plane)
         // DOUBT: is it better to make all normals 0,0,1 and then use z translations for each triangle?
-        let v1 = [this.v1.x - this.v2.x, this.v1.y - this.v2.y, this.v1.z - this.v2.z];
-        let v2 = [this.v1.x - this.v3.x, this.v1.y - this.v3.y, this.v1.z - this.v3.z];
-        let normal = [
-            v1[1] * v2[2] - v1[2] * v2[1],
-            v1[2] * v2[0] - v1[0] * v2[2],
-            v1[0] * v2[1] - v1[1] * v2[0]
-        ];
+
+        let v1 = [this.v2.x - this.v1.x, this.v2.y - this.v1.y, this.v2.z - this.v1.z]; // V1V2 ->
+        let v2 = [this.v3.x - this.v1.x, this.v3.y - this.v1.y, this.v3.z - this.v1.z]; // V1V3 ->
+
+        //cross product v1 x v2
+        let nx = (v1[1] * v2[2] - v1[2] * v2[1]);
+        let ny = (v1[2] * v2[0] - v1[0] * v2[2]);
+        let nz = (v1[0] * v2[1] - v1[1] * v2[0]);
+
+
         this.normals = [
-            normal[0], normal[1], normal[2],
-            normal[0], normal[1], normal[2],
-            normal[0], normal[1], normal[2]
+            nx, ny, nz,
+            nx, ny, nz,
+            nx, ny, nz
         ];
 
         // Texture mapping math
