@@ -18,6 +18,20 @@ class Vertex {
  * @param [x3, y3, z3] - Third vertex
  */
 export class MyTriangle extends CGFobject {
+P
+    static checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+
+        // check if the triangle is degenerate (collinear vertices and zero area, or zero length edges)
+        let a = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
+        let b = Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2) + Math.pow(z3 - z2, 2));
+        let c = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2) + Math.pow(z1 - z3, 2));
+        if (a === 0 || b === 0 || c === 0) return false
+
+        // the sum of any two sides must be greater than the third side
+        return !(a + b <= c || a + c <= b || b + c <= a);
+    }
+
+
     constructor(scene, id, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]) {
         super(scene);
         this.v1 = new Vertex(x1, y1, z1);
