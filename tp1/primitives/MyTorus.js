@@ -49,10 +49,10 @@ import { CGFobject } from '../../lib/CGF.js';
 
 
 
-				let Nx = -slice_angle_cos*( this.inner*slice_angle_cos*loop_angle_cos + this.outer*loop_angle_cos); 
-				let Ny =  slice_angle_cos*(-this.inner*slice_angle_cos*loop_angle_sin - this.outer*loop_angle_sin); 
-				let Nz = -loop_angle_sin*slice_angle_sin*(-this.inner*loop_angle_sin*slice_angle_cos - this.outer*loop_angle_sin) 
-						 +loop_angle_cos*slice_angle_sin*( this.inner*loop_angle_cos*slice_angle_cos + this.outer*loop_angle_cos); 
+				let Nx = -slice_angle_cos*x; 
+				let Ny =  slice_angle_cos*(-y); 
+				let Nz = -loop_angle_sin*slice_angle_sin*(-y) 
+						 +loop_angle_cos*slice_angle_sin*x; 
 				let Nr = Math.sqrt(Nx*Nx + Ny*Ny + Nz*Nz); 
 				this.normals.push(-Nx/Nr, -Ny/Nr, -Nz/Nr); 
 

@@ -541,7 +541,6 @@ export class MySceneGraph {
             var primitiveType = grandChildren[0].nodeName;
 
 
-            console.log("found a primitive of id: " + primitiveId + " and type: " + primitiveType)
             // Retrieves the primitive coordinates.
             if (primitiveType == 'rectangle') {
                 // x1
@@ -828,7 +827,7 @@ export class MySceneGraph {
 
         //this.primitives['demoRectangle'].display();
         //this.primitives['aSphere'].display();
-        this.primitives['aCylinder'].display();
-        //this.primitives['aTorus'].display();
+        //this.primitives['aCylinder'].display();
+        this.primitives['aTorus'].display();
     }
 }
