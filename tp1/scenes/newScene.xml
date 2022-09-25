@@ -58,6 +58,10 @@
         <primitive id="aCylinder">
             <cylinder base="1" top="3" height="5" slices="16" stacks="20" />
         </primitive>
+
+        <primitive id="aTorus">
+            <torus inner="1" outer="3" slices="15" loops="7" />
+        </primitive>
     </primitives>
 
     <components>
@@ -71,8 +75,8 @@
             </materials>
             <texture id="demoTexture"/>
             <children>
-
-                <primitiveref id="aSphere"/>
+                <!--<primitiveref id="demoRectangle"/>-->
+                <primitiveref id="aTorus"/>
             </children>
         </component>
     </components>

@@ -9,7 +9,7 @@ import { CGFobject } from '../../lib/CGF.js';
  * @param base
  * @param top
  */
- export class MyCylinder extends CGFobject {
+export class MyCylinder extends CGFobject {
 	constructor(scene, id, base, top, height, slices, stacks) {
 		super(scene);
 		this.slices = slices;
