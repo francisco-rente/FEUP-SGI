@@ -28,17 +28,19 @@ export class MyCylinder extends CGFobject {
 		this.texCoords = [];
 
 		let slice_angle = 2*Math.PI/this.slices;
+
 		let stack_increment = this.height/this.stacks;
 		let stack_distance = (this.top - this.base)/this.stacks;
 
 		// Cylinder
 		for(let i = 0; i <= this.slices; ++i) {
-
+			let slice_angle_cos = Math.cos(slice_angle*i);
+			let slice_angle_sin = Math.sin(slice_angle*i);
 			for(let j = 0; j <= this.stacks; ++j) {
 
 				this.vertices.push(
-					(this.base + stack_distance*j) * Math.cos(slice_angle*i), 
-					(this.base + stack_distance*j) * Math.sin(slice_angle*i), 
+					(this.base + stack_distance*j) * slice_angle_cos, 
+					(this.base + stack_distance*j) * slice_angle_sin, 
 					j*stack_increment
 				);
 
@@ -48,8 +50,9 @@ export class MyCylinder extends CGFobject {
 				);
 
 				this.normals.push(
-					Math.cos(slice_angle*i), 
-					Math.sin(slice_angle*i), 0
+					slice_angle_cos, 
+					slice_angle_sin,
+					0
 				);
 
 			}

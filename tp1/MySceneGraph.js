@@ -828,7 +828,7 @@ export class MySceneGraph {
 
         //this.primitives['demoRectangle'].display();
         //this.primitives['aSphere'].display();
-        //this.primitives['aCylinder'].display();
-        this.primitives['aTorus'].display();
+        this.primitives['aCylinder'].display();
+        //this.primitives['aTorus'].display();
     }
 }
