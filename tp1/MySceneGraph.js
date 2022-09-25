@@ -873,9 +873,9 @@ export class MySceneGraph {
         //To test the parsing/creation of the primitives, call the display function directly
 
         //this.primitives['demoRectangle'].display();
-        //this.primitives['aSphere'].display();
+        this.primitives['aSphere'].display();
         //this.primitives['aCylinder'].display();
         //this.primitives['aTriangle'].display();
-        this.primitives['aTorus'].display();
+        //this.primitives['aTorus'].display();
     }
 }
