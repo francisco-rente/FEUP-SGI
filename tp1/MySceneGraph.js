@@ -71,6 +71,8 @@ export class MySceneGraph {
 
         // As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
         this.scene.onGraphLoaded();
+
+        return rootElement;
     }
 
     /**
@@ -863,7 +865,10 @@ export class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        //To do: Create display loop for transversing the scene graph
+        //To do: Create display loop for traversing the scene graph
+
+        this.parseXMLFile(this.onXMLReady());
+
 
         //To test the parsing/creation of the primitives, call the display function directly
 
