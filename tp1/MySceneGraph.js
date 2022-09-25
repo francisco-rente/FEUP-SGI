@@ -3,6 +3,7 @@ import { MyRectangle } from './primitives/MyRectangle.js';
 import { MySphere } from './primitives/MySphere.js';
 import { MyCylinder } from './primitives/MyCylinder.js';
 import { MyTorus } from "./primitives/MyTorus.js";
+import { MyTriangle} from "./primitives/MyTriangle.js";
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -516,7 +517,7 @@ export class MySceneGraph {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
-                
+
 
             // Get id of the current primitive.
             var primitiveId = this.reader.getString(children[i], 'id');
@@ -636,13 +637,54 @@ export class MySceneGraph {
                 if (!(slices!= null && !isNaN(slices) && slices != 0))
                 return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
-                //loops 
+                //loops
                 var loops = this.reader.getFloat(grandChildren[0], 'loops');
                 if (!(loops != null && !isNaN(loops) && loops != 0))
                 return "unable to parse loops of the primitive coordinates for ID = " + primitiveId;
 
                 var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops)
                 this.primitives[primitiveId] = torus;
+            }
+            else if(primitiveType === 'triangle'){
+                /*<triangle   x1="ff" y1="ff" z1="ff"  x2="ff" y2="ff" z2="ff" x3="ff" y3="ff" z3="ff" /> */
+
+                let x1 = this.reader.getFloat(grandChildren[0], 'x1');
+                if (!(x1 != null && !isNaN(x1)))
+                    return "unable to parse x1 of the primitive coordinates for ID = " + primitiveId;
+                let y1 = this.reader.getFloat(grandChildren[0], 'y1');
+                if (!(y1 != null && !isNaN(y1)))
+                    return "unable to parse y1 of the primitive coordinates for ID = " + primitiveId;
+                let z1 = this.reader.getFloat(grandChildren[0], 'z1');
+                if (!(z1 != null && !isNaN(z1)))
+                    return "unable to parse z1 of the primitive coordinates for ID = " + primitiveId;
+
+                let x2 = this.reader.getFloat(grandChildren[0], 'x2');
+                if (!(x2 != null && !isNaN(x2)))
+                    return "unable to parse x2 of the primitive coordinates for ID = " + primitiveId;
+                let y2 = this.reader.getFloat(grandChildren[0], 'y2');
+                if (!(y2 != null && !isNaN(y2)))
+                    return "unable to parse y2 of the primitive coordinates for ID = " + primitiveId;
+                let z2 = this.reader.getFloat(grandChildren[0], 'z2');
+                if (!(z2 != null && !isNaN(z2)))
+                    return "unable to parse z2 of the primitive coordinates for ID = " + primitiveId;
+
+                let x3 = this.reader.getFloat(grandChildren[0], 'x3');
+                if (!(x3 != null && !isNaN(x3)))
+                    return "unable to parse x3 of the primitive coordinates for ID = " + primitiveId;
+                let y3 = this.reader.getFloat(grandChildren[0], 'y3');
+                if (!(y3 != null && !isNaN(y3)))
+                    return "unable to parse y3 of the primitive coordinates for ID = " + primitiveId;
+                let z3 = this.reader.getFloat(grandChildren[0], 'z3');
+                if (!(z3 != null && !isNaN(z3)))
+                    return "unable to parse z3 of the primitive coordinates for ID = " + primitiveId;
+
+                if(!MyTriangle.checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3))
+                    return "unable to parse triangle coordinates for ID = " + primitiveId;
+
+                var triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1] ,
+                    [x2, y2, z2], [x3, y3, z3]);
+
+                this.primitives[primitiveId] = triangle;
             }
             else {
                 console.warn("To do: Parse other primitives.");
@@ -828,6 +870,7 @@ export class MySceneGraph {
         //this.primitives['demoRectangle'].display();
         //this.primitives['aSphere'].display();
         //this.primitives['aCylinder'].display();
+        //this.primitives['aTriangle'].display();
         this.primitives['aTorus'].display();
     }
 }
