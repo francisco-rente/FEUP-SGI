@@ -1,4 +1,4 @@
-import { CGFXMLreader } from '../lib/CGF.js';
+import {CGFtexture, CGFXMLreader} from '../lib/CGF.js';
 import { MyRectangle } from './primitives/MyRectangle.js';
 import { MySphere } from './primitives/MySphere.js';
 import { MyCylinder } from './primitives/MyCylinder.js';
@@ -52,6 +52,12 @@ export class MySceneGraph {
         this.reader.open('scenes/' + filename, this);
     }
 
+
+    clear_data() {
+        if(this.textures.length !== 0) for (let texture of this.textures) texture.destroy();
+    }
+
+
     /*
      * Callback to be executed after successful reading
      */
@@ -82,6 +88,8 @@ export class MySceneGraph {
     parseXMLFile(rootElement) {
         if (rootElement.nodeName != "sxs")
             return "root tag <sxs> missing";
+
+        this.clear_data();
 
         var nodes = rootElement.children;
 
@@ -403,6 +411,26 @@ export class MySceneGraph {
 
         //For each texture in textures block, check ID and file URL
         this.onXMLMinorError("To do: Parse textures.");
+
+        for (let texture of texturesNode.children) {
+            const id = this.reader.getString(texture, 'id');
+            if (id == null) return "no ID defined for texture";
+
+            if (this.textures[id] != null)
+                return "ID must be unique for each texture (conflict: ID = " + id + ")";
+
+            const textureFile = this.reader.getString(texture, 'file');
+            if (textureFile == null) return "no file defined for texture";
+            if(textureFile.length === 0) return "file path is empty";
+
+            // check if file exists
+            //const texture_file = new File("./scenes/images/" + textureFile, "r");
+            // if (!texture_file.exists()) return "file " + textureFile + " does not exist";
+
+            console.log("Texture " + id + "from " + textureFile + " loaded");
+            this.textures[id] = new CGFtexture(this.scene, textureFile);
+        }
+
         return null;
     }
 
@@ -693,6 +721,7 @@ export class MySceneGraph {
             }
         }
         this.log("Parsed primitives");
+        this.primitives[primitiveId].display();
         return null;
     }
 
