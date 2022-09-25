@@ -2,6 +2,7 @@ import { CGFXMLreader } from '../lib/CGF.js';
 import { MyRectangle } from './primitives/MyRectangle.js';
 import { MySphere } from './primitives/MySphere.js';
 import { MyCylinder } from './primitives/MyCylinder.js';
+import { MyTorus } from "./primitives/MyTorus.js";
 import { MyTriangle} from "./primitives/MyTriangle.js";
 
 var DEGREE_TO_RAD = Math.PI / 180;
@@ -517,6 +518,7 @@ export class MySceneGraph {
                 continue;
             }
 
+
             // Get id of the current primitive.
             var primitiveId = this.reader.getString(children[i], 'id');
             if (primitiveId == null)
@@ -538,6 +540,7 @@ export class MySceneGraph {
 
             // Specifications for the current primitive.
             var primitiveType = grandChildren[0].nodeName;
+
 
             // Retrieves the primitive coordinates.
             if (primitiveType == 'rectangle') {
@@ -617,6 +620,30 @@ export class MySceneGraph {
 
                 this.primitives[primitiveId] = cylinder;
 
+            }
+            else if(primitiveType == 'torus'){
+                //inner
+                var inner = this.reader.getFloat(grandChildren[0], 'inner');
+                if (!(inner != null && !isNaN(inner) && inner != 0))
+                return "unable to parse inner of the primitive coordinates for ID = " + primitiveId;
+
+                //outer
+                var outer = this.reader.getFloat(grandChildren[0], 'outer');
+                if (!(outer != null && !isNaN(outer) && outer != 0))
+                return "unable to parse outer of the primitive coordinates for ID = " + primitiveId;
+
+                //slices
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices!= null && !isNaN(slices) && slices != 0))
+                return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+
+                //loops
+                var loops = this.reader.getFloat(grandChildren[0], 'loops');
+                if (!(loops != null && !isNaN(loops) && loops != 0))
+                return "unable to parse loops of the primitive coordinates for ID = " + primitiveId;
+
+                var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops)
+                this.primitives[primitiveId] = torus;
             }
             else if(primitiveType === 'triangle'){
                 /*<triangle   x1="ff" y1="ff" z1="ff"  x2="ff" y2="ff" z2="ff" x3="ff" y3="ff" z3="ff" /> */
@@ -839,11 +866,11 @@ export class MySceneGraph {
         //To do: Create display loop for transversing the scene graph
 
         //To test the parsing/creation of the primitives, call the display function directly
-        this.primitives['aSphere'].display();
-        this.primitives['aCylinder'].display();
-        this.primitives['aTriangle'].display();
 
-        this.primitives['demoRectangle'].display();
-  
+        //this.primitives['demoRectangle'].display();
+        //this.primitives['aSphere'].display();
+        //this.primitives['aCylinder'].display();
+        //this.primitives['aTriangle'].display();
+        this.primitives['aTorus'].display();
     }
 }

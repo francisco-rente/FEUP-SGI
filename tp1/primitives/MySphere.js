@@ -2,10 +2,10 @@ import { CGFobject } from '../../lib/CGF.js';
 /**
  * Sphere
  * @constructor
- * @param scene - Reference to MyScene object
- * @param radius - Radius of the sphere
- * @param slices - Number of stacks of the sphere
- * @param stacks - Number of stacks of the sphere
+ * @param scene 
+ * @param radius 
+ * @param slices 
+ * @param stacks
  */
 export class MySphere extends CGFobject {
     constructor(scene, id, radius, slices, stacks)
@@ -41,14 +41,6 @@ export class MySphere extends CGFobject {
                     Math.cos(slice_angle*j)*Math.sin(stack_angle*i), 
                     Math.sin(slice_angle*j)
                 );
-                
-                 /*
-                 // TODO: divide by 4 instead of 2 (in X)?
-                 this.texCoords.push(
-                     stack_angle*i / (2*Math.PI),
-                     1- ((slice_angle*j + Math.PI/2) / Math.PI)
-                 );*/
- 
             }
  
         }
@@ -68,7 +60,7 @@ export class MySphere extends CGFobject {
 
      	/**
 	 * @method updateTexCoords
-	 * Updates the list of texture coordinates of the rectangle
+	 * Updates the list of texture coordinates of the sphere
 	 * @param {Array} coords - Array of texture coordinates
 	 */
 	updateTexCoords(coords) {
