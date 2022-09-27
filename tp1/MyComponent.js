@@ -53,4 +53,20 @@ export class MyComponent extends CGFobject {
         return this._children;
     }
 
+    set scene(value) {
+        this._scene = value;
+    }
+
+    set id(value) {
+        this._id = value;
+    }
+
+    set texture(value) {
+        this._texture = value;
+    }
+
+    set children(value) {
+        this._children = value;
+    }
+
 }
