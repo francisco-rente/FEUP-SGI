@@ -36,6 +36,8 @@ export class MySceneGraph {
 
         this.idRoot = null;                    // The id of the root element.
 
+        this.textures = [];
+
         this.axisCoords = [];
         this.axisCoords['x'] = [1, 0, 0];
         this.axisCoords['y'] = [0, 1, 0];
@@ -773,6 +775,22 @@ export class MySceneGraph {
             // Materials
 
             // Texture
+            // get texture info in each loop child node (from its component children)
+            let texture_info = grandChildren[textureIndex];
+            if (!texture_info) return "Texture must be declared in each component";// MANDATORY DECLARATION
+
+            let texture_id = this.reader.getString(texture_info, 'id');
+            let texture = this.textures[texture_id];
+            if(typeof texture == "undefined") return `Texture ${texture_id} not found`;
+            component.setTexture(texture);
+
+            // inherit - keeps the parent texture
+            // none - removes the parent texture
+            // else overrides the parent texture
+            // length_s height, length_t width
+            // if inherit or none then no length_t or length_s are declared
+            // if inherit get parent texture coordinates
+            // <texture id="ss" length_s="ff" length_t="ff"/>
 
             // Children
         }
