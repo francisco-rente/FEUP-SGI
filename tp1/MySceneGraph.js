@@ -776,23 +776,41 @@ export class MySceneGraph {
 
             // Texture
             // get texture info in each loop child node (from its component's children)
-            /*let texture_info = grandChildren[textureIndex];
+            let texture_info = grandChildren[textureIndex];
             if (!texture_info) return "Texture must be declared in each component";// MANDATORY DECLARATION
 
             let texture_id = this.reader.getString(texture_info, 'id');
 
-            if (texture_id === "inherit") component.texture = "inherit";
-            if (texture_id === "none") component.texture = null;
-            else component.setTexture(this.textures[texture_id]);
-            if (typeof component.getTexture() == "undefined") return `Texture ${texture_id} not found`;// TODO: default texture
+            let length_s = null, length_t = null;
+            if (this.reader.hasAttribute(texture_info, 'length_s')
+                && this.reader.hasAttribute(texture_info, 'length_t')) {
+                length_s = this.reader.getFloat(texture_info, 'length_s');
+                length_t = this.reader.getFloat(texture_info, 'length_t');
 
-            console.log("Parsed texture: " + texture_id);
-            let length_s = this.reader.getFloat(texture_info, 'length_s');
-            let length_t = this.reader.getFloat(texture_info, 'length_t');
-            console.log("Parsed coordinates: " + length_s + " " + length_t);*/
-            //TODO:how to pass coordinates to primitives? Where do we define the inheritance of texture coordinates?
+                this.log("length_s: " + length_s + " length_t: " + length_t);
+                if (0 > length_s > 1 && 0 > length_t > 1) return "Texture length_s and length_t must be between 0 and 1";
+            }
 
-            // inherit - keeps the parent texture
+            if (texture_id === 'inherit' || texture_id === 'none') {
+                component.texture = texture_id;
+                if (length_s !== null || length_t !== null)
+                    this.onXMLMinorError("Texture length_s and length_t are not applicable to inherit or none");
+            } else {
+                if (length_t === null || length_s === null) return "Texture length_s and length_t must be declared";
+                component.setTexture(this.textures[texture_id]);
+            }
+            // TODO: default texture
+            if (typeof component.getTexture() == "undefined") return `Texture ${texture_id} not found`;
+
+
+            console.log("Parsed texture reference: " + texture_id + " for component " + componentID);
+
+            //TODO:how to pass coordinates to primitives?
+            // Where do we define the inheritance of texture coordinates?
+            // Are they passed directly to the primitives in the primitiveref to some sort of stack or dict?
+            // Are the textures changed only with push pop operations?
+
+            // inherit - keeps the parent texture and dimensions
             // none - removes the parent texture
             // else overrides the parent texture
             // length_s height, length_t width
@@ -801,7 +819,7 @@ export class MySceneGraph {
             // <texture id="ss" length_s="ff" length_t="ff"/>
 
             // Children
-            if(!grandChildren[childrenIndex]) return "Children must be declared in each component";
+            if (!grandChildren[childrenIndex]) return "Children must be declared in each component";
 
             // starts the array of components references, in <children>
             grandGrandChildren[componentID] = [];
