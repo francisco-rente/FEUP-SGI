@@ -3,41 +3,54 @@ import {CGFobject} from "../lib/CGF.js";
 export class MyComponent extends CGFobject {
     constructor(scene, id) {
         super(scene);
-        this.scene = scene;
-        this.id = id;
-        this.texture = null;
-        this.children = [];
+        this._texture = null;
+        this._children = [];
+        this._scene = scene;
+        this._id = id;
     }
 
 
     setTexture(texture) {
-        this.texture = texture;
+        this._texture = texture;
     }
 
     addChild(child) {
-        this.children.push(child);
+        this._children.push(child);
     }
 
     getTexture() {
-        return this.texture;
+        return this._texture;
     }
 
-    getID() {
-        return this.id;
+    setTexture(texture) {
+        this._texture = texture;
     }
 
     display() {
         //DOUBT: is this.texture.bind() necessary?
         // this.scene.pushMatrix();
-        this.scene.pushTexture();
-        if (this.texture != null) this.scene.setTexture(this.texture);
-        console.log(this.children)
-        for (let child of this.children) {
-            console.log(this.id + " displaying child");
-            child.display();
-        }
-        this.scene.popTexture();
+        this._scene.pushTexture();
+        if (this._texture != null) this._scene.setTexture(this._texture);
+        console.log(this._children)
+        for (let child of this._children) child.display();
+        this._scene.popTexture();
         // this.scene.popMatrix();
+    }
+
+    get scene() {
+        return this._scene;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    get texture() {
+        return this._texture;
+    }
+
+    get children() {
+        return this._children;
     }
 
 }

@@ -801,42 +801,38 @@ export class MySceneGraph {
             // <texture id="ss" length_s="ff" length_t="ff"/>
 
             // Children
-            // get children info in each loop child node
-            if(!grandChildren[childrenIndex])
-                return "Children must be declared in each component";// MANDATORY DECLARATION
+            if(!grandChildren[childrenIndex]) return "Children must be declared in each component";
+
+            // starts the array of components references, in <children>
             grandGrandChildren[componentID] = [];
-            const grandGrandChildrenTags = grandChildren[childrenIndex].children;
+            const grandGrandChildrenTags = grandChildren[childrenIndex].children; // <componentref/primitiveref> children
             for (let child of grandGrandChildrenTags) {
                 if (child.nodeName === "componentref") {
                     let componentRef = this.reader.getString(child, 'id');
-                    console.log("Parsed componentref: " + componentRef);
-                    // added to grandGrandChildren for later attribution
-                    grandGrandChildren[componentID].push(componentRef);
+                    grandGrandChildren[componentID].push(componentRef); // componentID -> [componentRef...]
                 }
                 else if (child.nodeName === "primitiveref") {
-                    // primitives already parsed and in this.primitives array as objects
+                    // primitives already parsed and in this.primitives array as objects (DOUBT: Hopefully)
                     let primitiveID = this.reader.getString(child, 'id');
-                    console.log("Parsed primitiveref: " + primitiveID);
-                    console.log(this.primitives)
-                    console.log("Added primitive " + this.primitives[primitiveID]  + "to component: " + componentID);
-
                     component.addChild(this.primitives[primitiveID]);
                 }
                 else {
                     return "Unknown tag <" + child.nodeName + ">";
                 }
-                // TODO: other options
+                // TODO: other options?
             }
             //TODO: verify repeated
-            this.components.push(component);
+            this.components.push(component); // <component> parsed, added to components array
         }
 
         // Go through the dict CompId -> [ChildCompId] and add the children to the components Objects
         // created in the loop above
-        for (let compId in grandGrandChildren)
-            for (let childComp of grandGrandChildren[compId]){
+        for (let compId in grandGrandChildren) //<component> id
+            for (let childComp of grandGrandChildren[compId]){ //<componentref> ids
                 let childCompObj = this.components.find(comp => comp.id === childComp);
-                console.log("Adding child " + childCompObj + " to " + compId);
+                // console.log("Adding child " + childCompObj + " to " + compId);
+                // add the component object (parsed in the loop above) to the parent component
+                // TODO: check here for recursive component connections?
                 this.components.find(comp => comp.id === compId).addChild(childCompObj);
             }
     }
