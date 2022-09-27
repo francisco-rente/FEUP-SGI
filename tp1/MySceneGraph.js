@@ -717,8 +717,8 @@ export class MySceneGraph {
                     [x2, y2, z2], [x3, y3, z3]);
 
                 this.primitives[primitiveId] = triangle;
-            }
-            else {
+                console.log("triangle added to primitives" + primitiveId);
+            } else {
                 console.warn("To do: Parse other primitives.");
             }
         }
