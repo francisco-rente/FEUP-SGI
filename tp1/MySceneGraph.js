@@ -1,9 +1,11 @@
 import {CGFtexture, CGFXMLreader} from '../lib/CGF.js';
-import { MyRectangle } from './primitives/MyRectangle.js';
-import { MySphere } from './primitives/MySphere.js';
-import { MyCylinder } from './primitives/MyCylinder.js';
-import { MyTorus } from "./primitives/MyTorus.js";
-import { MyTriangle} from "./primitives/MyTriangle.js";
+import {MyRectangle} from './primitives/MyRectangle.js';
+import {MySphere} from './primitives/MySphere.js';
+import {MyCylinder} from './primitives/MyCylinder.js';
+import {MyTorus} from "./primitives/MyTorus.js";
+import {MyTriangle} from "./primitives/MyTriangle.js";
+import {MyComponent} from "./MyComponent.js";
+
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -32,7 +34,7 @@ export class MySceneGraph {
         this.scene = scene;
         scene.graph = this;
 
-        this.nodes = [];
+        this.components = [];
 
         this.idRoot = null;                    // The id of the root element.
 
@@ -56,7 +58,7 @@ export class MySceneGraph {
 
 
     clear_data() {
-        if(this.textures.length !== 0) for (let texture of this.textures) texture.destroy();
+        if (this.textures.length !== 0) for (let texture of this.textures) texture.destroy();
     }
 
 
@@ -82,6 +84,7 @@ export class MySceneGraph {
 
         return rootElement;
     }
+
 
     /**
      * Parses the XML file, processing each block.
@@ -312,8 +315,7 @@ export class MySceneGraph {
             if (children[i].nodeName != "omni" && children[i].nodeName != "spot") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
-            }
-            else {
+            } else {
                 attributeNames.push(...["location", "ambient", "diffuse", "specular"]);
                 attributeTypes.push(...["position", "color", "color", "color"]);
             }
@@ -360,8 +362,7 @@ export class MySceneGraph {
                         return aux;
 
                     global.push(aux);
-                }
-                else
+                } else
                     return "light " + attributeNames[i] + " undefined for ID = " + lightId;
             }
 
@@ -385,8 +386,7 @@ export class MySceneGraph {
                         return aux;
 
                     targetLight = aux;
-                }
-                else
+                } else
                     return "light target undefined for ID = " + lightId;
 
                 global.push(...[angle, exponent, targetLight])
@@ -406,7 +406,7 @@ export class MySceneGraph {
     }
 
     /**
-     * Parses the <textures> block. 
+     * Parses the <textures> block.
      * @param {textures block element} texturesNode
      */
     parseTextures(texturesNode) {
@@ -419,11 +419,11 @@ export class MySceneGraph {
             if (id == null) return "no ID defined for texture";
 
             if (this.textures[id] != null)
-                return "ID must be unique for each texture (conflict: ID = " + id + ")";
+                return "Repeated ID for texture: " + id;
 
             const textureFile = this.reader.getString(texture, 'file');
             if (textureFile == null) return "no file defined for texture";
-            if(textureFile.length === 0) return "file path is empty";
+            if (textureFile.length === 0) return "file path is empty";
 
             // check if file exists
             //const texture_file = new File("./scenes/images/" + textureFile, "r");
@@ -732,18 +732,18 @@ export class MySceneGraph {
    * @param {components block element} componentsNode
    */
     parseComponents(componentsNode) {
-        var children = componentsNode.children;
+        let children = componentsNode.children;
 
-        this.components = [];
+        this.components = []; //array of components ids
 
-        var grandChildren = [];
-        var grandgrandChildren = [];
-        var nodeNames = [];
+        let grandChildren = [];
+        let grandGrandChildren = {}; //DICT: Pair NodeID -> [ChildComponentNodeID]
+        let nodeNames = [];
 
         // Any number of components.
         for (var i = 0; i < children.length; i++) {
 
-            if (children[i].nodeName != "component") {
+            if (children[i].nodeName !== "component") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
@@ -760,29 +760,37 @@ export class MySceneGraph {
             grandChildren = children[i].children;
 
             nodeNames = [];
-            for (var j = 0; j < grandChildren.length; j++) {
-                nodeNames.push(grandChildren[j].nodeName);
-            }
+            for (let j = 0; j < grandChildren.length; j++) nodeNames.push(grandChildren[j].nodeName);
 
-            var transformationIndex = nodeNames.indexOf("transformation");
-            var materialsIndex = nodeNames.indexOf("materials");
-            var textureIndex = nodeNames.indexOf("texture");
-            var childrenIndex = nodeNames.indexOf("children");
 
+            const transformationIndex = nodeNames.indexOf("transformation");
+            const materialsIndex = nodeNames.indexOf("materials");
+            const textureIndex = nodeNames.indexOf("texture");
+            const childrenIndex = nodeNames.indexOf("children");
+
+            let component = new MyComponent(this.scene, componentID);
             this.onXMLMinorError("To do: Parse components.");
             // Transformations
 
             // Materials
 
             // Texture
-            // get texture info in each loop child node (from its component children)
-            let texture_info = grandChildren[textureIndex];
+            // get texture info in each loop child node (from its component's children)
+            /*let texture_info = grandChildren[textureIndex];
             if (!texture_info) return "Texture must be declared in each component";// MANDATORY DECLARATION
 
             let texture_id = this.reader.getString(texture_info, 'id');
-            let texture = this.textures[texture_id];
-            if(typeof texture == "undefined") return `Texture ${texture_id} not found`;
-            component.setTexture(texture);
+
+            if (texture_id === "inherit") component.texture = "inherit";
+            if (texture_id === "none") component.texture = null;
+            else component.setTexture(this.textures[texture_id]);
+            if (typeof component.getTexture() == "undefined") return `Texture ${texture_id} not found`;// TODO: default texture
+
+            console.log("Parsed texture: " + texture_id);
+            let length_s = this.reader.getFloat(texture_info, 'length_s');
+            let length_t = this.reader.getFloat(texture_info, 'length_t');
+            console.log("Parsed coordinates: " + length_s + " " + length_t);*/
+            //TODO:how to pass coordinates to primitives? Where do we define the inheritance of texture coordinates?
 
             // inherit - keeps the parent texture
             // none - removes the parent texture
@@ -793,7 +801,44 @@ export class MySceneGraph {
             // <texture id="ss" length_s="ff" length_t="ff"/>
 
             // Children
+            // get children info in each loop child node
+            if(!grandChildren[childrenIndex])
+                return "Children must be declared in each component";// MANDATORY DECLARATION
+            grandGrandChildren[componentID] = [];
+            const grandGrandChildrenTags = grandChildren[childrenIndex].children;
+            for (let child of grandGrandChildrenTags) {
+                if (child.nodeName === "componentref") {
+                    let componentRef = this.reader.getString(child, 'id');
+                    console.log("Parsed componentref: " + componentRef);
+                    // added to grandGrandChildren for later attribution
+                    grandGrandChildren[componentID].push(componentRef);
+                }
+                else if (child.nodeName === "primitiveref") {
+                    // primitives already parsed and in this.primitives array as objects
+                    let primitiveID = this.reader.getString(child, 'id');
+                    console.log("Parsed primitiveref: " + primitiveID);
+                    console.log(this.primitives)
+                    console.log("Added primitive " + this.primitives[primitiveID]  + "to component: " + componentID);
+
+                    component.addChild(this.primitives[primitiveID]);
+                }
+                else {
+                    return "Unknown tag <" + child.nodeName + ">";
+                }
+                // TODO: other options
+            }
+            //TODO: verify repeated
+            this.components.push(component);
         }
+
+        // Go through the dict CompId -> [ChildCompId] and add the children to the components Objects
+        // created in the loop above
+        for (let compId in grandGrandChildren)
+            for (let childComp of grandGrandChildren[compId]){
+                let childCompObj = this.components.find(comp => comp.id === childComp);
+                console.log("Adding child " + childCompObj + " to " + compId);
+                this.components.find(comp => comp.id === compId).addChild(childCompObj);
+            }
     }
 
 
@@ -913,14 +958,14 @@ export class MySceneGraph {
      */
     displayScene() {
         //To do: Create display loop for traversing the scene graph
+        console.log(this.idRoot)
 
-        this.parseXMLFile(this.onXMLReady());
-
-
+        console.log(this.components.find(comp => comp.id === this.idRoot))
+        this.components.find(comp => comp.id === this.idRoot).display();
         //To test the parsing/creation of the primitives, call the display function directly
 
         //this.primitives['demoRectangle'].display();
-        this.primitives['aSphere'].display();
+        // this.primitives['aSphere'].display();
         //this.primitives['aCylinder'].display();
         //this.primitives['aTriangle'].display();
         //this.primitives['aTorus'].display();

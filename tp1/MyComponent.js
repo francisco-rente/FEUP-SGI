@@ -14,11 +14,29 @@ export class MyComponent extends CGFobject {
         this.texture = texture;
     }
 
+    addChild(child) {
+        this.children.push(child);
+    }
+
+    getTexture() {
+        return this.texture;
+    }
+
+    getID() {
+        return this.id;
+    }
+
     display() {
         //DOUBT: is this.texture.bind() necessary?
         // this.scene.pushMatrix();
-        if (this.texture != null) this.texture.apply();
-        for (let child of this.children) child.display();
+        this.scene.pushTexture();
+        if (this.texture != null) this.scene.setTexture(this.texture);
+        console.log(this.children)
+        for (let child of this.children) {
+            console.log(this.id + " displaying child");
+            child.display();
+        }
+        this.scene.popTexture();
         // this.scene.popMatrix();
     }
 
