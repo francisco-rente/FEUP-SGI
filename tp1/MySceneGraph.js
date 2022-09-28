@@ -522,16 +522,11 @@ export class MySceneGraph {
                         mat4.scale(transfMatrix, transfMatrix, coordinates);
                         break;
                     case 'rotate':
-                        console.log("inside rotate");
-                        console.log(grandChildren[j]);
-                        //console.log(grandChildren[j].)
                         let axis = this.reader.getString(grandChildren[j],'axis');
                         if(axis != 'x' && axis != 'y' && axis != 'z')
                             return grandChildren[j];
                         let angle = this.reader.getFloat(grandChildren[j], 'angle');
                         angle = DEGREE_TO_RAD*angle;
-                        console.log(axis);
-                        console.log(angle);
                         console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
                         //mat4.fromRotation(transfMatrix, angle, axis);
                         switch (axis) {
