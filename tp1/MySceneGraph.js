@@ -515,13 +515,53 @@ export class MySceneGraph {
 
                         transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
                         break;
-                    case 'scale':                        
-                        this.onXMLMinorError("To do: Parse scale transformations.");
+                    case 'scale':                      
+                        var coordinates = this.parseCoordinates3D(grandChildren[j], "translate transformation for ID " + transformationID);
+                        console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
+                        //mat4.fromScaling(transfMatrix, coordinates);
+                        mat4.scale(transfMatrix, transfMatrix, coordinates);
                         break;
                     case 'rotate':
-                        // angle
-                        this.onXMLMinorError("To do: Parse rotate transformations.");
+                        console.log("inside rotate");
+                        console.log(grandChildren[j]);
+                        //console.log(grandChildren[j].)
+                        let axis = this.reader.getString(grandChildren[j],'axis');
+                        if(axis != 'x' && axis != 'y' && axis != 'z')
+                            return grandChildren[j];
+                        let angle = this.reader.getFloat(grandChildren[j], 'angle');
+                        angle = DEGREE_TO_RAD*angle;
+                        console.log(axis);
+                        console.log(angle);
+                        console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
+                        //mat4.fromRotation(transfMatrix, angle, axis);
+                        switch (axis) {
+                            case 'x':
+                                mat4.rotateX(transfMatrix, transfMatrix, angle);
+                                break;
+                            case 'y':
+                                mat4.rotateY(transfMatrix, transfMatrix, angle);
+                                break;
+                            case 'z':
+                                mat4.rotateZ(transfMatrix, transfMatrix, angle);
+                                break;
+                            default:
+                                return "Rotation with wrong axis";
+                        }
                         break;
+                    /*
+
+                    case "rotation":
+                        let angle = this.parseFloat(trans, 'angle', `<transformations>, node ${nodeID}`); if(typeof angle === "string") return angle;
+                        angle *= DEGREE_TO_RAD;
+                        if(trans.attributes.axis  == null) return `rotation of node ${nodeID} is missing axis`;
+                        switch(trans.attributes.axis.value){
+                            case "x": mat4.rotateX(M, M, angle); break;
+                            case "y": mat4.rotateY(M, M, angle); break;
+                            case "z": mat4.rotateZ(M, M, angle); break;
+                            default: return `no such rotation axis "${trans.attributes.axis.value}"`;
+                        }
+                        break;
+                    */
                 }
             }
             this.transformations[transformationID] = transfMatrix;
@@ -974,7 +1014,7 @@ export class MySceneGraph {
         //To do: Create display loop for traversing the scene graph
         console.log(this.idRoot)
 
-        console.log(this.components.find(comp => comp.id === this.idRoot))
+        //console.log(this.components.find(comp => comp.id === this.idRoot))
         this.components.find(comp => comp.id === this.idRoot).display();
         //To test the parsing/creation of the primitives, call the display function directly
 
