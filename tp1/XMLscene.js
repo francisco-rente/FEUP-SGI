@@ -103,10 +103,23 @@ export class XMLscene extends CGFscene {
         this.texture_stack.pop();
     }
 
-
-    setTexture(texture) {
-
+    applyTexture() {
+        this.texture_stack[this.texture_stack.length - 1].bind();
+        // DOUBT: What's the difference between bind and apply?
+        // this.appearance.setTexture(this.texture);
+        // this.appearance.apply();
     }
+
+
+    removeParentTexture() {
+        this.texture = this.texture_stack[this.texture_stack.length - 2];
+    }
+
+    restoreParentTexture() {
+        this.texture = this.texture_stack[this.texture_stack.length - 1];
+    }
+
+
 
     /** Handler called when the graph is finally loaded. 
      * As loading is asynchronous, this may be called already after the application has started the run loop

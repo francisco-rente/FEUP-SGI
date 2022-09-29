@@ -23,8 +23,8 @@
     </lights>
 
     <textures>
-        <!--<texture id="vidralTexture" file="scenes/images/vidral.jpg"/>
-        <texture id="rocksTexture" file="scenes/images/rocks.jpg"/>-->
+        <texture id="vidralTexture" file="scenes/images/vidral.jpg"/>
+        <texture id="rocksTexture" file="scenes/images/rocks.jpg"/>
     </textures>
 
     <materials>
@@ -38,7 +38,6 @@
 
     <transformations>
         <transformation id="demoTransform">
-            <translate x="0" y="0" z="1"/>
             <scale x="5" y="1" z="5"/>
             <rotate axis="x" angle="-45"/>
             <rotate axis="z" angle="-45"/>
@@ -83,9 +82,9 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="vidralTexture"/>
+            <texture id="vidralTexture" length_s="0.1" length_t="0.3"/>
             <children>
-                <!--<primitiveref id="demoRectangle"/>-->
+                <primitiveref id="demoRectangle"/>
                 <componentref id="othercomponent"/>
                 <primitiveref id="aTorus"/>
             </children>
@@ -99,12 +98,26 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <!-- <texture id="vidralTexture"/>-->
+            <texture id="rocksTexture" length_s = "0.3" length_t = "0.4"/>
             <children>
-                <!--<primitiveref id="demoRectangle"/>-->
+                <primitiveref id="demoRectangle"/>
                 <primitiveref id="aTriangle"/>
             </children>
+        </component>
 
+        <component id="innercomponent">
+            <transformation>
+                <translate x="0" y="0" z="1"/>
+                <scale x="2" y="1" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <!--<primitiveref id="demoRectangle"/>-->
+                <primitiveref id="aTorus"/>
+            </children>
         </component>
 
     </components>
