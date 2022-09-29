@@ -25,6 +25,8 @@
     <textures>
         <texture id="vidralTexture" file="scenes/images/vidral.jpg"/>
         <texture id="leavesTexture" file="scenes/images/leaves.jpg"/>
+        <texture id="rocksTexture" file="scenes/images/rocks.jpg"/>
+
     </textures>
 
     <materials>
@@ -42,6 +44,20 @@
             <rotate axis="x" angle="-45"/>
             <rotate axis="z" angle="-45"/>
         </transformation>
+
+        <transformation id="transform1">
+            <scale x="1" y="1" z="1"/>
+            <rotate axis="x" angle="-45"/>
+            <rotate axis="z" angle="-45"/>
+        </transformation>
+
+
+        <transformation id="transform2">
+            <scale x="5" y="1" z="5"/>
+        </transformation>
+
+
+
     </transformations>
 
     <primitives>
@@ -76,8 +92,7 @@
     <components>
         <component id="demoRoot">
             <transformation>
-                <translate x="0" y="0" z="1"/>
-                <scale x="2" y="1" z="1"/>
+
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -85,12 +100,28 @@
             <texture id="vidralTexture" length_s="0.1" length_t="0.3"/>
             <children>
                 <componentref id="othercomponent"/>
+                <componentref id="triangleComponent"/>
+
             </children>
         </component>
 
+        <component id="triangleComponent">
+            <transformation>
+                <scale x="1" y="1" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="rocksTexture" length_s = "0.3" length_t = "0.4"/>
+            <children>
+                <primitiveref id="aTriangle"/>
+            </children>
+        </component>
+
+
+
         <component id="othercomponent">
             <transformation>
-                <translate x="0" y="0" z="1"/>
                 <scale x="2" y="1" z="1"/>
             </transformation>
             <materials>
@@ -99,14 +130,13 @@
             <texture id="leavesTexture" length_s = "0.3" length_t = "0.4"/>
             <children>
                 <primitiveref id="aTorus"/>
-                <componentref id="othercomponent"/>
+                <componentref id="innercomponent"/>
             </children>
         </component>
 
         <component id="innercomponent">
             <transformation>
-                <translate x="0" y="0" z="1"/>
-                <scale x="2" y="1" z="1"/>
+                <scale x="1" y="1" z="1"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>

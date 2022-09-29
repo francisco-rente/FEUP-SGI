@@ -507,57 +507,7 @@ export class MySceneGraph {
             var transfMatrix = mat4.create();
 
             for (var j = 0; j < grandChildren.length; j++) {
-                switch (grandChildren[j].nodeName) {
-                    case 'translate':
-                        var coordinates = this.parseCoordinates3D(grandChildren[j], "translate transformation for ID " + transformationID);
-                        if (!Array.isArray(coordinates))
-                            return coordinates;
-
-                        transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
-                        break;
-                    case 'scale':                      
-                        var coordinates = this.parseCoordinates3D(grandChildren[j], "translate transformation for ID " + transformationID);
-                        console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
-                        //mat4.fromScaling(transfMatrix, coordinates);
-                        mat4.scale(transfMatrix, transfMatrix, coordinates);
-                        break;
-                    case 'rotate':
-                        let axis = this.reader.getString(grandChildren[j],'axis');
-                        if(axis != 'x' && axis != 'y' && axis != 'z')
-                            return grandChildren[j];
-                        let angle = this.reader.getFloat(grandChildren[j], 'angle');
-                        angle = DEGREE_TO_RAD*angle;
-                        console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
-                        //mat4.fromRotation(transfMatrix, angle, axis);
-                        switch (axis) {
-                            case 'x':
-                                mat4.rotateX(transfMatrix, transfMatrix, angle);
-                                break;
-                            case 'y':
-                                mat4.rotateY(transfMatrix, transfMatrix, angle);
-                                break;
-                            case 'z':
-                                mat4.rotateZ(transfMatrix, transfMatrix, angle);
-                                break;
-                            default:
-                                return "Rotation with wrong axis";
-                        }
-                        break;
-                    /*
-
-                    case "rotation":
-                        let angle = this.parseFloat(trans, 'angle', `<transformations>, node ${nodeID}`); if(typeof angle === "string") return angle;
-                        angle *= DEGREE_TO_RAD;
-                        if(trans.attributes.axis  == null) return `rotation of node ${nodeID} is missing axis`;
-                        switch(trans.attributes.axis.value){
-                            case "x": mat4.rotateX(M, M, angle); break;
-                            case "y": mat4.rotateY(M, M, angle); break;
-                            case "z": mat4.rotateZ(M, M, angle); break;
-                            default: return `no such rotation axis "${trans.attributes.axis.value}"`;
-                        }
-                        break;
-                    */
-                }
+                transfMatrix = this.get_transformation_matrix(grandChildren[j], transfMatrix);
             }
             this.transformations[transformationID] = transfMatrix;
         }
@@ -565,6 +515,49 @@ export class MySceneGraph {
         this.log("Parsed transformations");
         return null;
     }
+
+
+    get_transformation_matrix(transformation_tag, transfMatrix) {
+        switch (transformation_tag.nodeName) {
+            case 'translate':
+                var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
+                if (!Array.isArray(coordinates))
+                    return coordinates;
+
+                transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
+                break;
+            case 'scale':
+                var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
+                console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
+                //mat4.fromScaling(transfMatrix, coordinates);
+                mat4.scale(transfMatrix, transfMatrix, coordinates);
+                break;
+            case 'rotate':transformation_tag
+                let axis = this.reader.getString(transformation_tag,'axis');
+                if(axis != 'x' && axis != 'y' && axis != 'z')
+                    return transformation_tag;
+                let angle = this.reader.getFloat(transformation_tag, 'angle');
+                angle = DEGREE_TO_RAD*angle;
+                console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
+                //mat4.fromRotation(transfMatrix, angle, axis);
+                switch (axis) {
+                    case 'x':
+                        mat4.rotateX(transfMatrix, transfMatrix, angle);
+                        break;
+                    case 'y':
+                        mat4.rotateY(transfMatrix, transfMatrix, angle);
+                        break;
+                    case 'z':
+                        mat4.rotateZ(transfMatrix, transfMatrix, angle);
+                        break;
+                    default:
+                        return "Rotation with wrong axis";
+                }
+                break;
+        }
+        return transfMatrix;
+    }
+
 
     /**
      * Parses the <primitives> block.
@@ -806,6 +799,22 @@ export class MySceneGraph {
             let component = new MyComponent(this.scene, componentID);
             this.onXMLMinorError("To do: Parse components.");
             // Transformations
+
+            let matrix = mat4.create();
+            let transformations = grandChildren[transformationIndex].children;
+            for (const transformation of transformations){
+                if(transformation.nodeName === 'transformationref'){
+                    let transformationID = this.reader.getString(transformation, 'id');
+                    console.log("transformationID: " + transformationID);
+                    mat4.multiply(matrix, matrix, this.transformations[transformationID]);
+                }
+                else
+                    mat4.multiply(matrix, matrix, this.get_transformation_matrix(transformation, matrix));
+            }
+
+            console.log("matrix: " + matrix + " componentID: " + componentID);
+            component.transformation = matrix;
+
 
             // Materials
 

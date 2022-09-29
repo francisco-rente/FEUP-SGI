@@ -14,13 +14,18 @@ export class MyComponent extends CGFobject {
         this._texture_coord = [1, 1];
         this._parent_texture = null;
         this._parent_texture_coord = [1, 1];
+
+        this.transformation = [];
     }
 
 
     display() {
         //DOUBT: is this.texture.bind() necessary?
-        // this.scene.pushMatrix();
-
+        console.log(this._scene.activeMatrix);
+        this._scene.multMatrix(this.transformation);
+        console.log(this._scene.activeMatrix);
+        this._scene.pushMatrix();
+        console.log(this._scene.activeMatrix);
         this.sendTextureToScene();
 
         for (const primitive of this._primitives) {
@@ -34,6 +39,7 @@ export class MyComponent extends CGFobject {
         }
 
         this._scene.popTexture();
+        this._scene.popMatrix();
         // this.scene.popMatrix();
     }
 
@@ -46,7 +52,6 @@ export class MyComponent extends CGFobject {
             if (this._scene.getTextureStackTop() === "none")
                 this._scene.pushDefaultTexture(); // inherit of none -> default
             else{
-                console.log(this._texture);
                 this._scene.pushTexture(this._scene.getTextureStackTop());
                 this.scene.applyTexture();
             }

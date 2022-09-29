@@ -109,8 +109,6 @@ export class XMLscene extends CGFscene {
     }
 
     applyTexture() {
-        console.log(this.texture_stack);
-        console.log("texture " + this.texture_stack[this.texture_stack.length - 1])
         this.texture_stack[this.texture_stack.length - 1].bind();
     }
 
