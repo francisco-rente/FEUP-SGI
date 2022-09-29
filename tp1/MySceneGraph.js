@@ -827,12 +827,16 @@ export class MySceneGraph {
             }
 
             if (texture_id === 'inherit' || texture_id === 'none') {
-                component.texture = texture_id;
+                component.setTexture(texture_id);
                 if (length_s !== null || length_t !== null)
                     this.onXMLMinorError("Texture length_s and length_t are not applicable to inherit or none");
+                console.log("Component " + componentID + " has implicit texture " + texture_id);
             } else {
                 if (length_t === null || length_s === null) return "Texture length_s and length_t must be declared";
+                console.log("Component " + componentID + " has texture " + texture_id +
+                    " with length_s " + length_s + " and length_t " + length_t);
                 component.setTexture(this.textures[texture_id]);
+                component.setTextureCoordinates((length_s, length_t));
             }
             // TODO: default texture
             if (typeof component.getTexture() == "undefined") return `Texture ${texture_id} not found`;
@@ -862,12 +866,12 @@ export class MySceneGraph {
             for (let child of grandGrandChildrenTags) {
                 if (child.nodeName === "componentref") {
                     let componentRef = this.reader.getString(child, 'id');
-                    grandGrandChildren[componentID].push(componentRef); // componentID -> [componentRef...]
+                    grandGrandChildren[componentID].push(componentRef); // { componentID -> [componentRef...] }
                 }
                 else if (child.nodeName === "primitiveref") {
                     // primitives already parsed and in this.primitives array as objects (DOUBT: Hopefully)
                     let primitiveID = this.reader.getString(child, 'id');
-                    component.addChild(this.primitives[primitiveID]);
+                    component.addPrimitive(this.primitives[primitiveID]);
                 }
                 else {
                     return "Unknown tag <" + child.nodeName + ">";
