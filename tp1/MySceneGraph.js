@@ -1,10 +1,10 @@
-import {CGFtexture, CGFXMLreader} from '../lib/CGF.js';
-import {MyRectangle} from './primitives/MyRectangle.js';
-import {MySphere} from './primitives/MySphere.js';
-import {MyCylinder} from './primitives/MyCylinder.js';
-import {MyTorus} from "./primitives/MyTorus.js";
-import {MyTriangle} from "./primitives/MyTriangle.js";
-import {MyComponent} from "./MyComponent.js";
+import { CGFtexture, CGFXMLreader } from '../lib/CGF.js';
+import { MyRectangle } from './primitives/MyRectangle.js';
+import { MySphere } from './primitives/MySphere.js';
+import { MyCylinder } from './primitives/MyCylinder.js';
+import { MyTorus } from "./primitives/MyTorus.js";
+import { MyTriangle } from "./primitives/MyTriangle.js";
+import { MyComponent } from "./MyComponent.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180;
@@ -36,7 +36,7 @@ export class MySceneGraph {
 
         this.components = [];
 
-        this.idRoot = null;                    // The id of the root element.
+        this.idRoot = null; // The id of the root element.
 
         this.textures = [];
 
@@ -58,7 +58,8 @@ export class MySceneGraph {
 
 
     clear_data() {
-        if (this.textures.length !== 0) for (let texture of this.textures) texture.destroy();
+        if (this.textures.length !== 0)
+            for (let texture of this.textures) texture.destroy();
     }
 
 
@@ -532,14 +533,18 @@ export class MySceneGraph {
                 //mat4.fromScaling(transfMatrix, coordinates);
                 mat4.scale(transfMatrix, transfMatrix, coordinates);
                 break;
-            case 'rotate':transformation_tag
-                let axis = this.reader.getString(transformation_tag,'axis');
-                if(axis != 'x' && axis != 'y' && axis != 'z')
+            case 'rotate':
+                transformation_tag
+                let axis = this.reader.getString(transformation_tag, 'axis');
+                if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
                 let angle = this.reader.getFloat(transformation_tag, 'angle');
-                angle = DEGREE_TO_RAD*angle;
+                angle = DEGREE_TO_RAD * angle;
                 console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
                 //mat4.fromRotation(transfMatrix, angle, axis);
+
+                console.log("about to apply a rotation");
+                console.log(transfMatrix);
                 switch (axis) {
                     case 'x':
                         mat4.rotateX(transfMatrix, transfMatrix, angle);
@@ -553,6 +558,8 @@ export class MySceneGraph {
                     default:
                         return "Rotation with wrong axis";
                 }
+                console.log("left rotation, transfmatrix is:");
+                console.log(transfMatrix);
                 break;
         }
         return transfMatrix;
@@ -627,8 +634,7 @@ export class MySceneGraph {
                 var rect = new MyRectangle(this.scene, primitiveId, x1, x2, y1, y2);
 
                 this.primitives[primitiveId] = rect;
-            }
-            else if(primitiveType == 'sphere'){
+            } else if (primitiveType == 'sphere') {
                 //radius
                 var radius = this.reader.getFloat(grandChildren[0], 'radius');
                 if (!(radius != null && !isNaN(radius) && radius != 0))
@@ -648,8 +654,7 @@ export class MySceneGraph {
 
                 this.primitives[primitiveId] = sphere;
 
-            }
-            else if(primitiveType == 'cylinder'){
+            } else if (primitiveType == 'cylinder') {
                 //base
                 var base = this.reader.getFloat(grandChildren[0], 'base');
                 if (!(base != null && !isNaN(base) && base != 0))
@@ -680,32 +685,30 @@ export class MySceneGraph {
 
                 this.primitives[primitiveId] = cylinder;
 
-            }
-            else if(primitiveType == 'torus'){
+            } else if (primitiveType == 'torus') {
                 //inner
                 var inner = this.reader.getFloat(grandChildren[0], 'inner');
                 if (!(inner != null && !isNaN(inner) && inner != 0))
-                return "unable to parse inner of the primitive coordinates for ID = " + primitiveId;
+                    return "unable to parse inner of the primitive coordinates for ID = " + primitiveId;
 
                 //outer
                 var outer = this.reader.getFloat(grandChildren[0], 'outer');
                 if (!(outer != null && !isNaN(outer) && outer != 0))
-                return "unable to parse outer of the primitive coordinates for ID = " + primitiveId;
+                    return "unable to parse outer of the primitive coordinates for ID = " + primitiveId;
 
                 //slices
                 var slices = this.reader.getFloat(grandChildren[0], 'slices');
-                if (!(slices!= null && !isNaN(slices) && slices != 0))
-                return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
+                if (!(slices != null && !isNaN(slices) && slices != 0))
+                    return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
                 //loops
                 var loops = this.reader.getFloat(grandChildren[0], 'loops');
                 if (!(loops != null && !isNaN(loops) && loops != 0))
-                return "unable to parse loops of the primitive coordinates for ID = " + primitiveId;
+                    return "unable to parse loops of the primitive coordinates for ID = " + primitiveId;
 
                 var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops)
                 this.primitives[primitiveId] = torus;
-            }
-            else if(primitiveType === 'triangle'){
+            } else if (primitiveType === 'triangle') {
                 /*<triangle   x1="ff" y1="ff" z1="ff"  x2="ff" y2="ff" z2="ff" x3="ff" y3="ff" z3="ff" /> */
 
                 let x1 = this.reader.getFloat(grandChildren[0], 'x1');
@@ -738,11 +741,10 @@ export class MySceneGraph {
                 if (!(z3 != null && !isNaN(z3)))
                     return "unable to parse z3 of the primitive coordinates for ID = " + primitiveId;
 
-                if(!MyTriangle.checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3))
+                if (!MyTriangle.checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3))
                     return "unable to parse triangle coordinates for ID = " + primitiveId;
 
-                var triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1] ,
-                    [x2, y2, z2], [x3, y3, z3]);
+                var triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]);
 
                 this.primitives[primitiveId] = triangle;
                 console.log("triangle added to primitives" + primitiveId);
@@ -756,9 +758,9 @@ export class MySceneGraph {
     }
 
     /**
-   * Parses the <components> block.
-   * @param {components block element} componentsNode
-   */
+     * Parses the <components> block.
+     * @param {components block element} componentsNode
+     */
     parseComponents(componentsNode) {
         let children = componentsNode.children;
 
@@ -802,13 +804,12 @@ export class MySceneGraph {
 
             let matrix = mat4.create();
             let transformations = grandChildren[transformationIndex].children;
-            for (const transformation of transformations){
-                if(transformation.nodeName === 'transformationref'){
+            for (const transformation of transformations) {
+                if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
                     mat4.multiply(matrix, matrix, this.transformations[transformationID]);
-                }
-                else
+                } else
                     mat4.multiply(matrix, matrix, this.get_transformation_matrix(transformation, matrix));
             }
 
@@ -821,13 +822,14 @@ export class MySceneGraph {
             // Texture
             // get texture info in each loop child node (from its component's children)
             let texture_info = grandChildren[textureIndex];
-            if (!texture_info) return "Texture must be declared in each component";// MANDATORY DECLARATION
+            if (!texture_info) return "Texture must be declared in each component"; // MANDATORY DECLARATION
 
             let texture_id = this.reader.getString(texture_info, 'id');
 
-            let length_s = null, length_t = null;
-            if (this.reader.hasAttribute(texture_info, 'length_s')
-                && this.reader.hasAttribute(texture_info, 'length_t')) {
+            let length_s = null,
+                length_t = null;
+            if (this.reader.hasAttribute(texture_info, 'length_s') &&
+                this.reader.hasAttribute(texture_info, 'length_t')) {
                 length_s = this.reader.getFloat(texture_info, 'length_s');
                 length_t = this.reader.getFloat(texture_info, 'length_t');
 
@@ -876,13 +878,11 @@ export class MySceneGraph {
                 if (child.nodeName === "componentref") {
                     let componentRef = this.reader.getString(child, 'id');
                     grandGrandChildren[componentID].push(componentRef); // { componentID -> [componentRef...] }
-                }
-                else if (child.nodeName === "primitiveref") {
+                } else if (child.nodeName === "primitiveref") {
                     // primitives already parsed and in this.primitives array as objects (DOUBT: Hopefully)
                     let primitiveID = this.reader.getString(child, 'id');
                     component.addPrimitive(this.primitives[primitiveID]);
-                }
-                else {
+                } else {
                     return "Unknown tag <" + child.nodeName + ">";
                 }
                 // TODO: other options?
@@ -894,13 +894,13 @@ export class MySceneGraph {
         // Go through the dict CompId -> [ChildCompId] and add the children to the components Objects
         // created in the loop above
         for (let compId in grandGrandChildren) //<component> id
-            for (let childComp of grandGrandChildren[compId]){ //<componentref> ids
-                let childCompObj = this.components.find(comp => comp.id === childComp);
-                // console.log("Adding child " + childCompObj + " to " + compId);
-                // add the component object (parsed in the loop above) to the parent component
-                // TODO: check here for recursive component connections?
-                this.components.find(comp => comp.id === compId).addChild(childCompObj);
-            }
+            for (let childComp of grandGrandChildren[compId]) { //<componentref> ids
+            let childCompObj = this.components.find(comp => comp.id === childComp);
+            // console.log("Adding child " + childCompObj + " to " + compId);
+            // add the component object (parsed in the loop above) to the parent component
+            // TODO: check here for recursive component connections?
+            this.components.find(comp => comp.id === compId).addChild(childCompObj);
+        }
     }
 
 

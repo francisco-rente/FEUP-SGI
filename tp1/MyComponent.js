@@ -1,4 +1,4 @@
-import {CGFobject} from "../lib/CGF.js";
+import { CGFobject } from "../lib/CGF.js";
 
 export class MyComponent extends CGFobject {
 
@@ -21,23 +21,23 @@ export class MyComponent extends CGFobject {
 
     display() {
         //DOUBT: is this.texture.bind() necessary?
-        console.log(this._scene.activeMatrix);
+        let previous_matrix = this._scene.getMatrix();
         this._scene.multMatrix(this.transformation);
-        console.log(this._scene.activeMatrix);
         this._scene.pushMatrix();
-        console.log(this._scene.activeMatrix);
         this.sendTextureToScene();
 
         for (const primitive of this._primitives) {
             // primitive.updateTexCoords(this._texture_coord);
             primitive.display();
         }
-
         for (let child of this._children) {
             child.updateTexCoords(this._texture_coord);
             child.display();
         }
-
+        // let invertMatrix =  mat4.create();
+        this._scene.setMatrix(previous_matrix);
+        //mat4.invert(invertMatrix, this.transformation)
+        //this._scene.multMatrix(invertMatrix)
         this._scene.popTexture();
         this._scene.popMatrix();
         // this.scene.popMatrix();
@@ -45,13 +45,12 @@ export class MyComponent extends CGFobject {
 
 
     sendTextureToScene() {
-        if (this._texture === "none"){
+        if (this._texture === "none") {
             this._scene.pushDefaultTexture();
-        }
-         else if (this._texture === "inherit") {
+        } else if (this._texture === "inherit") {
             if (this._scene.getTextureStackTop() === "none")
                 this._scene.pushDefaultTexture(); // inherit of none -> default
-            else{
+            else {
                 this._scene.pushTexture(this._scene.getTextureStackTop());
                 this.scene.applyTexture();
             }
@@ -64,11 +63,11 @@ export class MyComponent extends CGFobject {
     }
 
 
-/*    isTexture(texture, type) {
-        if (typeof texture === "string") return type === texture;
-        else if (typeof texture === "object") return type === "texture";
-        return null;
-    }*/
+    /*    isTexture(texture, type) {
+            if (typeof texture === "string") return type === texture;
+            else if (typeof texture === "object") return type === "texture";
+            return null;
+        }*/
 
     set texture_coord(value) {
         this._texture_coord = value;

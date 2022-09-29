@@ -42,6 +42,8 @@
     </materials>
 
     <transformations>
+
+    <!--
         <transformation id="demoTransform">
             <scale x="5" y="1" z="5"/>
             <rotate axis="x" angle="-45"/>
@@ -58,6 +60,7 @@
         <transformation id="transform2">
             <scale x="5" y="1" z="5"/>
         </transformation>
+-->
 
 
 
@@ -100,15 +103,17 @@
             </materials>
             <texture id="rocks" length_s="0.1" length_t="0.3"/>
             <children>
-                <componentref id="campfireStones" />
-    
+                <componentref id="floor" />
+                <!--<componentref id="tent" />-->
             </children>
         </component>
     
     
     
         <component id="floor">
-            <transformation>
+            <transformation>   
+                <rotate axis="x" angle="90"/>
+                <!-- <scale x="4" y="4" z="1"/> -->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -127,11 +132,26 @@
             </materials>
             <texture id="canvas" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <componentref id="tentsideinner1" />
+                
             </children>
         </component>
 
-        <component id="tentside1">
+        <component id="tentsideinner1">
+            <transformation>
+                <!--<rotate axis="" angle="45" /> --> 
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+        
+        
+        <component id="tentsideouter1">
             <transformation>
             </transformation>
             <materials>
@@ -143,7 +163,8 @@
             </children>
         </component>
 
-        <component id="tentside2">
+
+        <component id="tentsideinner2">
             <transformation>
             </transformation>
             <materials>
@@ -154,6 +175,19 @@
                 <primitiveref id="demoRectangle"/>
             </children>
         </component>
+
+        <component id="tentsideouter2">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+        
 
         <component id="campfireFire">
             <transformation>
@@ -203,7 +237,7 @@
             </children>
         </component>
 
-        <component id="campFireStones">
+        <component id="campfireStones">
             <transformation>
             </transformation>
             <materials>
@@ -299,4 +333,16 @@
             <primitiveref id="demoRectangle"/>
         </children>
     </component>
+
+        <component id="forest">
+        <transformation>
+        </transformation>
+        <materials>
+            <material id="demoMaterial"/>
+        </materials>
+        <texture id="leaves" length_s="0.1" length_t="0.3"/>
+        <children>
+            <primitiveref id="demoRectangle"/>
+        </children>
+    </component>v
 </sxs>
