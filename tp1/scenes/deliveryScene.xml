@@ -119,42 +119,184 @@
             </children>
         </component>
 
-        <component id="campFireStones">
-            <transformation>
-            </transformation>
-            <materials>
-                <material id="demoMaterial"/>
-            </materials>
-            <texture id="grass" length_s="0.1" length_t="0.3"/>
-            <children>
-                <primitiveref id="aTorus"/>
-            </children>
-        </component>
-
         <component id="tent">
             <transformation>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="grass" length_s="0.1" length_t="0.3"/>
+            <texture id="canvas" length_s="0.1" length_t="0.3"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
         </component>
 
-        <component id="tree">
+        <component id="tentside1">
             <transformation>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="grass" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
         </component>
 
+        <component id="tentside2">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
 
+        <component id="campfireFire">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="fire" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="fire1">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="fire2">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="fire3">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="campFireStones">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="rocks" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="aTorus"/>
+            </children>
+        </component>
+
+        <component id="treeTrunk">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="wood" length_s="0.1" length_t="0.1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="treeFoliage1">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="treeFoliage2">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="treeFoliage3">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="tree1">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="leaves" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="tree2">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="leaves" length_s="0.1" length_t="0.3"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
     </components>
+
+    <component id="tree3">
+        <transformation>
+        </transformation>
+        <materials>
+            <material id="demoMaterial"/>
+        </materials>
+        <texture id="leaves" length_s="0.1" length_t="0.3"/>
+        <children>
+            <primitiveref id="demoRectangle"/>
+        </children>
+    </component>
 </sxs>
