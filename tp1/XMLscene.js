@@ -14,6 +14,7 @@ export class XMLscene extends CGFscene {
      */
     constructor(myinterface) {
         super();
+        this.texture_stack = [];
 
         this.interface = myinterface;
     }
@@ -91,6 +92,34 @@ export class XMLscene extends CGFscene {
         this.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.setShininess(10.0);
     }
+
+
+
+    getTextureStackTop() {
+        return this.texture_stack[this.texture_stack.length - 1];
+    }
+
+
+    pushTexture(texture) {
+        this.texture_stack.push(texture);
+    }
+
+    popTexture() {
+        this.texture_stack.pop();
+    }
+
+    applyTexture() {
+        this.texture_stack[this.texture_stack.length - 1].bind();
+    }
+
+
+    pushDefaultTexture() {
+        this.texture_stack[this.texture_stack.length - 1].unbind();
+        this.texture_stack.push("none");
+    }
+
+
+
     /** Handler called when the graph is finally loaded. 
      * As loading is asynchronous, this may be called already after the application has started the run loop
      */

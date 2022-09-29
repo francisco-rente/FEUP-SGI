@@ -28,18 +28,23 @@ export class MySphere extends CGFobject {
         let stack_angle = 2*Math.PI/this.stacks;
  
         for(let i = 0; i <= this.slices; ++i) {
+            let stack_angle_cos = Math.cos(stack_angle*i);
+            let stack_angle_sin = Math.sin(stack_angle*i);
             for(let j = 0; j <= this.stacks; ++j) {
- 
+
+                let slice_angle_cos = Math.cos(slice_angle*j);
+                let slice_angle_sin = Math.sin(slice_angle*j);
+
                 this.vertices.push(
-                    this.radius*Math.cos(slice_angle*j)*Math.cos(stack_angle*i), 
-                    this.radius*Math.cos(slice_angle*j)*Math.sin(stack_angle*i), 
-                    this.radius*Math.sin(slice_angle*j)
+                    this.radius*slice_angle_cos*stack_angle_cos, 
+                    this.radius*slice_angle_cos*stack_angle_sin, 
+                    this.radius*slice_angle_sin
                 );
  
                 this.normals.push(
-                    Math.cos(slice_angle*j)*Math.cos(stack_angle*i), 
-                    Math.cos(slice_angle*j)*Math.sin(stack_angle*i), 
-                    Math.sin(slice_angle*j)
+                    slice_angle_cos*stack_angle_cos,
+                    slice_angle_cos*slice_angle_sin, 
+                    slice_angle_sin
                 );
             }
  
