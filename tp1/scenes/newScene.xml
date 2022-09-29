@@ -24,7 +24,7 @@
 
     <textures>
         <texture id="vidralTexture" file="scenes/images/vidral.jpg"/>
-        <texture id="rocksTexture" file="scenes/images/rocks.jpg"/>
+        <texture id="leavesTexture" file="scenes/images/leaves.jpg"/>
     </textures>
 
     <materials>
@@ -84,9 +84,7 @@
             </materials>
             <texture id="vidralTexture" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
                 <componentref id="othercomponent"/>
-                <primitiveref id="aTorus"/>
             </children>
         </component>
 
@@ -98,10 +96,10 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="rocksTexture" length_s = "0.3" length_t = "0.4"/>
+            <texture id="leavesTexture" length_s = "0.3" length_t = "0.4"/>
             <children>
-                <primitiveref id="demoRectangle"/>
-                <primitiveref id="aTriangle"/>
+                <primitiveref id="aTorus"/>
+                <componentref id="othercomponent"/>
             </children>
         </component>
 
@@ -115,8 +113,7 @@
             </materials>
             <texture id="inherit"/>
             <children>
-                <!--<primitiveref id="demoRectangle"/>-->
-                <primitiveref id="aTorus"/>
+                <primitiveref id="demoRectangle"/>
             </children>
         </component>
 

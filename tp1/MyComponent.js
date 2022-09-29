@@ -11,7 +11,9 @@ export class MyComponent extends CGFobject {
         this._children = [];
 
         this._texture = null;
-        this._texture_coord = (1 , 1);
+        this._texture_coord = [1, 1];
+        this._parent_texture = null;
+        this._parent_texture_coord = [1, 1];
     }
 
 
@@ -19,44 +21,49 @@ export class MyComponent extends CGFobject {
         //DOUBT: is this.texture.bind() necessary?
         // this.scene.pushMatrix();
 
+        this.sendTextureToScene();
 
-        // Doesn't work, the stack is always incrementing, maybe save the parent id.
-        // Pass the texture to the child with none type, so that it knows what to restore?
-        // Or does pop guarantee the shift is well done?? No because the next one overrides the position n - 1
-        // Can a bind() call here be all we need? Do we need to play with scene?
-
-
-        if (this.isTexture(this._texture,"none")) this._scene.removeParentTexture();
-        else this._scene.pushTexture(this._texture);// overrides or applies its own
-
-
-        this._scene.applyTexture();
-        //  this.texture.bind();
-
-        for (const primitive of this._primitives) primitive.display();
+        for (const primitive of this._primitives) {
+            // primitive.updateTexCoords(this._texture_coord);
+            primitive.display();
+        }
 
         for (let child of this._children) {
-            if (this.isTexture(child.texture,"inherit")){
-                // passes the parent texture and coordinates
-                child.texture = this._texture; // DOUBT: what if texture is inherit or there is no texture here?
-                child.updateTexCoords(this._texture_coord);
-            }
-
+            child.updateTexCoords(this._texture_coord);
             child.display();
         }
 
-        if (this.isTexture(this._texture,"none")) this._scene.restoreParentTexture();
-        else this._scene.popTexture(this._texture);
-
+        this._scene.popTexture();
         // this.scene.popMatrix();
     }
 
 
-    isTexture(texture, type){
-        if (typeof texture === "string") return type === texture;
-        else if (typeof texture === "object" ) return type === "texture";
-        return null;
+    sendTextureToScene() {
+        if (this._texture === "none"){
+            this._scene.pushDefaultTexture();
+        }
+         else if (this._texture === "inherit") {
+            if (this._scene.getTextureStackTop() === "none")
+                this._scene.pushDefaultTexture(); // inherit of none -> default
+            else{
+                console.log(this._texture);
+                this._scene.pushTexture(this._scene.getTextureStackTop());
+                this.scene.applyTexture();
+            }
+
+            this._texture_coord = this._parent_texture_coord;
+        } else {
+            this._scene.pushTexture(this._texture);
+            this.scene.applyTexture();
+        }
     }
+
+
+/*    isTexture(texture, type) {
+        if (typeof texture === "string") return type === texture;
+        else if (typeof texture === "object") return type === "texture";
+        return null;
+    }*/
 
     set texture_coord(value) {
         this._texture_coord = value;
@@ -117,6 +124,22 @@ export class MyComponent extends CGFobject {
 
     updateTexCoords(coords) {
         this.texture_coord = coords;
+    }
+
+    get parent_texture() {
+        return this._parent_texture;
+    }
+
+    set parent_texture(value) {
+        this._parent_texture = value;
+    }
+
+    get parent_texture_coord() {
+        return this._parent_texture_coord;
+    }
+
+    set parent_texture_coord(value) {
+        this._parent_texture_coord = value;
     }
 
 }

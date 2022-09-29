@@ -426,7 +426,7 @@ export class MySceneGraph {
             if (textureFile.length === 0) return "file path is empty";
 
             // check if file exists
-            //const texture_file = new File("./scenes/images/" + textureFile, "r");
+            // const texture_file = new File("./scenes/images/" + textureFile, "r");
             // if (!texture_file.exists()) return "file " + textureFile + " does not exist";
 
             console.log("Texture " + id + "from " + textureFile + " loaded");
@@ -836,7 +836,7 @@ export class MySceneGraph {
                 console.log("Component " + componentID + " has texture " + texture_id +
                     " with length_s " + length_s + " and length_t " + length_t);
                 component.setTexture(this.textures[texture_id]);
-                component.setTextureCoordinates((length_s, length_t));
+                component.setTextureCoordinates([length_s, length_t]);
             }
             // TODO: default texture
             if (typeof component.getTexture() == "undefined") return `Texture ${texture_id} not found`;
@@ -1011,7 +1011,7 @@ export class MySceneGraph {
      */
     displayScene() {
         //To do: Create display loop for traversing the scene graph
-        console.log(this.idRoot)
+        // console.log(this.idRoot)
 
         //console.log(this.components.find(comp => comp.id === this.idRoot))
         this.components.find(comp => comp.id === this.idRoot).display();

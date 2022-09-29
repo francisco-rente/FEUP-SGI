@@ -95,6 +95,11 @@ export class XMLscene extends CGFscene {
 
 
 
+    getTextureStackTop() {
+        return this.texture_stack[this.texture_stack.length - 1];
+    }
+
+
     pushTexture(texture) {
         this.texture_stack.push(texture);
     }
@@ -104,19 +109,15 @@ export class XMLscene extends CGFscene {
     }
 
     applyTexture() {
+        console.log(this.texture_stack);
+        console.log("texture " + this.texture_stack[this.texture_stack.length - 1])
         this.texture_stack[this.texture_stack.length - 1].bind();
-        // DOUBT: What's the difference between bind and apply?
-        // this.appearance.setTexture(this.texture);
-        // this.appearance.apply();
     }
 
 
-    removeParentTexture() {
-        this.texture = this.texture_stack[this.texture_stack.length - 2];
-    }
-
-    restoreParentTexture() {
-        this.texture = this.texture_stack[this.texture_stack.length - 1];
+    pushDefaultTexture() {
+        this.texture_stack[this.texture_stack.length - 1].unbind();
+        this.texture_stack.push("none");
     }
 
 
