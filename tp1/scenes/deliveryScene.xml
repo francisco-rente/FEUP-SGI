@@ -200,7 +200,9 @@
             </materials>
             <texture id="fire" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <componentref id="fire1"/>
+                <componentref id="fire2"/>
+                <componentref id="fire3"/>
             </children>
         </component>
 
@@ -212,7 +214,7 @@
             </materials>
             <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aTriangle"/>
             </children>
         </component>
 
@@ -224,7 +226,7 @@
             </materials>
             <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aTriangle"/>
             </children>
         </component>
 
@@ -236,7 +238,7 @@
             </materials>
             <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aTriangle"/>
             </children>
         </component>
 
@@ -260,7 +262,7 @@
             </materials>
             <texture id="wood" length_s="0.1" length_t="0.1"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aCylinder"/>
             </children>
         </component>
 
@@ -272,7 +274,7 @@
             </materials>
             <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aCylinder"/>
             </children>
         </component>
 
@@ -284,7 +286,7 @@
             </materials>
             <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aSphere"/>
             </children>
         </component>
 
@@ -296,7 +298,7 @@
             </materials>
             <texture id="inherit" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <primitiveref id="aCylinder"/>
             </children>
         </component>
 
@@ -308,7 +310,8 @@
             </materials>
             <texture id="leaves" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <componentref id="treeTrunk"/>
+                <componentref id="treeFoliage1"/>
             </children>
         </component>
 
@@ -320,7 +323,8 @@
             </materials>
             <texture id="leaves" length_s="0.1" length_t="0.3"/>
             <children>
-                <primitiveref id="demoRectangle"/>
+                <componentref id="treeTrunk"/>
+                <componentref id="treeFoliage2"/>
             </children>
         </component>
     </components>
@@ -333,7 +337,8 @@
         </materials>
         <texture id="leaves" length_s="0.1" length_t="0.3"/>
         <children>
-            <primitiveref id="demoRectangle"/>
+            <componentref id="treeTrunk"/>
+            <componentref id="treeFoliage3"/>
         </children>
     </component>
 
@@ -345,7 +350,9 @@
         </materials>
         <texture id="leaves" length_s="0.1" length_t="0.3"/>
         <children>
-            <primitiveref id="demoRectangle"/>
+            <componentref id="tree1"/>
+            <componentref id="tree2"/>
+            <componentref id="tree3"/>
         </children>
-    </component>v
+    </component>
 </sxs>
