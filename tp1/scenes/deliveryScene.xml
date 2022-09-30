@@ -133,6 +133,7 @@
             <texture id="canvas" length_s="0.1" length_t="0.3"/>
             <children>
                 <componentref id="tentsideinner1" />
+                <componentref id="tentsideouter1" />
                 
             </children>
         </component>
@@ -154,6 +155,7 @@
         
         <component id="tentsideouter1">
             <transformation>
+                <scale x="0.5" y="4" z="1" />
             </transformation>
             <materials>
                 <material id="demoMaterial"/>

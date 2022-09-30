@@ -534,7 +534,6 @@ export class MySceneGraph {
                 mat4.scale(transfMatrix, transfMatrix, coordinates);
                 break;
             case 'rotate':
-                transformation_tag
                 let axis = this.reader.getString(transformation_tag, 'axis');
                 if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
@@ -801,16 +800,32 @@ export class MySceneGraph {
             // Transformations
 
             let matrix = mat4.create();
-            mat4.identity(matrix);
+            console.log("after creating matrix it is:");
+            console.log(matrix);
             let transformations = grandChildren[transformationIndex].children;
+            console.log("transformations are:");
+            console.log(transformations);
             for (const transformation of transformations) {
+
+
+                console.log(transformation);
+                for(x of transformation.children){
+                    console.log(x);
+                }
+
+
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
                     mat4.multiply(matrix, matrix, this.transformations[transformationID]);
                 } else{
+
+                    console.log("before copying matrix ");
+                    console.log(matrix);
                     let copied = mat4.clone(matrix);
-                    mat4.multiply(matrix, matrix, this.get_transformation_matrix(transformation, copied));
+                    let new_matrix = mat4.create();
+                    mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
+                    matrix = new_matrix;
                 }
 
             }
