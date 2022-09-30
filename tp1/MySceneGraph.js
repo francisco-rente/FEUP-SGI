@@ -801,6 +801,7 @@ export class MySceneGraph {
             // Transformations
 
             let matrix = mat4.create();
+            mat4.identity(matrix);
             let transformations = grandChildren[transformationIndex].children;
             for (const transformation of transformations) {
                 if (transformation.nodeName === 'transformationref') {
