@@ -21,8 +21,22 @@ export class MyComponent extends CGFobject {
 
     display() {
         //DOUBT: is this.texture.bind() necessary?
+
+        
         let previous_matrix = this._scene.getMatrix();
+        
+        console.log("previous matrix is:")
+        console.log(previous_matrix)
+
+        console.log("this.transformation is \n\n\n\n")
+        console.log(this.transformation)
         this._scene.multMatrix(this.transformation);
+
+
+        console.log("this._scene.getMatrix is:")
+        console.log(this._scene.getMatrix())
+
+
         this._scene.pushMatrix();
         this.sendTextureToScene();
 
@@ -36,6 +50,10 @@ export class MyComponent extends CGFobject {
         }
         // let invertMatrix =  mat4.create();
         this._scene.setMatrix(previous_matrix);
+
+
+        console.log("previous matrix is:")
+        console.log(previous_matrix)
         //mat4.invert(invertMatrix, this.transformation)
         //this._scene.multMatrix(invertMatrix)
         this._scene.popTexture();

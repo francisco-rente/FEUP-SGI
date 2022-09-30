@@ -558,8 +558,6 @@ export class MySceneGraph {
                     default:
                         return "Rotation with wrong axis";
                 }
-                console.log("left rotation, transfmatrix is:");
-                console.log(transfMatrix);
                 break;
         }
         return transfMatrix;
@@ -809,8 +807,11 @@ export class MySceneGraph {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
                     mat4.multiply(matrix, matrix, this.transformations[transformationID]);
-                } else
-                    mat4.multiply(matrix, matrix, this.get_transformation_matrix(transformation, matrix));
+                } else{
+                    let copied = mat4.clone(matrix);
+                    mat4.multiply(matrix, matrix, this.get_transformation_matrix(transformation, copied));
+                }
+
             }
 
             console.log("matrix: " + matrix + " componentID: " + componentID);
