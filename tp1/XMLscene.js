@@ -130,7 +130,7 @@ export class XMLscene extends CGFscene {
     popAppearance() {
         if (this.appearence_stack.length === 0) return null;
         const appearance = this.appearence_stack.pop();
-        if(this.appearence_stack.length === 0) this.pushDefaultAppearance();
+        if (this.appearence_stack.length === 0) this.pushDefaultAppearance();
         else this.applyAppearance();
         return appearance;
     }
@@ -217,4 +217,19 @@ export class XMLscene extends CGFscene {
         this.popMatrix();
         // ---- END Background, camera and axis setup
     }
+
+
+    checkKeys() {
+        if (this.gui.isKeyPressed("KeyM")) {
+            console.log("Key M pressed");
+            ++this.appearence_index;
+        }
+    }
+
+// called periodically (as per setUpdatePeriod() in init())
+    update(t) {
+        this.checkKeys();
+    }
+
+
 }
