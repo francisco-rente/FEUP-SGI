@@ -1,4 +1,4 @@
-import { CGFscene } from '../lib/CGF.js';
+import {CGFappearance, CGFscene} from '../lib/CGF.js';
 import { CGFaxis,CGFcamera } from '../lib/CGF.js';
 
 
@@ -15,7 +15,8 @@ export class XMLscene extends CGFscene {
     constructor(myinterface) {
         super();
         this.texture_stack = [];
-
+        this.appearence_stack = [];
+        this.appearence_index = 0;
         this.interface = myinterface;
     }
 
@@ -91,6 +92,44 @@ export class XMLscene extends CGFscene {
         this.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.setShininess(10.0);
+    }
+
+
+    pushDefaultAppearance() {
+        const defaultAppearance = new CGFappearance(this);
+        defaultAppearance.setAmbient(0.2, 0.4, 0.8, 1.0);
+        defaultAppearance.setDiffuse(0.2, 0.4, 0.8, 1.0);
+        defaultAppearance.setSpecular(0.2, 0.4, 0.8, 1.0);
+        defaultAppearance.setShininess(10.0);
+        this.appearence_stack.push(defaultAppearance);
+    }
+
+
+
+    cloneMaterial(material) {
+        const newMaterial = new CGFappearance(this);
+        newMaterial.setAmbient(material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
+        newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
+        newMaterial.setSpecular(material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
+        newMaterial.setShininess(material.shininess);
+        return newMaterial;
+    }
+
+    getAppearanceStackTop() {
+        // TODO: Clone may take a toll on memory
+        return this.cloneMaterial(this.appearence_stack[this.appearence_stack.length - 1]);
+    }
+
+    pushAppearance(appearance) {
+        this.appearence_stack.push(appearance);
+    }
+
+    popAppearance() {
+       return this.appearence_stack.pop();
+    }
+
+    applyAppearance() {
+        this.appearence_stack[this.appearence_stack.length - 1].apply();
     }
 
 

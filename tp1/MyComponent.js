@@ -12,17 +12,18 @@ export class MyComponent extends CGFobject {
 
         this._texture = null;
         this._texture_coord = [1, 1];
-        this._parent_texture = null;
         this._parent_texture_coord = [1, 1];
+
+        this._materials = []; // array of materials or inherit string
 
         this.transformation = [];
     }
 
 
     display() {
-        //DOUBT: is this.texture.bind() necessary?
-        this.sendTextureToScene();
 
+        this.sendAppearanceToScene();
+        // this.sendTextureToScene();
         this._scene.pushMatrix();
         this._scene.multMatrix(this.transformation);
 
@@ -36,11 +37,10 @@ export class MyComponent extends CGFobject {
             child.display();
         }
 
-        //mat4.invert(invertMatrix, this.transformation)
-        //this._scene.multMatrix(invertMatrix)
-        this._scene.popTexture();
+
+        // this._scene.popTexture();
         this._scene.popMatrix();
-        // this.scene.popMatrix();
+        this._scene.popAppearance();
     }
 
 
@@ -54,7 +54,6 @@ export class MyComponent extends CGFobject {
                 this._scene.pushTexture(this._scene.getTextureStackTop());
                 this.scene.applyTexture();
             }
-
             this._texture_coord = this._parent_texture_coord;
         } else {
             this._scene.pushTexture(this._texture);
@@ -63,11 +62,38 @@ export class MyComponent extends CGFobject {
     }
 
 
-    /*    isTexture(texture, type) {
-            if (typeof texture === "string") return type === texture;
-            else if (typeof texture === "object") return type === "texture";
-            return null;
-        }*/
+    sendAppearanceToScene() {
+        // materials are empty or has some other type of string, default
+        if(this._materials.length === 0 ||
+            (typeof this._materials[0] === "string" && this._materials[0] !== "inherit"))
+                this._scene.pushDefaultAppearance();
+
+        else if(this._materials[0]=== "inherit") {
+            //TODO: this is wrong, we should clone it and remove the texture
+            // SHOULD WE UPDATE TWO STACKS ONE FOR TEXTURE, ONE FOR APPEARANCE AND MERGE IT IN APPLY?
+            console.log("INHERIT MATERIAL");
+            this.scene.pushAppearance(this._scene.getAppearanceStackTop()); // gets parent appearance CLONE and pushes it
+        }
+
+        else {
+            let appearance = this._materials[this.scene.appearence_index % this._materials.length];
+            switch (this.texture){
+                case "none": break;
+                case "inherit": // sets parent's texture
+                    let parentTexture = this._scene.getAppearanceStackTop().texture;
+                    appearance.setTexture(parentTexture);
+                    break;
+                default:
+                    appearance.setTexture(this.texture); // own texture
+                    break;
+            }
+            this._scene.pushAppearance(appearance);
+        }
+
+        this._scene.applyAppearance();
+    }
+
+
 
     set texture_coord(value) {
         this._texture_coord = value;
@@ -130,20 +156,15 @@ export class MyComponent extends CGFobject {
         this.texture_coord = coords;
     }
 
-    get parent_texture() {
-        return this._parent_texture;
+    addMaterial(material) {
+        this._materials.push(material);
     }
 
-    set parent_texture(value) {
-        this._parent_texture = value;
+    get materials() {
+        return this._materials;
     }
 
-    get parent_texture_coord() {
-        return this._parent_texture_coord;
+    setMaterials(materials) {
+        this._materials = materials;
     }
-
-    set parent_texture_coord(value) {
-        this._parent_texture_coord = value;
-    }
-
 }
