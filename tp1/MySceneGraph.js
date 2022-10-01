@@ -1,10 +1,10 @@
-import { CGFtexture, CGFXMLreader } from '../lib/CGF.js';
-import { MyRectangle } from './primitives/MyRectangle.js';
-import { MySphere } from './primitives/MySphere.js';
-import { MyCylinder } from './primitives/MyCylinder.js';
-import { MyTorus } from "./primitives/MyTorus.js";
-import { MyTriangle } from "./primitives/MyTriangle.js";
-import { MyComponent } from "./MyComponent.js";
+import {CGFappearance, CGFtexture, CGFXMLreader} from '../lib/CGF.js';
+import {MyRectangle} from './primitives/MyRectangle.js';
+import {MySphere} from './primitives/MySphere.js';
+import {MyCylinder} from './primitives/MyCylinder.js';
+import {MyTorus} from "./primitives/MyTorus.js";
+import {MyTriangle} from "./primitives/MyTriangle.js";
+import {MyComponent} from "./MyComponent.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180;
@@ -221,7 +221,7 @@ export class MySceneGraph {
     }
 
     /**
-     * Parses the <scene> block. 
+     * Parses the <scene> block.
      * @param {scene block element} sceneNode
      */
     parseScene(sceneNode) {
@@ -458,19 +458,38 @@ export class MySceneGraph {
             }
 
             // Get id of the current material.
-            var materialID = this.reader.getString(children[i], 'id');
-            if (materialID == null)
-                return "no ID defined for material";
+            const materialID = this.reader.getString(children[i], 'id');
+            if (materialID == null) return "no ID defined for material";
 
             // Checks for repeated IDs.
             if (this.materials[materialID] != null)
                 return "ID must be unique for each light (conflict: ID = " + materialID + ")";
 
-            //Continue here
-            this.onXMLMinorError("To do: Parse materials.");
+            console.log(Array.from(children[i].children));
+
+            const material_properties = Array.from(children[i].children);
+            const shininess = this.reader.getFloat(children[i], 'shininess');
+            const emission = this.parseColor(material_properties.find(node => node.nodeName === "emission"),
+                "emission for material " + materialID);
+            const ambient = this.parseColor(material_properties.find(node => node.nodeName === "ambient"),
+                "ambient for material " + materialID);
+            const diffuse = this.parseColor(material_properties.find(node => node.nodeName === "diffuse"),
+                "diffuse for material " + materialID);
+            const specular = this.parseColor(material_properties.find(node => node.nodeName === "specular"),
+                "specular for material " + materialID);
+
+            const material = new CGFappearance(this.scene);
+            material.setShininess(shininess);
+            material.setEmission(emission[0], emission[1], emission[2], emission[3]);
+            material.setAmbient(ambient[0], ambient[1], ambient[2], ambient[3]);
+            material.setDiffuse(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+            material.setSpecular(specular[0], specular[1], specular[2], specular[3]);
+
+            this.materials[materialID] = material;
+            console.log("Material " + materialID + " loaded");
         }
 
-        //this.log("Parsed materials");
+        this.log("Parsed materials");
         return null;
     }
 
@@ -807,18 +826,11 @@ export class MySceneGraph {
             console.log(transformations);
             for (const transformation of transformations) {
 
-
-                console.log(transformation);
-                for(x of transformation.children){
-                    console.log(x);
-                }
-
-
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
                     mat4.multiply(matrix, matrix, this.transformations[transformationID]);
-                } else{
+                } else {
 
                     console.log("before copying matrix ");
                     console.log(matrix);
@@ -835,42 +847,23 @@ export class MySceneGraph {
 
 
             // Materials
+            /*
+               - mandatory material declaration
+               - inherit -> inherits parents material
+               - if multiple declared, default is the first one
+               - when multiple declared, when M/m is pressed it cycles through them
+               - M/m should be perpetuated to every node
+            */
+
+            let success = true, string = "";
+            console.log("PARSING MATERIALS: " + componentID);
+            console.log(grandChildren[materialsIndex]);
+            [success, string] = this.parseMaterialNode(grandChildren[materialsIndex], component);
+            if (!success) return string;
 
             // Texture
-            // get texture info in each loop child node (from its component's children)
-            let texture_info = grandChildren[textureIndex];
-            if (!texture_info) return "Texture must be declared in each component"; // MANDATORY DECLARATION
-
-            let texture_id = this.reader.getString(texture_info, 'id');
-
-            let length_s = null,
-                length_t = null;
-            if (this.reader.hasAttribute(texture_info, 'length_s') &&
-                this.reader.hasAttribute(texture_info, 'length_t')) {
-                length_s = this.reader.getFloat(texture_info, 'length_s');
-                length_t = this.reader.getFloat(texture_info, 'length_t');
-
-                this.log("length_s: " + length_s + " length_t: " + length_t);
-                if (0 > length_s > 1 && 0 > length_t > 1) return "Texture length_s and length_t must be between 0 and 1";
-            }
-
-            if (texture_id === 'inherit' || texture_id === 'none') {
-                component.setTexture(texture_id);
-                if (length_s !== null || length_t !== null)
-                    this.onXMLMinorError("Texture length_s and length_t are not applicable to inherit or none");
-                console.log("Component " + componentID + " has implicit texture " + texture_id);
-            } else {
-                if (length_t === null || length_s === null) return "Texture length_s and length_t must be declared";
-                console.log("Component " + componentID + " has texture " + texture_id +
-                    " with length_s " + length_s + " and length_t " + length_t);
-                component.setTexture(this.textures[texture_id]);
-                component.setTextureCoordinates([length_s, length_t]);
-            }
-            // TODO: default texture
-            if (typeof component.getTexture() == "undefined") return `Texture ${texture_id} not found`;
-
-
-            console.log("Parsed texture reference: " + texture_id + " for component " + componentID);
+            [success, string] = this.parseTextureNode(grandChildren[textureIndex], component);
+            if (!success) return string;
 
             //TODO:how to pass coordinates to primitives?
             // Where do we define the inheritance of texture coordinates?
@@ -912,12 +905,75 @@ export class MySceneGraph {
         // created in the loop above
         for (let compId in grandGrandChildren) //<component> id
             for (let childComp of grandGrandChildren[compId]) { //<componentref> ids
-            let childCompObj = this.components.find(comp => comp.id === childComp);
-            // console.log("Adding child " + childCompObj + " to " + compId);
-            // add the component object (parsed in the loop above) to the parent component
-            // TODO: check here for recursive component connections?
-            this.components.find(comp => comp.id === compId).addChild(childCompObj);
+                let childCompObj = this.components.find(comp => comp.id === childComp);
+                // console.log("Adding child " + childCompObj + " to " + compId);
+                // add the component object (parsed in the loop above) to the parent component
+                // TODO: check here for recursive component connections?
+                this.components.find(comp => comp.id === compId).addChild(childCompObj);
+            }
+    }
+
+    parseMaterialNode(materials_tag, component) {
+        /*
+           - mandatory material declaration
+           - inherit -> inherits parents material
+           - if multiple declared, default is the first one
+           - when multiple declared, when M/m is pressed it cycles through them
+           - M/m should be perpetuated to every node
+        */
+
+        let materials = materials_tag.children;
+        if (materials.length === 0) return [false, "At least one material must be declared in each component"];
+        for (const material of materials) {
+            if (material.nodeName === 'material') {
+                let materialID = this.reader.getString(material, 'id');
+                if (materialID === 'inherit') component.addMaterial('inherit');
+                else component.addMaterial(this.materials[materialID]);
+                console.log("materialID: " + materialID);
+            } else return [false, "Unknown tag <" + material.nodeName + ">"];
         }
+        return [true, null];
+    }
+
+    parseTextureNode(texture_info, component) {
+        // get texture info in each loop child node (from its component's children)
+        // let texture_info = grandChildren[textureIndex];
+        if (!texture_info)
+            return [false, "Texture must be declared in each component"]; // MANDATORY DECLARATION
+
+        let texture_id = this.reader.getString(texture_info, 'id');
+
+        let length_s = null,
+            length_t = null;
+        if (this.reader.hasAttribute(texture_info, 'length_s') &&
+            this.reader.hasAttribute(texture_info, 'length_t')) {
+            length_s = this.reader.getFloat(texture_info, 'length_s');
+            length_t = this.reader.getFloat(texture_info, 'length_t');
+
+            this.log("length_s: " + length_s + " length_t: " + length_t);
+            if (0 > length_s > 1 && 0 > length_t > 1)
+                return [false, "Texture length_s and length_t must be between 0 and 1"];
+        }
+
+        if (texture_id === 'inherit' || texture_id === 'none') {
+            component.setTexture(texture_id);
+            if (length_s !== null || length_t !== null)
+                this.onXMLMinorError("Texture length_s and length_t are not applicable to inherit or none");
+            // console.log("Component " + component.id + " has implicit texture " + texture_id);
+        } else {
+            if (length_t === null || length_s === null)
+                return "Texture length_s and length_t must be declared";
+            // console.log("Component " + component.id + " has texture " + texture_id +
+            // " with length_s " + length_s + " and length_t " + length_t);
+            component.setTexture(this.textures[texture_id]);
+            component.setTextureCoordinates([length_s, length_t]);
+        }
+        // TODO: default texture
+        if (typeof component.getTexture() == "undefined")
+            return [false, `Texture ${texture_id} not found`];
+
+        console.log("Parsed texture reference: " + texture_id + " for component " + component.id);
+        return [true, null]
     }
 
 
@@ -1049,4 +1105,6 @@ export class MySceneGraph {
         //this.primitives['aTriangle'].display();
         //this.primitives['aTorus'].display();
     }
+
+
 }
