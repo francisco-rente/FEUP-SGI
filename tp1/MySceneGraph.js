@@ -928,8 +928,12 @@ export class MySceneGraph {
             if (material.nodeName === 'material') {
                 let materialID = this.reader.getString(material, 'id');
                 if (materialID === 'inherit') component.addMaterial('inherit');
-                else component.addMaterial(this.materials[materialID]);
-                console.log("materialID: " + materialID);
+                else {
+                    if (!this.materials[materialID]) return [false, "Material " + materialID + " not found"];
+                    component.addMaterial(this.materials[materialID])
+                }
+
+                console.log("materialID: " + materialID + "for " + component.id);
             } else return [false, "Unknown tag <" + material.nodeName + ">"];
         }
         return [true, null];
@@ -962,9 +966,10 @@ export class MySceneGraph {
             // console.log("Component " + component.id + " has implicit texture " + texture_id);
         } else {
             if (length_t === null || length_s === null)
-                return "Texture length_s and length_t must be declared";
-            // console.log("Component " + component.id + " has texture " + texture_id +
-            // " with length_s " + length_s + " and length_t " + length_t);
+                return [false, "Texture length_s and length_t must be declared"];
+            /* console.log("Component " + component.id + " has texture " + texture_id +
+             " with length_s " + length_s + " and length_t " + length_t);*/
+            if (this.textures[texture_id] === undefined) return [false, "Texture " + texture_id + " not found"];
             component.setTexture(this.textures[texture_id]);
             component.setTextureCoordinates([length_s, length_t]);
         }

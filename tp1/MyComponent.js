@@ -1,4 +1,4 @@
-import { CGFobject } from "../lib/CGF.js";
+import {CGFobject} from "../lib/CGF.js";
 
 export class MyComponent extends CGFobject {
 
@@ -63,36 +63,32 @@ export class MyComponent extends CGFobject {
 
 
     sendAppearanceToScene() {
-        // materials are empty or has some other type of string, default
-        if(this._materials.length === 0 ||
+
+        const texture = this.getTextureToApply();
+        let appearance;
+
+        if (this._materials.length === 0 ||
             (typeof this._materials[0] === "string" && this._materials[0] !== "inherit"))
-                this._scene.pushDefaultAppearance();
+            appearance = this._scene.createDefaultAppearance();
+        else if (this._materials[0] === "inherit") appearance = this._scene.getAppearanceStackTop();
+        else appearance = this._materials[this.scene.appearence_index % this._materials.length];
 
-        else if(this._materials[0]=== "inherit") {
-            //TODO: this is wrong, we should clone it and remove the texture
-            // SHOULD WE UPDATE TWO STACKS ONE FOR TEXTURE, ONE FOR APPEARANCE AND MERGE IT IN APPLY?
-            console.log("INHERIT MATERIAL");
-            this.scene.pushAppearance(this._scene.getAppearanceStackTop()); // gets parent appearance CLONE and pushes it
-        }
-
-        else {
-            let appearance = this._materials[this.scene.appearence_index % this._materials.length];
-            switch (this.texture){
-                case "none": break;
-                case "inherit": // sets parent's texture
-                    let parentTexture = this._scene.getAppearanceStackTop().texture;
-                    appearance.setTexture(parentTexture);
-                    break;
-                default:
-                    appearance.setTexture(this.texture); // own texture
-                    break;
-            }
-            this._scene.pushAppearance(appearance);
-        }
-
+        appearance.setTexture(texture);
+        this._scene.pushAppearance(appearance);
         this._scene.applyAppearance();
     }
 
+
+    getTextureToApply() {
+        switch (this.texture) {
+            case "none":
+                return null;
+            case "inherit":
+                return this._scene.getAppearanceStackTop().texture; //TODO: reevaluate cloning of the top
+            default:
+                return this.texture;
+        }
+    }
 
 
     set texture_coord(value) {

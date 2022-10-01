@@ -68,7 +68,7 @@ export class XMLscene extends CGFscene {
                 this.lights[i].setDiffuse(light[4][0], light[4][1], light[4][2], light[4][3]);
                 this.lights[i].setSpecular(light[5][0], light[5][1], light[5][2], light[5][3]);
 
-                if (light[1] == "spot") {
+                if (light[1] === "spot") {
                     this.lights[i].setSpotCutOff(light[6]);
                     this.lights[i].setSpotExponent(light[7]);
                     this.lights[i].setSpotDirection(light[8][0], light[8][1], light[8][2]);
@@ -95,16 +95,18 @@ export class XMLscene extends CGFscene {
     }
 
 
-    pushDefaultAppearance() {
+    createDefaultAppearance() {
         const defaultAppearance = new CGFappearance(this);
         defaultAppearance.setAmbient(0.2, 0.4, 0.8, 1.0);
         defaultAppearance.setDiffuse(0.2, 0.4, 0.8, 1.0);
         defaultAppearance.setSpecular(0.2, 0.4, 0.8, 1.0);
         defaultAppearance.setShininess(10.0);
-        this.appearence_stack.push(defaultAppearance);
+        return defaultAppearance;
     }
 
-
+    pushDefaultAppearance() {
+        this.pushAppearance(this.createDefaultAppearance());
+    }
 
     cloneMaterial(material) {
         const newMaterial = new CGFappearance(this);
@@ -112,6 +114,7 @@ export class XMLscene extends CGFscene {
         newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
         newMaterial.setSpecular(material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
         newMaterial.setShininess(material.shininess);
+        // newMaterial.texture = material.texture;
         return newMaterial;
     }
 
@@ -125,7 +128,11 @@ export class XMLscene extends CGFscene {
     }
 
     popAppearance() {
-       return this.appearence_stack.pop();
+        if (this.appearence_stack.length === 0) return null;
+        const appearance = this.appearence_stack.pop();
+        if(this.appearence_stack.length === 0) this.pushDefaultAppearance();
+        else this.applyAppearance();
+        return appearance;
     }
 
     applyAppearance() {
