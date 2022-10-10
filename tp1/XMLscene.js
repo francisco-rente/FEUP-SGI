@@ -1,4 +1,4 @@
-import { CGFscene } from '../lib/CGF.js';
+import {CGFappearance, CGFscene} from '../lib/CGF.js';
 import { CGFaxis,CGFcamera } from '../lib/CGF.js';
 
 
@@ -15,7 +15,8 @@ export class XMLscene extends CGFscene {
     constructor(myinterface) {
         super();
         this.texture_stack = [];
-
+        this.appearence_stack = [];
+        this.appearence_index = 0;
         this.interface = myinterface;
     }
 
@@ -67,7 +68,7 @@ export class XMLscene extends CGFscene {
                 this.lights[i].setDiffuse(light[4][0], light[4][1], light[4][2], light[4][3]);
                 this.lights[i].setSpecular(light[5][0], light[5][1], light[5][2], light[5][3]);
 
-                if (light[1] == "spot") {
+                if (light[1] === "spot") {
                     this.lights[i].setSpotCutOff(light[6]);
                     this.lights[i].setSpotExponent(light[7]);
                     this.lights[i].setSpotDirection(light[8][0], light[8][1], light[8][2]);
@@ -91,6 +92,51 @@ export class XMLscene extends CGFscene {
         this.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.setShininess(10.0);
+    }
+
+
+    createDefaultAppearance() {
+        const defaultAppearance = new CGFappearance(this);
+        defaultAppearance.setAmbient(0.2, 0.4, 0.8, 1.0);
+        defaultAppearance.setDiffuse(0.2, 0.4, 0.8, 1.0);
+        defaultAppearance.setSpecular(0.2, 0.4, 0.8, 1.0);
+        defaultAppearance.setShininess(10.0);
+        return defaultAppearance;
+    }
+
+    pushDefaultAppearance() {
+        this.pushAppearance(this.createDefaultAppearance());
+    }
+
+    cloneMaterial(material) {
+        const newMaterial = new CGFappearance(this);
+        newMaterial.setAmbient(material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
+        newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
+        newMaterial.setSpecular(material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
+        newMaterial.setShininess(material.shininess);
+        // newMaterial.texture = material.texture;
+        return newMaterial;
+    }
+
+    getAppearanceStackTop() {
+        // TODO: Clone may take a toll on memory
+        return this.cloneMaterial(this.appearence_stack[this.appearence_stack.length - 1]);
+    }
+
+    pushAppearance(appearance) {
+        this.appearence_stack.push(appearance);
+    }
+
+    popAppearance() {
+        if (this.appearence_stack.length === 0) return null;
+        const appearance = this.appearence_stack.pop();
+        if (this.appearence_stack.length === 0) this.pushDefaultAppearance();
+        else this.applyAppearance();
+        return appearance;
+    }
+
+    applyAppearance() {
+        this.appearence_stack[this.appearence_stack.length - 1].apply();
     }
 
 
@@ -171,4 +217,19 @@ export class XMLscene extends CGFscene {
         this.popMatrix();
         // ---- END Background, camera and axis setup
     }
+
+
+    checkKeys() {
+        if (this.gui.isKeyPressed("KeyM")) {
+            console.log("Key M pressed");
+            ++this.appearence_index;
+        }
+    }
+
+// called periodically (as per setUpdatePeriod() in init())
+    update(t) {
+        this.checkKeys();
+    }
+
+
 }

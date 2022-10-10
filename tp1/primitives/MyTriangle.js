@@ -22,9 +22,9 @@ P
     static checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 
         // check if the triangle is degenerate (collinear vertices and zero area, or zero length edges)
-        let a = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
-        let b = Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2) + Math.pow(z3 - z2, 2));
-        let c = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2) + Math.pow(z1 - z3, 2));
+        const a = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
+        const b = Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2) + Math.pow(z3 - z2, 2));
+        const c = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2) + Math.pow(z1 - z3, 2));
         if (a === 0 || b === 0 || c === 0) return false
 
         // the sum of any two sides must be greater than the third side
@@ -64,14 +64,17 @@ P
         // Calculate normal by cross product of two vectors (normal to the plane)
         // DOUBT: is it better to make all normals 0,0,1 and then use z translations for each triangle?
 
-        let v1 = [this.v2.x - this.v1.x, this.v2.y - this.v1.y, this.v2.z - this.v1.z]; // V1V2 ->
-        let v2 = [this.v3.x - this.v1.x, this.v3.y - this.v1.y, this.v3.z - this.v1.z]; // V1V3 ->
+        const v1 = [this.v2.x - this.v1.x, this.v2.y - this.v1.y, this.v2.z - this.v1.z]; // V1V2 ->
+        const v2 = [this.v3.x - this.v1.x, this.v3.y - this.v1.y, this.v3.z - this.v1.z]; // V1V3 ->
 
         //cross product v1 x v2
         let nx = (v1[1] * v2[2] - v1[2] * v2[1]);
         let ny = (v1[2] * v2[0] - v1[0] * v2[2]);
         let nz = (v1[0] * v2[1] - v1[1] * v2[0]);
-
+        const v_size = Math.sqrt(nx * nx + ny * ny + nz * nz);
+        nx /= v_size;
+        ny /= v_size;
+        nz /= v_size;
 
         this.normals = [
             nx, ny, nz,

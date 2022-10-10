@@ -76,13 +76,21 @@ import { CGFobject } from '../../lib/CGF.js';
 		this.initGLBuffers();
 	}
 
-         	/**
-	 * @method updateTexCoords
-	 * Updates the list of texture coordinates of the sphere
-	 * @param {Array} coords - Array of texture coordinates
-	 */
-	updateTexCoords(coords) {
-		this.texCoords = [...coords];
-		this.updateTexCoordsGLBuffers();
-	}
+    /**
+     * @method updateTexCoords
+     * Updates the list of texture coordinates of the sphere
+     * @param {Array} coords - Array of texture coordinates
+     */
+    updateTexCoords(coords) {
+        const s = coords[0];
+        const t = coords[1];
+        this.texCoords = []; // empty texCoords array
+
+        for (let i = 0; i <= this.slices; ++i) for (let j = 0; j <= this.stacks; ++j)
+            this.texCoords.push(
+                s * i / this.loops,
+                t * (1 - j / this.slices)
+            );
+        this.updateTexCoordsGLBuffers();
+    }
 }

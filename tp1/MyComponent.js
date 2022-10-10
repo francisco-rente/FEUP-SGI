@@ -1,4 +1,4 @@
-import { CGFobject } from "../lib/CGF.js";
+import {CGFobject} from "../lib/CGF.js";
 
 export class MyComponent extends CGFobject {
 
@@ -12,23 +12,25 @@ export class MyComponent extends CGFobject {
 
         this._texture = null;
         this._texture_coord = [1, 1];
-        this._parent_texture = null;
         this._parent_texture_coord = [1, 1];
+
+        this._materials = []; // array of materials or inherit string
 
         this.transformation = [];
     }
 
 
     display() {
-        //DOUBT: is this.texture.bind() necessary?
-        this.sendTextureToScene();
 
+        this.sendAppearanceToScene();
+        // this.sendTextureToScene();
         this._scene.pushMatrix();
         this._scene.multMatrix(this.transformation);
+        this.updateCoords();
 
 
         for (const primitive of this._primitives) {
-            // primitive.updateTexCoords(this._texture_coord);
+            primitive.updateTexCoords(this._texture_coord);
             primitive.display();
         }
         for (let child of this._children) {
@@ -36,38 +38,47 @@ export class MyComponent extends CGFobject {
             child.display();
         }
 
-        //mat4.invert(invertMatrix, this.transformation)
-        //this._scene.multMatrix(invertMatrix)
-        this._scene.popTexture();
+
+        // this._scene.popTexture();
         this._scene.popMatrix();
-        // this.scene.popMatrix();
+        this._scene.popAppearance();
     }
 
 
-    sendTextureToScene() {
-        if (this._texture === "none") {
-            this._scene.pushDefaultTexture();
-        } else if (this._texture === "inherit") {
-            if (this._scene.getTextureStackTop() === "none")
-                this._scene.pushDefaultTexture(); // inherit of none -> default
-            else {
-                this._scene.pushTexture(this._scene.getTextureStackTop());
-                this.scene.applyTexture();
-            }
+    updateCoords() {
+        if (this._texture === "inherit") this._texture_coord = this._parent_texture_coord;
+        else if (this._texture === "none") this._texture_coord = [1, 1];
+    }
 
-            this._texture_coord = this._parent_texture_coord;
-        } else {
-            this._scene.pushTexture(this._texture);
-            this.scene.applyTexture();
+    sendAppearanceToScene() {
+
+        const texture = this.getTextureToApply();
+        let appearance;
+
+        if (this._materials.length === 0 ||
+            (typeof this._materials[0] === "string" && this._materials[0] !== "inherit"))
+            appearance = this._scene.createDefaultAppearance();
+        else if (this._materials[0] === "inherit") appearance = this._scene.getAppearanceStackTop();
+        else appearance = this._materials[this.scene.appearence_index % this._materials.length];
+
+        appearance.setTexture(texture);
+        appearance.setTextureWrap('REPEAT', 'REPEAT');
+        this._scene.pushAppearance(appearance);
+        this._scene.applyAppearance();
+    }
+
+
+    getTextureToApply() {
+        switch (this.texture) {
+            case "none":
+                return null;
+            case "inherit":
+                return this._scene.getAppearanceStackTop().texture; //TODO: reevaluate cloning of the top
+            default:
+                return this.texture;
         }
     }
 
-
-    /*    isTexture(texture, type) {
-            if (typeof texture === "string") return type === texture;
-            else if (typeof texture === "object") return type === "texture";
-            return null;
-        }*/
 
     set texture_coord(value) {
         this._texture_coord = value;
@@ -127,23 +138,18 @@ export class MyComponent extends CGFobject {
     }
 
     updateTexCoords(coords) {
-        this.texture_coord = coords;
+        this._parent_texture_coord = coords;
     }
 
-    get parent_texture() {
-        return this._parent_texture;
+    addMaterial(material) {
+        this._materials.push(material);
     }
 
-    set parent_texture(value) {
-        this._parent_texture = value;
+    get materials() {
+        return this._materials;
     }
 
-    get parent_texture_coord() {
-        return this._parent_texture_coord;
+    setMaterials(materials) {
+        this._materials = materials;
     }
-
-    set parent_texture_coord(value) {
-        this._parent_texture_coord = value;
-    }
-
 }

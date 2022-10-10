@@ -46,6 +46,10 @@ export class MySphere extends CGFobject {
                     slice_angle_cos*slice_angle_sin, 
                     slice_angle_sin
                 );
+                this.texCoords.push(
+                    i / this.slices,
+                    1 - j / this.stacks
+                );
             }
  
         }
@@ -63,14 +67,22 @@ export class MySphere extends CGFobject {
         this.initGLBuffers();
     };
 
-     	/**
-	 * @method updateTexCoords
-	 * Updates the list of texture coordinates of the sphere
-	 * @param {Array} coords - Array of texture coordinates
-	 */
-	updateTexCoords(coords) {
-		this.texCoords = [...coords];
-		this.updateTexCoordsGLBuffers();
-	}
+    /**
+     * @method updateTexCoords
+     * Updates the list of texture coordinates of the sphere
+     * @param {Array} coords - Array of texture coordinates
+     */
+    updateTexCoords(coords) {
+        const s = coords[0];
+        const t = coords[1];
+        this.texCoords = []; // empty texCoords array
+        for (let i = 0; i <= this.slices; ++i) for (let j = 0; j <= this.stacks; ++j)
+            this.texCoords.push(
+                s * i / this.slices,
+                t * (1 - j / this.stacks) // TODO: Verify if it should be 1 - t
+            );
+
+        this.updateTexCoordsGLBuffers();
+    }
 
 };
