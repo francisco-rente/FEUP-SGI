@@ -26,6 +26,7 @@ export class MyComponent extends CGFobject {
         // this.sendTextureToScene();
         this._scene.pushMatrix();
         this._scene.multMatrix(this.transformation);
+        this.updateCoords();
 
 
         for (const primitive of this._primitives) {
@@ -44,23 +45,10 @@ export class MyComponent extends CGFobject {
     }
 
 
-    sendTextureToScene() {
-        if (this._texture === "none") {
-            this._scene.pushDefaultTexture();
-        } else if (this._texture === "inherit") {
-            if (this._scene.getTextureStackTop() === "none")
-                this._scene.pushDefaultTexture(); // inherit of none -> default
-            else {
-                this._scene.pushTexture(this._scene.getTextureStackTop());
-                this.scene.applyTexture();
-            }
-            this._texture_coord = this._parent_texture_coord;
-        } else {
-            this._scene.pushTexture(this._texture);
-            this.scene.applyTexture();
-        }
+    updateCoords() {
+        if (this._texture === "inherit") this._texture_coord = this._parent_texture_coord;
+        else if (this._texture === "none") this._texture_coord = [1, 1];
     }
-
 
     sendAppearanceToScene() {
 
@@ -74,6 +62,7 @@ export class MyComponent extends CGFobject {
         else appearance = this._materials[this.scene.appearence_index % this._materials.length];
 
         appearance.setTexture(texture);
+        appearance.setTextureWrap('REPEAT', 'REPEAT');
         this._scene.pushAppearance(appearance);
         this._scene.applyAppearance();
     }
@@ -149,7 +138,7 @@ export class MyComponent extends CGFobject {
     }
 
     updateTexCoords(coords) {
-        this.texture_coord = coords;
+        this._parent_texture_coord = coords;
     }
 
     addMaterial(material) {
