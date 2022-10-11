@@ -18,8 +18,6 @@ export class XMLscene extends CGFscene {
         this.appearence_index = 0;
         this.interface = myinterface;
         this.lights = [];
-
-        this.lightsState = {};
     }
 
     /**
@@ -97,7 +95,6 @@ export class XMLscene extends CGFscene {
                     this.lights[i].disable();
 
                 this.lights[i].update();
-                // this.lightsState[light[i]] =  true; // light is enabled by default
                 i++;
             }
         }
@@ -192,8 +189,7 @@ export class XMLscene extends CGFscene {
         this.axis.display();
 
         for (var i = 0; i < this.lights.length; i++) {
-            //this.lights[i].setVisible(true);
-            this.lights[i].enable();
+            // this.lights[i].setVisible(true);
             this.lights[i].update();
         }
 
@@ -218,34 +214,9 @@ export class XMLscene extends CGFscene {
         }
     }
 
-// called periodically (as per setUpdatePeriod() in init())
+    // called periodically (as per setUpdatePeriod() in init())
     update(t) {
         this.checkKeys();
-        // this.updateLights()
     }
-
-    updateLights() {
-        var i = 0;
-        // Lights index.
-
-        // Reads the lights from the lightsAux map.
-        for (const light in this.lightsState) {
-            if (this.lightsState.hasOwnProperty(light)) {
-                if (this.lightsState[light]){
-                    this.lights[i].setVisible(true);
-                    this.lights[i].enable();
-                }
-                else{
-                    this.lights[i].setVisible(false);
-                    this.lights[i].disable();
-                }
-
-                this.lights[i].update();
-
-                i++;
-            }
-        }
-    }
-
 
 }

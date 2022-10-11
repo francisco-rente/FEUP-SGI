@@ -856,14 +856,13 @@ export class MySceneGraph {
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
-                    let new_matrix = mat4.create();
+                    let copied = mat4.clone(matrix);
                     matrix = this.get_transformation_matrix(transformation, copied);
                 } else {
 
                     console.log("before copying matrix ");
                     console.log(matrix);
                     let copied = mat4.clone(matrix);
-                    let new_matrix = mat4.create();
                     // mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
                     matrix = this.get_transformation_matrix(transformation, copied);
                 }

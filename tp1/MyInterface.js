@@ -1,8 +1,8 @@
-import { CGFinterface, CGFapplication, dat } from '../lib/CGF.js';
+import {CGFinterface, CGFapplication, dat} from '../lib/CGF.js';
 
 /**
-* MyInterface class, creating a GUI interface.
-*/
+ * MyInterface class, creating a GUI interface.
+ */
 
 export class MyInterface extends CGFinterface {
     /**
@@ -23,7 +23,17 @@ export class MyInterface extends CGFinterface {
 
         this.gui = new dat.GUI();
 
-        // add a group of controls (and open/expand by defult)
+        let lightFolder = this.gui.addFolder("LightControl");
+        for (const light of this.scene.lights)
+            if (light.enabled) lightFolder.add(light, 'enabled').name(light.id);
+            else lightFolder.add(light, 'enabled').name(light.id).listen();
+
+        lightFolder.open();
+        console.log("Interface initialized");
+        this.gui.addFolder("CameraControl");
+
+        // add a group of controls (and open/expand by default)
+        // this.gui.add(this.scene, 'lightsOn', this.scene.lights).onChange(this.scene.lights.bind(this.scene)).name('Lights On');
 
         this.initKeys();
 
@@ -34,17 +44,18 @@ export class MyInterface extends CGFinterface {
      * initKeys
      */
     initKeys() {
-        this.scene.gui=this;
-        this.processKeyboard=function(){};
-        this.activeKeys={};
+        this.scene.gui = this;
+        this.processKeyboard = function () {
+        };
+        this.activeKeys = {};
     }
 
     processKeyDown(event) {
-        this.activeKeys[event.code]=true;
+        this.activeKeys[event.code] = true;
     };
 
     processKeyUp(event) {
-        this.activeKeys[event.code]=false;
+        this.activeKeys[event.code] = false;
     };
 
     isKeyPressed(keyCode) {
