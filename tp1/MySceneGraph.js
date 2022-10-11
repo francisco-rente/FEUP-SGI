@@ -7,7 +7,7 @@ import {MyTriangle} from "./primitives/MyTriangle.js";
 import {MyComponent} from "./MyComponent.js";
 
 
-var DEGREE_TO_RAD = Math.PI / 180;
+var DEGREE_TO_RAD = Math.PI / 180.0;
 
 // Order of the groups in the XML document.
 var SCENE_INDEX = 0;
@@ -313,12 +313,19 @@ export class MySceneGraph {
             var attributeTypes = [];
 
             //Check type of light
-            if (children[i].nodeName != "omni" && children[i].nodeName != "spot") {
-                this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
-                continue;
-            } else {
-                attributeNames.push(...["location", "ambient", "diffuse", "specular"]);
-                attributeTypes.push(...["position", "color", "color", "color"]);
+
+            switch(children[i].nodeName){
+                case "omni":
+                    attributeNames.push(...["location", "ambient", "diffuse", "specular", "attenuation"]);
+                    attributeTypes.push(...["position", "color", "color", "color", "attenuation"]);
+                    break; 
+                case "spot":
+                    attributeNames.push(...["location", "target", "ambient", "diffuse", "specular", "attenuation"]);
+                    attributeTypes.push(...["position", "position", "color", "color", "color", "attenuation"]);
+                    break;
+                default:
+                    this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
+                    continue;
             }
 
             // Get id of the current light.
@@ -352,22 +359,37 @@ export class MySceneGraph {
 
             for (var j = 0; j < attributeNames.length; j++) {
                 var attributeIndex = nodeNames.indexOf(attributeNames[j]);
-
+                console.log("attri" + attributeTypes[j]);
                 if (attributeIndex != -1) {
-                    if (attributeTypes[j] == "position")
+                    if (attributeTypes[j] == "position"){
                         var aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
-                    else
+                        global.push(aux); 
+                    }
+                    else if (attributeTypes[j] == "color"){
                         var aux = this.parseColor(grandChildren[attributeIndex], attributeNames[j] + " illumination for ID" + lightId);
-
-                    if (!Array.isArray(aux))
-                        return aux;
-
-                    global.push(aux);
+                        if (!Array.isArray(aux)) return aux;
+                        global.push(aux); 
+                    }
+                    // <attenuation constant="ff" linear="ff" quadratic="ff" />  
+                    else if(attributeTypes[j] == "attenuation") {
+                        var constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
+                        if (!(constant != null && !isNaN(constant))) return "unable to parse constant-coordinate of the " + messageError;
+                        var linear = this.reader.getFloat(grandChildren[attributeIndex], 'linear');
+                        if (!(linear != null && !isNaN(linear))) return "unable to parse constant-coordinate of the " + messageError;
+                        var quadratic = this.reader.getFloat(grandChildren[attributeIndex], 'quadratic');
+                        if (!(quadratic != null && !isNaN(quadratic))) return "unable to parse constant-coordinate of the " + messageError;
+                        
+                        if(constant + linear + quadratic == 1.0) 
+                            global.push([constant, linear, quadratic])
+                        else 
+                            this.onXMLMinorError("Only one attenuation component should be set to 1.0"); 
+                            global.push([1.0,0.0,0.0])
+                    }
                 } else
-                    return "light " + attributeNames[i] + " undefined for ID = " + lightId;
+                    return "light " + attributeNames[j] + " undefined for ID = " + lightId;
             }
 
-            // Gets the additional attributes of the spot light
+            // Gets the additional attributes of the spotlight
             if (children[i].nodeName == "spot") {
                 var angle = this.reader.getFloat(children[i], 'angle');
                 if (!(angle != null && !isNaN(angle)))
@@ -394,15 +416,21 @@ export class MySceneGraph {
             }
 
             this.lights[lightId] = global;
+            console.log(this.lights[lightId]);
+
             numLights++;
         }
 
+        console.log(this.lights);
         if (numLights == 0)
             return "at least one light must be defined";
         else if (numLights > 8)
             this.onXMLMinorError("too many lights defined; WebGL imposes a limit of 8 lights");
 
+        // TODO : add default values for lights
+
         this.log("Parsed lights");
+
         return null;
     }
 
@@ -465,7 +493,6 @@ export class MySceneGraph {
             if (this.materials[materialID] != null)
                 return "ID must be unique for each light (conflict: ID = " + materialID + ")";
 
-            console.log(Array.from(children[i].children));
 
             const material_properties = Array.from(children[i].children);
             const shininess = this.reader.getFloat(children[i], 'shininess');
@@ -543,8 +570,8 @@ export class MySceneGraph {
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
                 if (!Array.isArray(coordinates))
                     return coordinates;
-
-                transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
+                let matrix_copy = mat4.clone(transfMatrix);
+                mat4.translate(transfMatrix, matrix_copy, coordinates);
                 break;
             case 'scale':
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
@@ -557,9 +584,9 @@ export class MySceneGraph {
                 if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
                 let angle = this.reader.getFloat(transformation_tag, 'angle');
-                angle = DEGREE_TO_RAD * angle;
+                angle = DEGREE_TO_RAD * angle ;
                 console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
-                //mat4.fromRotation(transfMatrix, angle, axis);
+                // mat4.fromRotation(transfMatrix, angle, axis);
 
                 console.log("about to apply a rotation");
                 console.log(transfMatrix);
@@ -829,18 +856,19 @@ export class MySceneGraph {
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
-                    mat4.multiply(matrix, matrix, this.transformations[transformationID]);
+                    let copied = mat4.clone(matrix);
+                    matrix = this.get_transformation_matrix(transformation, copied);
                 } else {
 
                     console.log("before copying matrix ");
                     console.log(matrix);
                     let copied = mat4.clone(matrix);
-                    let new_matrix = mat4.create();
-                    mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
-                    matrix = new_matrix;
+                    // mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
+                    matrix = this.get_transformation_matrix(transformation, copied);
                 }
 
             }
+
 
             console.log("matrix: " + matrix + " componentID: " + componentID);
             component.transformation = matrix;

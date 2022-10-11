@@ -24,7 +24,6 @@ export class MyComponent extends CGFobject {
 
         this.sendAppearanceToScene();
         // this.sendTextureToScene();
-        this._scene.pushMatrix();
         this._scene.multMatrix(this.transformation);
         this.updateCoords();
 
@@ -34,13 +33,15 @@ export class MyComponent extends CGFobject {
             primitive.display();
         }
         for (let child of this._children) {
+            this._scene.pushMatrix();
             child.updateTexCoords(this._texture_coord);
             child.display();
+            this._scene.popMatrix();
+
         }
 
 
         // this._scene.popTexture();
-        this._scene.popMatrix();
         this._scene.popAppearance();
     }
 
