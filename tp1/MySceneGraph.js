@@ -7,7 +7,7 @@ import {MyTriangle} from "./primitives/MyTriangle.js";
 import {MyComponent} from "./MyComponent.js";
 
 
-var DEGREE_TO_RAD = Math.PI / 180;
+var DEGREE_TO_RAD = Math.PI / 180.0;
 
 // Order of the groups in the XML document.
 var SCENE_INDEX = 0;
@@ -570,8 +570,8 @@ export class MySceneGraph {
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
                 if (!Array.isArray(coordinates))
                     return coordinates;
-
-                transfMatrix = mat4.translate(transfMatrix, transfMatrix, coordinates);
+                let matrix_copy = mat4.clone(transfMatrix);
+                mat4.translate(transfMatrix, matrix_copy, coordinates);
                 break;
             case 'scale':
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
@@ -584,9 +584,9 @@ export class MySceneGraph {
                 if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
                 let angle = this.reader.getFloat(transformation_tag, 'angle');
-                angle = DEGREE_TO_RAD * angle;
+                angle = DEGREE_TO_RAD * angle ;
                 console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
-                //mat4.fromRotation(transfMatrix, angle, axis);
+                // mat4.fromRotation(transfMatrix, angle, axis);
 
                 console.log("about to apply a rotation");
                 console.log(transfMatrix);
@@ -856,18 +856,20 @@ export class MySceneGraph {
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     console.log("transformationID: " + transformationID);
-                    mat4.multiply(matrix, matrix, this.transformations[transformationID]);
+                    let new_matrix = mat4.create();
+                    matrix = this.get_transformation_matrix(transformation, copied);
                 } else {
 
                     console.log("before copying matrix ");
                     console.log(matrix);
                     let copied = mat4.clone(matrix);
                     let new_matrix = mat4.create();
-                    mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
-                    matrix = new_matrix;
+                    // mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
+                    matrix = this.get_transformation_matrix(transformation, copied);
                 }
 
             }
+
 
             console.log("matrix: " + matrix + " componentID: " + componentID);
             component.transformation = matrix;
