@@ -1,0 +1,327 @@
+<sxs>
+    <scene root="scenario" axis_length="5"/>
+
+    <!-- birds eye view -->
+    <views default="defaultCamera">
+        <perspective id="defaultCamera" near="0.1" far="500" angle="45">
+            <from x="30" y="15" z="30" />
+            <to x="0" y="-2" z="0" />
+        </perspective>
+    </views>
+
+    <!-- inside tent -->
+    <views default="tentview">
+        <perspective id="defaultCamera" near="0.1" far="500" angle="45">
+            <from x="30" y="15" z="30" />
+            <to x="0" y="-2" z="0" />
+        </perspective>
+    </views>
+
+    <!-- dim ambient light (if night), strong if daytime-->
+    <ambient>
+        <ambient r="0.2" g="0.2" b="0.2" a="1.0" />
+        <background r="0.0" g="0.0" b="0.0" a="1.0" />
+    </ambient>
+
+    <!-- the sun/moon-->
+    <lights>
+        <omni id="demoLight" enabled="1">
+            <location x="9.8" y="11.9" z="10" w="1.0" />
+            <ambient r="0" g="0" b="0" a="1.0" />
+            <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
+            <specular r="1.0" g="1.0" b="1.0" a="1.0" />
+        </omni>
+    </lights>
+
+    <!-- inside the tent -->
+    <lights>
+        <omni id="demoLight" enabled="1">
+            <location x="9.8" y="11.9" z="10" w="1.0" />
+            <ambient r="0" g="0" b="0" a="1.0" />
+            <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
+            <specular r="1.0" g="1.0" b="1.0" a="1.0" />
+        </omni>
+    </lights>
+
+
+    <!-- fireplace DOUBT: is it necessary if firetriangle has emission=1?-->
+    <lights>
+        <omni id="demoLight" enabled="1">
+            <location x="9.8" y="11.9" z="10" w="1.0" />
+            <ambient r="0" g="0" b="0" a="1.0" />
+            <diffuse r="1.0" g="1.0" b="1.0" a="1.0" />
+            <specular r="1.0" g="1.0" b="1.0" a="1.0" />
+        </omni>
+    </lights>
+
+
+    <textures>
+        <texture id="demoTexture" file="scenes/images/vidral.jpg" /> <!-- wood -->
+        <texture id="demoTexture" file="scenes/images/vidral.jpg" /> <!-- tree -->
+        <texture id="demoTexture" file="scenes/images/vidral.jpg" /> <!-- linen -->
+        <texture id="demoTexture" file="scenes/images/vidral.jpg" /> <!-- sky 4 sides LATER-->
+        <texture id="demoTexture" file="scenes/images/vidral.jpg" /> <!-- grass -->
+        <texture id="demoTexture" file="scenes/images/vidral.jpg" /> <!-- fire -->
+    </textures>
+
+    <materials>
+        <!-- fire with max emission -->
+        <material id="fireMaterial" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
+            <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+        </material>
+
+        <!-- Wood diffuse component, but dim in general-->
+        <material id="woodMaterial" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
+            <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+        </material>
+
+        <!-- Grass   -->
+        <material id="grassMaterial" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
+            <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+        </material>
+
+        <!-- Tent Material -->
+        <material id="tentMaterial" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0" />
+            <ambient r="1.0" g="0.0" b="0.0" a="1.0" />
+            <diffuse r="0.6" g="0.0" b="0.0" a="1.0" />
+            <specular r="0.6" g="0.0" b="0.0" a="1.0" />
+        </material>
+    </materials>
+
+    <transformations>
+
+        <!-- Take all tree crowns to an elevated height
+        (translation, since the cylinder and sphere are oriented with Z-->
+        <transformation id="treeCrown">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+
+        <!-- Tree translations (y or x-axis translations for individual trees)-->
+        <transformation id="tree1Pos">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+        <transformation id="tree2Pos">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+        <transformation id="tree3Pos">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+
+        <!-- Tent translation (45-degree rotation, y or x-axis translations for rectangle)
+            Triangle not necessary because we can define its coordinates here (x,y,z) (but could also be included)
+        -->
+        <transformation id="tentSide1">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+        <transformation id="tentSide2">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+
+
+        <!-- Firepit translation, translation since the center is Z oriented
+            triangle already define, unless we plan to make multiple ones (multiple flames), maybe that works best with
+            transformations, and not predefined coordinates
+        -->
+        <transformation id="firePitTorusTranslation">
+            <scale x="5" y="1" z="5" />
+            <rotate axis="x" angle="-45" />
+            <rotate axis="z" angle="-45" />
+        </transformation>
+
+
+    </transformations>
+
+    <primitives>
+        <primitive id="tentRectangle">
+            <rectangle x1="-0.5" y1="-1" x2="0.5" y2="1" />
+        </primitive>
+
+        <primitive id="tentTriangle">
+            <rectangle x1="-0.5" y1="-1" x2="0.5" y2="1" />
+        </primitive>
+
+        <primitive id="treeTrunkCylinder">
+            <cylinder base="1" top="3" height="5" slices="16" stacks="20"/>
+        </primitive>
+
+        <primitive id="treeCrownSphere">
+            <sphere radius="1" slices="20" stacks="20" />
+        </primitive>
+
+        <!-- DOUBT: Maybe one of the tree crowns could be a pyramid, by 4 triangles and a square??-->
+        <primitive id="treeCrownCylinder">
+            <!-- DOUBT: How can we cover the underside of the tree??-->
+            <cylinder base="1" top="3" height="5" slices="16" stacks="20"/>
+        </primitive>
+
+        <primitive id="fireTriangle">
+            <!--DOUBT: Maybe a cone looks better,
+            and triangles could be other things, like a mountain in the background ?-->
+            <triangle x1="-0.5" y1="-1" z1="0" x2="0.5" y2="-1" z2="0" x3="0" y3="1" z3="0" />
+        </primitive>
+
+        <primitive id="firePitTorus"> <!--DOUBT: Maybe cylinders look better, and torus could be a tree -->
+            <torus inner="0.5" outer="1" slices="10" loops="10" />
+        </primitive>
+    </primitives>
+
+    <components>
+
+        <!--
+           Scene     Campsite     Tent      Triangle/Rectangle (DOUBT: should we have 1 Rectangle or 2?
+                                                                If only 1 primitive, is it necessary to divide them in 2 components left right?)
+
+                                  FirePit Torus/Triangle
+
+
+                     Forest       Tree1     Cylinder/Cylinder(cone like)
+                                  Tree2     Cylinder/Cylinder(cone like)
+                                  Tree3     Cylinder/Sphere
+
+         -->
+        <component id="campingScene">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="campSite" />
+                <componentref id="forest" />
+            </children>
+        </component>
+
+        <component id="campSite">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="firePlace" />
+                <componentref id="tent" />
+            </children>
+        </component>
+
+        <component id="forest">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <componentref id="tree1" />
+                <componentref id="tree2" />
+                <componentref id="tree3" />
+            </children>
+        </component>
+
+
+        <component id="firePlace">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="fireTriangle" />
+                <primitiveref id="firePitTorus" />
+            </children>
+        </component>
+
+        <component id="tent">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="demoRectangle" />
+                <primitiveref id="tentTriangle" />
+            </children>
+        </component>
+
+
+        <component id="tree1">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="treeTrunkCylinder" />
+                <primitiveref id="treeCrownCylinder" />
+            </children>
+        </component>
+        <component id="tree2">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="treeTrunkCylinder" />
+                <primitiveref id="treeCrownCylinder" />
+            </children>
+        </component>
+        <component id="tree3">
+            <transformation>
+                <translate x="0" y="0" z="1" />
+                <scale x="2" y="1" z="1" />
+            </transformation>
+            <materials>
+                <material id="demoMaterial" />
+            </materials>
+            <texture id="demoTexture"/>
+            <children>
+                <primitiveref id="treeTrunkCylinder" />
+                <primitiveref id="treeCrownSphere" />
+            </children>
+        </component>
+
+
+    </components>
+</sxs>
