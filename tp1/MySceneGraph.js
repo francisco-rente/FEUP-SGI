@@ -566,6 +566,7 @@ export class MySceneGraph {
 
     get_transformation_matrix(transformation_tag, transfMatrix) {
         switch (transformation_tag.nodeName) {
+
             case 'translate':
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
                 if (!Array.isArray(coordinates))
@@ -587,8 +588,6 @@ export class MySceneGraph {
                 angle = DEGREE_TO_RAD * angle ;
                 console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
                 // mat4.fromRotation(transfMatrix, angle, axis);
-
-                console.log("about to apply a rotation");
                 console.log(transfMatrix);
                 switch (axis) {
                     case 'x':
@@ -846,22 +845,15 @@ export class MySceneGraph {
             // Transformations
 
             let matrix = mat4.create();
-            console.log("after creating matrix it is:");
-            console.log(matrix);
             let transformations = grandChildren[transformationIndex].children;
-            console.log("transformations are:");
-            console.log(transformations);
+
             for (const transformation of transformations) {
 
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
-                    console.log("transformationID: " + transformationID);
-                    let copied = mat4.clone(matrix);
-                    matrix = this.get_transformation_matrix(transformation, copied);
-                } else {
+                    matrix = this.transformations[transformationID]
 
-                    console.log("before copying matrix ");
-                    console.log(matrix);
+                } else {
                     let copied = mat4.clone(matrix);
                     // mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
                     matrix = this.get_transformation_matrix(transformation, copied);

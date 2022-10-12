@@ -3,13 +3,13 @@
 
     <views default="defaultCamera">
         <perspective id="defaultCamera" near="0.1" far="500" angle="45">
-            <from x="30" y="15" z="30"/>
+            <from x="50" y="50" z="50"/>
             <to x="0" y="-2" z="0"/>
         </perspective>
     </views>
 
     <ambient>
-        <ambient r="0.1" g="0.2" b="0.2" a="1.0"/>
+        <ambient r="0.2" g="0.2" b="0.2" a="1.0"/>
         <background r="0.0" g="0.0" b="0.0" a="1.0"/>
     </ambient>
 
@@ -19,7 +19,7 @@
             <ambient r="0" g="0" b="0" a="1.0"/>
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0"/>
             <specular r="1.0" g="1.0" b="1.0" a="1.0"/>
-            <attenuation constant="1.0" linear="0.0" quadratic="0.0" />
+            <attenuation constant="1.0" linear="0.0" quadratic="0.0" /> 
         </omni>
     </lights>
 
@@ -35,10 +35,10 @@
 
     <materials>
         <material id="demoMaterial" shininess="10">
-            <emission r="0.0" g="0.0" b="0.0" a="1.0"/>
-            <ambient r="1.0" g="0.0" b="0.0" a="1.0"/>
-            <diffuse r="0.6" g="0.0" b="0.0" a="1.0"/>
-            <specular r="0.6" g="0.0" b="0.0" a="1.0"/>
+            <emission r="0.2" g="0.2" b="0.2" a="1.0"/>
+            <ambient r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
         </material>
     </materials>
 
@@ -49,7 +49,24 @@
             <translate x="0" y="0" z="4.5"/>
         </transformation>
 
+        <transformation id="tentScaleRotate">
+            <scale x="1" y="1" z="1"/>
+            <rotate axis="y" angle="45"/>
+        </transformation>
 
+        <transformation id="tentSide1">
+            <rotate axis="x" angle="45"/>
+            <translate x="0" y="2" z="0"/>
+        </transformation>
+
+        <transformation id="tentSide2">
+            <rotate axis="x" angle="45"/>
+            <translate x="0" y="2" z="0"/>
+        </transformation>
+
+        <transformation id="tentSwapInToOut">
+            <rotate axis="y" angle ="180"/>
+        </transformation>
 
     </transformations>
 
@@ -91,7 +108,7 @@
             <texture id="rocks" length_s="0.1" length_t="0.3"/>
             <children>
                 <componentref id="floor"/>
-                <componentref id="forest"/>
+                <!-- <componentref id="forest"/>-->
                 <componentref id="tent"/>
                 <!--<componentref id="campfire"/>-->
             </children>
@@ -100,13 +117,14 @@
 
         <component id="floor">
             <transformation>
-                <translate x="1" y="1" z="0"/>
-                <scale x="15" y="15" z="15"/>
+                <!--<translate x="1" y="1" z="0"/>-->
+                <scale x="7" y="7" z="7"/>
+                <rotate axis="x" angle="-90" />
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="grass" length_s="0.1" length_t="0.3"/>
+            <texture id="grass" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
@@ -114,7 +132,7 @@
 
         <component id="tent">
             <transformation>
-                <translate x="0" y="5" z="0"/>
+                <!-- <transformationref id="tentScaleRotate"/> -->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -123,20 +141,21 @@
             <children>
                 <!-- leftside -->
 
-                <componentref id="tentsideinner1"/>
+                <!--<componentref id="tentsideinner1"/>-->
                 <componentref id="tentsideouter1"/>
 
                 <!-- rightside -->
-                <componentref id="tentsideinner2"/>
-                <componentref id="tentsideouter2"/>
+                <!--<componentref id="tentsideinner2"/>-->
+                <!--<componentref id="tentsideouter2"/>-->
             </children>
         </component>
 
 
         <component id="tentsideinner1">
             <transformation>
-                <translate x="0" y="0" z="0.7"/>
-                <rotate axis="x" angle="225" />
+                <transformationref id="tentSide1"/>
+                <!--<rotate axis="x" angle="45"/> -->
+                <!--<translate x="0" y="2" z="0"/> -->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -150,8 +169,15 @@
 
         <component id="tentsideouter1">
             <transformation>
-                <translate x="0" y="0" z="0.7"/>
-                <rotate axis="x" angle="45" />
+                <!--<transformationref id="tentSwapInToOut"/>-->
+                <transformationref id="tentSide1"/>
+                <!--<transformationref id="tentSwapInToOut"/>-->
+                <!--<rotate axis="x" angle="45" /> -->
+                <!--<translate x="0" y="2" z="0"/> -->
+
+
+
+                <!--<rotate axis="x" angle="180"/> -->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -165,8 +191,9 @@
 
         <component id="tentsideinner2">
             <transformation>
-                <translate x="0" y="1.41" z="0.7"/>
-                <rotate axis="x" angle="-45" />
+                <transformationref id="tentSide2"/>
+                <rotate axis="x" angle="45"/>
+                <translate x="0" y="2" z="0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -179,8 +206,14 @@
 
         <component id="tentsideouter2">
             <transformation>
-                <translate x="0" y="1.41" z="0.7"/>
-                <rotate axis="x" angle="135" />
+                <transformationref id="tentSide2"/>
+                <rotate axis="x" angle="45"/>
+                <translate x="0" y="2" z="0"/>
+
+                <transformationref id="tentSwapInToOut"/>
+                <rotate axis="x" angle="180"/>
+
+                
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
