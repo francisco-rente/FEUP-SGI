@@ -1,4 +1,4 @@
-import {CGFappearance, CGFtexture, CGFXMLreader} from '../lib/CGF.js';
+import {CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader} from '../lib/CGF.js';
 import {MyRectangle} from './primitives/MyRectangle.js';
 import {MySphere} from './primitives/MySphere.js';
 import {MyCylinder} from './primitives/MyCylinder.js';
@@ -251,6 +251,116 @@ export class MySceneGraph {
      */
     parseView(viewsNode) {
         this.onXMLMinorError("To do: Parse views and create cameras.");
+        this.defaultView = this.reader.getString(viewsNode, 'default');
+        this.views = {};
+        const children = viewsNode.children;
+
+
+        console.log("Parsing views");
+
+        // var constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
+        // var aux = this.parseCoordinates3D(grandChildren[targetIndex], "target light for ID " + lightId);
+        for (const child of children) {
+            const id = this.reader.getString(child, 'id');
+            const near = this.reader.getFloat(child, 'near');
+            const far = this.reader.getFloat(child, 'far');
+
+            if (child.nodeName === "perspective") {
+                //TODO: error handling
+                const angle = this.reader.getFloat(child, 'angle');
+
+                let from = null;
+                let to = null;
+
+                for (const grandChild of child.children) {
+                    if (grandChild.nodeName === "from") {
+                        from = this.parseCoordinates3D(grandChild, "from");
+                    }
+                    else if (grandChild.nodeName === "to") {
+                        to = this.parseCoordinates3D(grandChild, "to");
+                    }
+                    else {
+                        this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
+                    }
+                }
+
+                if(from == null || to == null || typeof from === 'string' || typeof to === 'string')  {
+                    this.onXMLMinorError("Error parsing perspective view");
+                    return "Missing from/to in perspective view";
+                }
+                if(this.views[id] != null) {
+                    this.onXMLMinorError("View with id " + id + " already exists");
+                    return "View with id " + id + " already exists";
+                }
+                this.views[id] = new CGFcamera(angle * DEGREE_TO_RAD, near, far, from, to);
+
+            } else if (child.nodeName === "ortho") {
+                const left = this.reader.getFloat(child, 'left');
+                const right = this.reader.getFloat(child, 'right');
+                const top = this.reader.getFloat(child, 'top');
+                const bottom = this.reader.getFloat(child, 'bottom');
+
+                let from = null;
+                let to = null;
+                let up = null;
+
+                for (const grandChild of child.children) {
+                    if (grandChild.nodeName === "from") {
+                        from = this.parseCoordinates3D(grandChild, "from");
+                    }
+                    else if (grandChild.nodeName === "to") {
+                        to = this.parseCoordinates3D(grandChild, "to");
+                    }
+                    else if (grandChild.nodeName === "up") {
+                        up = this.parseCoordinates3D(grandChild, "up");
+                    }
+                    else {
+                        this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
+                    }
+                }
+
+                if(from == null || to == null || typeof from === 'string' || typeof to === 'string')  {
+                    this.onXMLMinorError("Error parsing perspective view");
+                    return "Missing from/to in perspective view";
+                }
+
+                if (typeof up === "string" || up === null) {
+                    this.onXMLMinorError("up not found using default value (0, 1, 0)");
+                    up = vec3.fromValues(0, 1, 0);
+                }
+
+
+                if(this.views[id] != null) {
+                    this.onXMLMinorError("View with id " + id + " already exists");
+                    return "View with id " + id + " already exists";
+                }
+                this.views[id] = (new CGFcameraOrtho(left, right, bottom, top, near, far, from, to, up));
+            }
+        }
+
+        if(this.views[this.defaultView] == null) {
+            this.onXMLMinorError("Default view not found");
+            return "Default view not found";
+        }
+
+
+        /*<views default="ss" >
+            <!-- tem de existir, pelo menos, uma vista de -->
+            <!-- entre as seguintes (perspective ou ortho) -->
+            <perspective id="ss" near="ff" far="ff" angle="ff">
+                <from x="ff" y="ff" z="ff" />
+                <to x="ff" y="ff" z="ff" />
+            </perspective>
+
+
+
+            <ortho id="ss"  near="ff" far="ff" left="ff" right="ff" top="ff" bottom="ff" >
+                <from x="ff" y="ff" z="ff" />
+                <to x="ff" y="ff" z="ff" />
+                <up x="ff" y="ff" z="ff" /> <!-- opcional, default 0,1,0 -->
+            </ortho>
+        </views>*/
+        console.log("Parsed views");
 
         return null;
     }
@@ -314,11 +424,11 @@ export class MySceneGraph {
 
             //Check type of light
 
-            switch(children[i].nodeName){
+            switch (children[i].nodeName) {
                 case "omni":
                     attributeNames.push(...["location", "ambient", "diffuse", "specular", "attenuation"]);
                     attributeTypes.push(...["position", "color", "color", "color", "attenuation"]);
-                    break; 
+                    break;
                 case "spot":
                     attributeNames.push(...["location", "target", "ambient", "diffuse", "specular", "attenuation"]);
                     attributeTypes.push(...["position", "position", "color", "color", "color", "attenuation"]);
@@ -361,29 +471,28 @@ export class MySceneGraph {
                 var attributeIndex = nodeNames.indexOf(attributeNames[j]);
                 console.log("attri" + attributeTypes[j]);
                 if (attributeIndex != -1) {
-                    if (attributeTypes[j] == "position"){
+                    if (attributeTypes[j] == "position") {
                         var aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
-                        global.push(aux); 
-                    }
-                    else if (attributeTypes[j] == "color"){
+                        global.push(aux);
+                    } else if (attributeTypes[j] == "color") {
                         var aux = this.parseColor(grandChildren[attributeIndex], attributeNames[j] + " illumination for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
-                        global.push(aux); 
+                        global.push(aux);
                     }
                     // <attenuation constant="ff" linear="ff" quadratic="ff" />  
-                    else if(attributeTypes[j] == "attenuation") {
+                    else if (attributeTypes[j] == "attenuation") {
                         var constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
                         if (!(constant != null && !isNaN(constant))) return "unable to parse constant-coordinate of the " + messageError;
                         var linear = this.reader.getFloat(grandChildren[attributeIndex], 'linear');
                         if (!(linear != null && !isNaN(linear))) return "unable to parse constant-coordinate of the " + messageError;
                         var quadratic = this.reader.getFloat(grandChildren[attributeIndex], 'quadratic');
                         if (!(quadratic != null && !isNaN(quadratic))) return "unable to parse constant-coordinate of the " + messageError;
-                        
-                        if(constant + linear + quadratic == 1.0) 
+
+                        if (constant + linear + quadratic == 1.0)
                             global.push([constant, linear, quadratic])
-                        else 
-                            this.onXMLMinorError("Only one attenuation component should be set to 1.0"); 
-                            global.push([1.0,0.0,0.0])
+                        else
+                            this.onXMLMinorError("Only one attenuation component should be set to 1.0");
+                        global.push([1.0, 0.0, 0.0])
                     }
                 } else
                     return "light " + attributeNames[j] + " undefined for ID = " + lightId;
@@ -586,7 +695,7 @@ export class MySceneGraph {
                 if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
                 let angle = this.reader.getFloat(transformation_tag, 'angle');
-                angle = DEGREE_TO_RAD * angle ;
+                angle = DEGREE_TO_RAD * angle;
                 console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
                 // mat4.fromRotation(transfMatrix, angle, axis);
                 console.log(transfMatrix);

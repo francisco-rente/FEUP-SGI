@@ -163,8 +163,10 @@ export class XMLscene extends CGFscene {
 
         this.setGlobalAmbientLight(this.graph.ambient[0], this.graph.ambient[1], this.graph.ambient[2], this.graph.ambient[3]);
 
-        this.initLights();
 
+        this.initLights();
+        this.updateViews();
+        this.interface.updateInterface()
         this.sceneInited = true;
     }
 
@@ -219,4 +221,9 @@ export class XMLscene extends CGFscene {
         this.checkKeys();
     }
 
+    updateViews() {
+        this.views = this.graph.views;
+        this.camera = this.graph.views[this.graph.defaultView];
+        this.interface.setActiveCamera(this.camera);
+    }
 }

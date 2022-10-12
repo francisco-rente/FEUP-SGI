@@ -23,22 +23,44 @@ export class MyInterface extends CGFinterface {
 
         this.gui = new dat.GUI();
 
+        this.initKeys();
+
+        return true;
+    }
+
+    updateInterface() {
         let lightFolder = this.gui.addFolder("LightControl");
         for (const light of this.scene.lights)
             if (light.enabled) lightFolder.add(light, 'enabled').name(light.id);
             else lightFolder.add(light, 'enabled').name(light.id).listen();
 
         lightFolder.open();
+        let viewFolder = this.gui.addFolder("ViewControl");
+
         console.log("Interface initialized");
-        this.gui.addFolder("CameraControl");
+        // create drop down menu for views
+        let views = this.scene.views;
+        let viewNames = [];
+        for (let key in views) {
+            console.log(key);
+            viewNames.push(key);
+        }
+        viewFolder.add(this, 'activeCamera', viewNames).name("Views").onChange(function (value) {
+            this.scene.camera = this.scene.views[value];
+            this.setActiveCamera(this.scene.camera);
+        }.bind(this));
+
+        viewFolder.open();
+        /*for (const camera of this.scene.graph.views) {
+            viewFolder.add(this, 'activeCamera', this.scene.graph.views).name(camera).onChange(this.scene.updateCamera.bind(this.scene));
+        }*/
 
         // add a group of controls (and open/expand by default)
         // this.gui.add(this.scene, 'lightsOn', this.scene.lights).onChange(this.scene.lights.bind(this.scene)).name('Lights On');
-
-        this.initKeys();
-
-        return true;
     }
+
+
+
 
     /**
      * initKeys
