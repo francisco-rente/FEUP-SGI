@@ -554,7 +554,8 @@ export class MySceneGraph {
             var transfMatrix = mat4.create();
 
             for (var j = 0; j < grandChildren.length; j++) {
-                transfMatrix = this.get_transformation_matrix(grandChildren[j], transfMatrix);
+                let copy = mat4.clone(transfMatrix);
+                transfMatrix = this.get_transformation_matrix(grandChildren[j], copy);
             }
             this.transformations[transformationID] = transfMatrix;
         }
@@ -851,8 +852,7 @@ export class MySceneGraph {
 
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
-                    matrix = this.transformations[transformationID]
-
+                    mat4.multiply(matrix, matrix, this.transformations[transformationID])
                 } else {
                     let copied = mat4.clone(matrix);
                     // mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
