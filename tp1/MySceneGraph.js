@@ -480,15 +480,15 @@ export class MySceneGraph {
                         global.push(aux);
                     }
                     // <attenuation constant="ff" linear="ff" quadratic="ff" />  
-                    else if (attributeTypes[j] == "attenuation") {
+                    else if (attributeTypes[j] === "attenuation") {
                         var constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
                         if (!(constant != null && !isNaN(constant))) return "unable to parse constant-coordinate of the " + messageError;
                         var linear = this.reader.getFloat(grandChildren[attributeIndex], 'linear');
                         if (!(linear != null && !isNaN(linear))) return "unable to parse constant-coordinate of the " + messageError;
                         var quadratic = this.reader.getFloat(grandChildren[attributeIndex], 'quadratic');
                         if (!(quadratic != null && !isNaN(quadratic))) return "unable to parse constant-coordinate of the " + messageError;
-
-                        if (constant + linear + quadratic == 1.0)
+                        // TODO: has to be greater than 0
+                        if (constant + linear + quadratic === 1.0)
                             global.push([constant, linear, quadratic])
                         else
                             this.onXMLMinorError("Only one attenuation component should be set to 1.0");
