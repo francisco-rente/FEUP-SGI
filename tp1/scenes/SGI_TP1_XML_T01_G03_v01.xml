@@ -49,22 +49,17 @@
             <translate x="0" y="0" z="4.5"/>
         </transformation>
 
-        <transformation id="tentScaleRotate">
-            <scale x="1" y="1" z="1"/>
-            <rotate axis="y" angle="45"/>
-        </transformation>
-
         <transformation id="tentSide1">
             <rotate axis="x" angle="45"/>
             <translate x="0" y="2" z="0"/>
         </transformation>
 
         <transformation id="tentSide2">
-            <rotate axis="x" angle="45"/>
-            <translate x="0" y="2" z="0"/>
+            <rotate axis="x" angle="-45"/>
+            <translate x="0" y="-2" z="4"/>
         </transformation>
 
-        <transformation id="tentSwapInToOut">
+        <transformation id="tentSwapSide">
             <rotate axis="y" angle ="180"/>
         </transformation>
 
@@ -110,7 +105,7 @@
                 <componentref id="floor"/>
                 <!-- <componentref id="forest"/>-->
                 <componentref id="tent"/>
-                <!--<componentref id="campfire"/>-->
+                <componentref id="campfire"/>
             </children>
         </component>
 
@@ -132,21 +127,19 @@
 
         <component id="tent">
             <transformation>
-                <!-- <transformationref id="tentScaleRotate"/> -->
+                <translate x="-4" y="0" z="-2"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="canvas" length_s="0.1" length_t="0.3"/>
+            <texture id="canvas" length_s="1" length_t="1"/>
             <children>
-                <!-- leftside -->
 
-                <!--<componentref id="tentsideinner1"/>-->
+                <componentref id="tentsideinner1"/>
                 <componentref id="tentsideouter1"/>
 
-                <!-- rightside -->
-                <!--<componentref id="tentsideinner2"/>-->
-                <!--<componentref id="tentsideouter2"/>-->
+                <componentref id="tentsideinner2"/>
+                <componentref id="tentsideouter2"/>
             </children>
         </component>
 
@@ -169,9 +162,9 @@
 
         <component id="tentsideouter1">
             <transformation>
-                <!--<transformationref id="tentSwapInToOut"/>-->
+                <!--<transformationref id="tentSwapSide"/>-->
                 <transformationref id="tentSide1"/>
-                <!--<transformationref id="tentSwapInToOut"/>-->
+                <transformationref id="tentSwapSide"/>
                 <!--<rotate axis="x" angle="45" /> -->
                 <!--<translate x="0" y="2" z="0"/> -->
 
@@ -192,8 +185,7 @@
         <component id="tentsideinner2">
             <transformation>
                 <transformationref id="tentSide2"/>
-                <rotate axis="x" angle="45"/>
-                <translate x="0" y="2" z="0"/>
+                <transformationref id="tentSwapSide"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -207,11 +199,6 @@
         <component id="tentsideouter2">
             <transformation>
                 <transformationref id="tentSide2"/>
-                <rotate axis="x" angle="45"/>
-                <translate x="0" y="2" z="0"/>
-
-                <transformationref id="tentSwapInToOut"/>
-                <rotate axis="x" angle="180"/>
 
                 
             </transformation>
