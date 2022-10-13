@@ -73,23 +73,6 @@ export class MyCylinder extends CGFobject {
     };
 
     updateTexCoords(coords) {
-        const s_l = coords[0];
-        const t_l = coords[1];
-        this.texCoords = []; // empty texCoords array
-        //TODO:verify the Math
-        // decrease by s' and t' the length of the current texture coordinates
-        for (let i = 0; i <= this.slices; ++i) for (let j = 0; j <= this.stacks; ++j)
-            this.texCoords.push(
-                s_l * i / this.slices,
-                t_l * (1 - j/ this.stacks)
-            );
-
-        /*for(let i = 0; i < this.texCoords.length; i += 2) {
-            this.texCoords[i] *= s_l;
-            this.texCoords[i + 1] *= t_l;
-        }*/
-
-
         this.updateTexCoordsGLBuffers();
     }
 

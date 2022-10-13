@@ -27,7 +27,7 @@
         <texture id="leaves" file="scenes/images/leaves.jpg"/>
         <texture id="rocks" file="scenes/images/rocks.jpg"/>
         <texture id="grass" file="scenes/images/grass.jpg"/>
-        <texture id="fire" file="scenes/images/fire.png"/>
+        <texture id="fire" file="scenes/images/fire.jpg"/>
         <texture id="canvas" file="scenes/images/canvas.jpg"/>
         <texture id="wood" file="scenes/images/trunk-image.jpg"/>
 
@@ -35,11 +35,18 @@
 
     <materials>
         <material id="demoMaterial" shininess="10">
-            <emission r="0.2" g="0.2" b="0.2" a="1.0"/>
-            <ambient r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <emission r="0.1" g="0.1" b="0.1" a="1.0"/>
+            <ambient r="0.2" g="0.2" b="0.2" a="1.0"/>
             <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
             <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
         </material>
+        <material id="fire" shininess="10">
+            <emission r="1.0" g="1.0" b="1.0" a="1.0"/>
+            <ambient r="0.9" g="0.9" b="0.9" a="1.0"/>
+            <diffuse r="0.3" g="0.3" b="0.3" a="1.0"/>
+            <specular r="0.7" g="0.7" b="0.7" a="1.0"/>
+        </material>
+
     </materials>
 
     <transformations>
@@ -73,22 +80,30 @@
 
 
         <primitive id="aSphere">
-            <sphere radius="10" slices="12" stacks="12"/>
+            <sphere radius="3" slices="12" stacks="12"/>
         </primitive>
 
+
+        <primitive id="treeCone">
+            <cylinder base="0.5" top="0.001" height="5" slices="20" stacks="20"/>
+        </primitive>
 
         <primitive id="aCylinder">
             <cylinder base="0.5" top="0.3" height="5" slices="20" stacks="20"/>
         </primitive>
 
         <primitive id="aTorus">
-            <torus inner="1" outer="3" slices="15" loops="7"/>
+            <torus inner="1" outer="3" slices="20" loops="20"/>
         </primitive>
 
         <primitive id="aTriangle">
-            <triangle x1="1" y1="0" z1="0"
-                      x2="0" y2="0" z2="1"
-                      x3="0" y3="1" z3="0"/>
+            <triangle x1="0" y1="0" z1="0"
+                      x2="1" y2="0"  z2="0"
+                      x3="0.5" y3="1" z3="0"/>
+        </primitive>
+
+        <primitive id="fireCone">
+            <cylinder base="0.5" top="0.01" height="0.8" slices="10" stacks="10"/>
         </primitive>
     </primitives>
 
@@ -103,7 +118,7 @@
             <texture id="rocks" length_s="0.1" length_t="0.3"/>
             <children>
                 <componentref id="floor"/>
-                <!-- <componentref id="forest"/>-->
+                <componentref id="forest"/>
                 <componentref id="tent"/>
                 <componentref id="campfire"/>
             </children>
@@ -119,7 +134,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="grass" length_s="1" length_t="1"/>
+            <texture id="grass" length_s="2" length_t="2"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
@@ -153,7 +168,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
@@ -162,20 +177,13 @@
 
         <component id="tentsideouter1">
             <transformation>
-                <!--<transformationref id="tentSwapSide"/>-->
                 <transformationref id="tentSide1"/>
                 <transformationref id="tentSwapSide"/>
-                <!--<rotate axis="x" angle="45" /> -->
-                <!--<translate x="0" y="2" z="0"/> -->
-
-
-
-                <!--<rotate axis="x" angle="180"/> -->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
@@ -190,7 +198,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
@@ -205,7 +213,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
@@ -215,9 +223,9 @@
             <transformation>
             </transformation>
             <materials>
-                <material id="demoMaterial"/>
+                <material id="fire"/>
             </materials>
-            <texture id="none" length_s="0.1" length_t="0.3"/>
+            <texture id="none"/>
             <children>
                 <componentref id="campfireFire"/>
                 <componentref id="campfireStones"/>
@@ -226,11 +234,13 @@
 
         <component id="campfireStones">
             <transformation>
+                <scale x="0.2" y="0.2" z="0.2"/>
+                <rotate axis="x" angle="90"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="none" />
+            <texture id="rocks" length_s="1" length_t="1"/>
             <children>
                 <primitiveref id="aTorus"/>
             </children>
@@ -238,26 +248,49 @@
 
         <component id="campfireFire">
             <transformation>
-                <scale x="2" y="2" z="2"/>
+                
+                <rotate axis="x" angle="-90"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="fire" length_s="0.1" length_t="0.3"/>
+            <texture id="fire" length_s="1" length_t="1"/>
             <children>
-                <componentref id="fire1"/>
-                <componentref id="fire2"/>
-                <componentref id="fire3"/>
+                <!--<componentref id="fire1"/>-->
+                <!--<componentref id="fire2"/>-->
+                <!--<componentref id="fire3"/>-->
+                <!--<componentref id="fire4"/>-->
+                <primitiveref id="fireCone"/>
             </children>
         </component>
 
-        <component id="fire1">
+
+        <component id="fire">
             <transformation>
+                <scale x="-1" y="1" z="1"/>
+                <translate x="-1" y="0" z="0"/>
+                <rotate axis="x" angle="30"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="aTriangle"/>
+            </children>
+        </component>
+
+
+        <component id="fire1">
+            <transformation>
+                <scale x="-1" y="1" z="1"/>
+                <translate x="-1" y="0" z="0"/>
+                <rotate axis="x" angle="30"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="aTriangle"/>
             </children>
@@ -265,11 +298,14 @@
 
         <component id="fire2">
             <transformation>
+                <rotate axis="z" angle="-30"/>
+                <rotate axis="y" angle="-90"/>
+                                
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="aTriangle"/>
             </children>
@@ -277,11 +313,32 @@
 
         <component id="fire3">
             <transformation>
+                <translate x="0" y="0" z="1"/>
+                <rotate axis="x" angle="-30"></rotate>
+                
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="inherit" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="aTriangle"/>
+            </children>
+        </component>
+
+        <component id="fire4">
+            <transformation>
+                
+                <translate x="1" y="0" z="1"/>
+                <rotate axis="z" angle="30"/>
+                <rotate axis="y" angle="90"></rotate>
+
+                
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit"/>
             <children>
                 <primitiveref id="aTriangle"/>
             </children>
@@ -289,6 +346,8 @@
 
         <component id="forest">
             <transformation>
+                <translate x="0" y="0" z="-6"/>     
+                <rotate axis="x" angle="-90"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -307,7 +366,7 @@
             <materials>
                 <material id="inherit"/>
             </materials>
-            <texture id="leaves" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit"/>
             <children>
                 <componentref id="treeTrunk"/>
                 <componentref id="treeFoliage1"/>
@@ -321,7 +380,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="leaves" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit"/>
             <children>
                 <componentref id="treeTrunk"/>
                 <componentref id="treeFoliage2"/>
@@ -335,7 +394,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="leaves" length_s="0.1" length_t="0.3"/>
+            <texture id="inherit"/>
             <children>
                 <componentref id="treeTrunk"/>
                 <componentref id="treeFoliage3"/>
@@ -356,7 +415,8 @@
 
         <component id="treeFoliage1">
             <transformation>
-                <scale x="4" y="4" z="1"/>
+                <translate x="0" y="0" z="-2"/>
+                <scale x="5" y="5" z="1"/>
                 <transformationref id="raiseFoliage" />
             </transformation>
             <materials>
@@ -364,27 +424,27 @@
             </materials>
             <texture id="inherit"/>
             <children>
-                <primitiveref id="aCylinder"/>
+                <primitiveref id="treeCone"/>
             </children>
         </component>
 
         <component id="treeFoliage2">
             <transformation>
-                <scale x="4" y="4" z="1"/>
                 <transformationref id="raiseFoliage" />
+                <scale x="4" y="4" z="2"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
             <texture id="inherit"/>
             <children>
-                <primitiveref id="aCylinder"/>
+                <primitiveref id="treeCone"/>
             </children>
         </component>
 
         <component id="treeFoliage3">
             <transformation>
-                <scale x="4" y="4" z="1"/>
+                <translate x="0" y="0" z="2"/>
                 <transformationref id="raiseFoliage" />
             </transformation>
             <materials>
@@ -392,7 +452,7 @@
             </materials>
             <texture id="inherit"/>
             <children>
-                <primitiveref id="aCylinder"/>
+                <primitiveref id="aSphere"/>
             </children>
         </component>
     </components>

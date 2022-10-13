@@ -1,4 +1,4 @@
-import {CGFappearance, CGFscene} from '../lib/CGF.js';
+import {CGFappearance, CGFscene, CGFtexture} from '../lib/CGF.js';
 import {CGFaxis, CGFcamera} from '../lib/CGF.js';
 
 
@@ -127,7 +127,10 @@ export class XMLscene extends CGFscene {
         newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
         newMaterial.setSpecular(material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
         newMaterial.setShininess(material.shininess);
-        // newMaterial.texture = material.texture;
+        
+        //newMaterial.texture = new CGFtexture(this, material.texture.image.src)
+
+        newMaterial.texture = material.texture;
         return newMaterial;
     }
 

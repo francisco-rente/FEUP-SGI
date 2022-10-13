@@ -73,15 +73,6 @@ export class MySphere extends CGFobject {
      * @param {Array} coords - Array of texture coordinates
      */
     updateTexCoords(coords) {
-        const s = coords[0];
-        const t = coords[1];
-        this.texCoords = []; // empty texCoords array
-        for (let i = 0; i <= this.slices; ++i) for (let j = 0; j <= this.stacks; ++j)
-            this.texCoords.push(
-                s * i / this.slices,
-                t * (1 - j / this.stacks) // TODO: Verify if it should be 1 - t
-            );
-
         this.updateTexCoordsGLBuffers();
     }
 
