@@ -15,6 +15,7 @@ export class XMLscene extends CGFscene {
     constructor(myinterface) {
         super();
         this.appearence_stack = [];
+        this.texture_stack = [];
         this.appearence_index = 0;
         this.interface = myinterface;
         this.lights = [];
@@ -121,7 +122,7 @@ export class XMLscene extends CGFscene {
         this.pushAppearance(this.createDefaultAppearance());
     }
 
-    cloneMaterial(material) {
+    cloneMaterial(material, texture) {
         const newMaterial = new CGFappearance(this);
         newMaterial.setAmbient(material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
         newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
@@ -153,6 +154,22 @@ export class XMLscene extends CGFscene {
 
     applyAppearance() {
         this.appearence_stack[this.appearence_stack.length - 1].apply();
+    }
+
+
+    getTopTexture() {
+        return this.texture_stack[this.texture_stack.length - 1];
+    }
+
+    popTexture() {
+        if (this.texture_stack.length === 0) return null;
+        const texture = this.texture_stack.pop();
+        if (this.texture_stack.length === 0) this.texture_stack.push(null);
+        return texture;
+    }
+
+    pushTexture(texture) {
+        this.texture_stack.push(texture);
     }
 
 

@@ -21,9 +21,8 @@ export class MyComponent extends CGFobject {
 
 
     display() {
-
+        this.sendTextureToScene();
         this.sendAppearanceToScene();
-        // this.sendTextureToScene();
         this._scene.multMatrix(this.transformation);
         this.updateCoords();
 
@@ -37,11 +36,9 @@ export class MyComponent extends CGFobject {
             child.updateTexCoords(this._texture_coord);
             child.display();
             this._scene.popMatrix();
-
         }
 
-
-        // this._scene.popTexture();
+        this._scene.popTexture();
         this._scene.popAppearance();
     }
 
@@ -62,6 +59,7 @@ export class MyComponent extends CGFobject {
         else if (this._materials[0] === "inherit") appearance = this._scene.getAppearanceStackTop();
         else appearance = this._materials[this.scene.appearence_index % this._materials.length];
 
+        console.log("setting texture to " + texture);
         appearance.setTexture(texture);
         appearance.setTextureWrap('REPEAT', 'REPEAT');
         this._scene.pushAppearance(appearance);
@@ -70,20 +68,17 @@ export class MyComponent extends CGFobject {
 
 
     getTextureToApply() {
-        switch (this.texture) {
+        /*switch (this.texture) {
             case "none":
                 return null;
             case "inherit":
-                return this._scene.getAppearanceStackTop().texture; //TODO: reevaluate cloning of the top
+                return this._scene.getTopTexture().texture; //TODO: reevaluate cloning of the top
             default:
                 return this.texture;
-        }
+        }*/
+        return this._scene.getTopTexture();
     }
 
-
-    set texture_coord(value) {
-        this._texture_coord = value;
-    }
 
     addChild(child) {
         this._children.push(child);
@@ -150,7 +145,16 @@ export class MyComponent extends CGFobject {
         return this._materials;
     }
 
-    setMaterials(materials) {
-        this._materials = materials;
+    sendTextureToScene() {
+        switch (this.texture) {
+            case "none":
+                this._scene.pushTexture(null);
+                break;
+            case "inherit":
+                this._scene.pushTexture(this._scene.getTopTexture());
+                break;
+            default:
+                this._scene.pushTexture(this.texture);
+        }
     }
 }
