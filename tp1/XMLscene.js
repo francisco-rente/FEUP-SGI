@@ -55,6 +55,10 @@ export class XMLscene extends CGFscene {
      */
     initLights() {
         var i = 0;
+
+
+        // TODO: WHY THIS? for (var ul in this.activeShader.uniforms.uLight)
+        // this.lights = [];
         // Lights index.
 
         // Reads the lights from the scene graph.
@@ -63,9 +67,9 @@ export class XMLscene extends CGFscene {
                 break;              // Only eight lights allowed by WebGL.
 
             if (this.graph.lights.hasOwnProperty(key)) {
-                var light = this.graph.lights[key];
-
-
+                const light = this.graph.lights[key];
+                // this.lights[i] = new CGFlight(this, key);
+                this.lights[i].name = key;
                 if(light[1] === "omni"){
                     this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
                     this.lights[i].setAmbient(light[3][0], light[3][1], light[3][2], light[3][3]);
@@ -183,8 +187,10 @@ export class XMLscene extends CGFscene {
 
         this.setGlobalAmbientLight(this.graph.ambient[0], this.graph.ambient[1], this.graph.ambient[2], this.graph.ambient[3]);
 
-        this.initLights();
 
+        this.initLights();
+        this.updateViews();
+        this.interface.updateInterface()
         this.sceneInited = true;
     }
 
@@ -239,4 +245,9 @@ export class XMLscene extends CGFscene {
         this.checkKeys();
     }
 
+    updateViews() {
+        this.views = this.graph.views;
+        this.camera = this.graph.views[this.graph.defaultView];
+        this.interface.setActiveCamera(this.camera);
+    }
 }
