@@ -56,37 +56,62 @@ export class XMLscene extends CGFscene {
         this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
     }
 
+    parseOmniLight(light, position, ambient, diffuse, specular, attenuation) {
+        light.setPosition(position[0], position[1], position[2], position[3]);
+        light.setAmbient(ambient[0], ambient[1], ambient[2], ambient[3]);
+        light.setDiffuse(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+        light.setSpecular(specular[0], specular[1], specular[2], specular[3]);
+        light.setConstantAttenuation(attenuation[0]);
+        light.setLinearAttenuation(attenuation[1]);
+        light.setQuadraticAttenuation(attenuation[2]);
+    }
+
+
+    parseSpotLight(light, position, target, ambient, diffuse, specular, attenuation, angle, exponent) {
+        light.setPosition(position[0], position[1], position[2], position[3]);
+        light.setAmbient(ambient[0], ambient[1], ambient[2], ambient[3]);
+        light.setDiffuse(diffuse[0], diffuse[1], diffuse[2], diffuse[3]);
+        light.setSpecular(specular[0], specular[1], specular[2], specular[3]);
+        light.setConstantAttenuation(attenuation[0]);
+        light.setLinearAttenuation(attenuation[1]);
+        light.setQuadraticAttenuation(attenuation[2]);
+        light.setSpotCutOff(angle);
+        light.setSpotExponent(exponent);
+        light.setSpotDirection(target[0] - position[0], target[1] - position[1], target[2] - position[2]);
+
+        let dir = vec3.fromValues(target[0] - position[0], target[1] - position[1], target[2] - position[2]);
+        vec3.normalize(dir, dir);
+        light.setSpotDirection(dir[0], dir[1], dir[2]);
+    }
+
+
     /**
      * Initializes the scene lights with the values read from the XML file.
      */
     initLights() {
-        var i = 0;
-
-
-        // TODO: WHY THIS? for (var ul in this.activeShader.uniforms.uLight)
-        // this.lights = [];
-        // Lights index.
+        let i = 0;
 
         // Reads the lights from the scene graph.
-        for (var key in this.graph.lights) {
+        for (let key in this.graph.lights) {
             if (i >= 8)
                 break;              // Only eight lights allowed by WebGL.
 
             if (this.graph.lights.hasOwnProperty(key)) {
                 const light = this.graph.lights[key];
-                // this.lights[i] = new CGFlight(this, key);
-                this.lights[i].name = key;
+                this.lights[i].name = key; // for interface dropdown
                 if(light[1] === "omni"){
-                    this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
+                    this.parseOmniLight(this.lights[i], light[2], light[3], light[4], light[5], light[6]);
+                    /*this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
                     this.lights[i].setAmbient(light[3][0], light[3][1], light[3][2], light[3][3]);
                     this.lights[i].setDiffuse(light[4][0], light[4][1], light[4][2], light[4][3]);
                     this.lights[i].setSpecular(light[5][0], light[5][1], light[5][2], light[5][3]);
                     this.lights[i].setConstantAttenuation(light[6][0]);
                     this.lights[i].setLinearAttenuation(light[6][1]);
-                    this.lights[i].setQuadraticAttenuation(light[6][2]);    
+                    this.lights[i].setQuadraticAttenuation(light[6][2]);    */
                 }
                 if (light[1] === "spot") {
-                    this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
+                    this.parseSpotLight(this.lights[i], light[2], light[3], light[4], light[5], light[6], light[7], light[8], light[9]);
+                    /*this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
                     this.lights[i].setAmbient(light[4][0], light[4][1], light[4][2], light[4][3]);
                     this.lights[i].setDiffuse(light[5][0], light[5][1], light[5][2], light[5][3]);
                     this.lights[i].setSpecular(light[6][0], light[6][1], light[6][2], light[6][3]);
@@ -95,15 +120,12 @@ export class XMLscene extends CGFscene {
                     this.lights[i].setQuadraticAttenuation(light[7][2]);    
                     this.lights[i].setSpotCutOff(light[8]);
                     this.lights[i].setSpotExponent(light[9]);
-                    // TODO: normalize
-                    this.lights[i].setSpotDirection(light[3][0]- light[2][0], light[3][1]-light[2][1], light[3][2]-light[2][2]);
+                    this.lights[i].setSpotDirection(light[3][0]- light[2][0], light[3][1]-light[2][1], light[3][2]-light[2][2]);*/
                 }
 
                 this.lights[i].setVisible(true);
-                if (light[0])
-                    this.lights[i].enable();
-                else
-                    this.lights[i].disable();
+                if (light[0] === 1) this.lights[i].enable(); // TODO: check this, without === all are enabled
+                else this.lights[i].disable();
 
                 this.lights[i].update();
                 i++;
