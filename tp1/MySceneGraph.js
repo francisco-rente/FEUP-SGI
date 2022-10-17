@@ -1,10 +1,10 @@
-import {CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader} from '../lib/CGF.js';
-import {MyRectangle} from './primitives/MyRectangle.js';
-import {MySphere} from './primitives/MySphere.js';
-import {MyCylinder} from './primitives/MyCylinder.js';
-import {MyTorus} from "./primitives/MyTorus.js";
-import {MyTriangle} from "./primitives/MyTriangle.js";
-import {MyComponent} from "./MyComponent.js";
+import { CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader } from '../lib/CGF.js';
+import { MyRectangle } from './primitives/MyRectangle.js';
+import { MySphere } from './primitives/MySphere.js';
+import { MyCylinder } from './primitives/MyCylinder.js';
+import { MyTorus } from "./primitives/MyTorus.js";
+import { MyTriangle } from "./primitives/MyTriangle.js";
+import { MyComponent } from "./MyComponent.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -275,20 +275,18 @@ export class MySceneGraph {
                 for (const grandChild of child.children) {
                     if (grandChild.nodeName === "from") {
                         from = this.parseCoordinates3D(grandChild, "from");
-                    }
-                    else if (grandChild.nodeName === "to") {
+                    } else if (grandChild.nodeName === "to") {
                         to = this.parseCoordinates3D(grandChild, "to");
-                    }
-                    else {
+                    } else {
                         this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
                     }
                 }
 
-                if(from == null || to == null || typeof from === 'string' || typeof to === 'string')  {
+                if (from == null || to == null || typeof from === 'string' || typeof to === 'string') {
                     this.onXMLMinorError("Error parsing perspective view");
                     return "Missing from/to in perspective view";
                 }
-                if(this.views[id] != null) {
+                if (this.views[id] != null) {
                     this.onXMLMinorError("View with id " + id + " already exists");
                     return "View with id " + id + " already exists";
                 }
@@ -307,19 +305,16 @@ export class MySceneGraph {
                 for (const grandChild of child.children) {
                     if (grandChild.nodeName === "from") {
                         from = this.parseCoordinates3D(grandChild, "from");
-                    }
-                    else if (grandChild.nodeName === "to") {
+                    } else if (grandChild.nodeName === "to") {
                         to = this.parseCoordinates3D(grandChild, "to");
-                    }
-                    else if (grandChild.nodeName === "up") {
+                    } else if (grandChild.nodeName === "up") {
                         up = this.parseCoordinates3D(grandChild, "up");
-                    }
-                    else {
+                    } else {
                         this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
                     }
                 }
 
-                if(from == null || to == null || typeof from === 'string' || typeof to === 'string')  {
+                if (from == null || to == null || typeof from === 'string' || typeof to === 'string') {
                     this.onXMLMinorError("Error parsing perspective view");
                     return "Missing from/to in perspective view";
                 }
@@ -330,7 +325,7 @@ export class MySceneGraph {
                 }
 
 
-                if(this.views[id] != null) {
+                if (this.views[id] != null) {
                     this.onXMLMinorError("View with id " + id + " already exists");
                     return "View with id " + id + " already exists";
                 }
@@ -338,7 +333,7 @@ export class MySceneGraph {
             }
         }
 
-        if(this.views[this.defaultView] == null) {
+        if (this.views[this.defaultView] == null) {
             this.onXMLMinorError("Default view not found");
             return "Default view not found";
         }
@@ -427,7 +422,7 @@ export class MySceneGraph {
             switch (children[i].nodeName) {
                 case "omni":
                     attributeNames.push(...["location", "ambient", "diffuse", "specular", "attenuation"]);
-                    attributeTypes.push(...["position", "color", "color", "color", "attenuation"]);
+                    attributeTypes.push(...["omni_position", "color", "color", "color", "attenuation"]);
                     break;
                 case "spot":
                     attributeNames.push(...["location", "target", "ambient", "diffuse", "specular", "attenuation"]);
@@ -470,6 +465,7 @@ export class MySceneGraph {
             for (var j = 0; j < attributeNames.length; j++) {
                 var attributeIndex = nodeNames.indexOf(attributeNames[j]);
                 console.log("attri" + attributeTypes[j]);
+                console.log(attributeNames)
                 if (attributeIndex != -1) {
                     if (attributeTypes[j] == "position") {
                         var aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
@@ -984,7 +980,8 @@ export class MySceneGraph {
                - M/m should be perpetuated to every node
             */
 
-            let success = true, string = "";
+            let success = true,
+                string = "";
             console.log("PARSING MATERIALS: " + componentID);
             console.log(grandChildren[materialsIndex]);
             [success, string] = this.parseMaterialNode(grandChildren[materialsIndex], component);
@@ -1034,12 +1031,12 @@ export class MySceneGraph {
         // created in the loop above
         for (let compId in grandGrandChildren) //<component> id
             for (let childComp of grandGrandChildren[compId]) { //<componentref> ids
-                let childCompObj = this.components.find(comp => comp.id === childComp);
-                // console.log("Adding child " + childCompObj + " to " + compId);
-                // add the component object (parsed in the loop above) to the parent component
-                // TODO: check here for recursive component connections?
-                this.components.find(comp => comp.id === compId).addChild(childCompObj);
-            }
+            let childCompObj = this.components.find(comp => comp.id === childComp);
+            // console.log("Adding child " + childCompObj + " to " + compId);
+            // add the component object (parsed in the loop above) to the parent component
+            // TODO: check here for recursive component connections?
+            this.components.find(comp => comp.id === compId).addChild(childCompObj);
+        }
     }
 
     parseMaterialNode(materials_tag, component) {
