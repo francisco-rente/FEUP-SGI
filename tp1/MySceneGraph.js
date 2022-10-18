@@ -416,7 +416,7 @@ export class MySceneGraph {
                     break;
                 case "spot":
                     attributeNames.push(...["location", "target", "ambient", "diffuse", "specular", "attenuation"]);
-                    attributeTypes.push(...["position", "position", "color", "color", "color", "attenuation"]);
+                    attributeTypes.push(...["position", "target", "color", "color", "color", "attenuation"]);
                     break;
                 default:
                     this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
@@ -459,7 +459,12 @@ export class MySceneGraph {
                         const aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
                         global.push(aux);
-                    } else if (attributeTypes[j] === "color") {
+                    } else if(attributeTypes[j] === "target") {
+                        const aux = this.parseCoordinates3D(grandChildren[attributeIndex], "light target for ID" + lightId);
+                        if (!Array.isArray(aux)) return aux;
+                        global.push(aux);
+                    }
+                    else if (attributeTypes[j] === "color") {
                         const aux = this.parseColor(grandChildren[attributeIndex], attributeNames[j] + " illumination for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
                         global.push(aux);

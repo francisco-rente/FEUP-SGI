@@ -124,7 +124,7 @@ export class XMLscene extends CGFscene {
                 }
 
                 this.lights[i].setVisible(true);
-                if (light[0] === 1) this.lights[i].enable(); // TODO: check this, without === all are enabled
+                if (light[0]) this.lights[i].enable(); // TODO: check this, without === all are enabled
                 else this.lights[i].disable();
 
                 this.lights[i].update();

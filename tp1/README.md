@@ -33,7 +33,7 @@ ids in the tree, missing attributes), terminating the program if they are not me
 - Other, more specific error conditions that could develop into runtime errors or problems
 were also in place (e.g. recursive component references, invalid references, invalid primitive definitions - degenerate triangles etc.)
 - If an error from a definition does not corrupt the overall scene, the program will continue to run,
-but an alert will appear (e.g. lenght_s/t defined for an inherit/none texture). 
+but an alert will appear (e.g. lenght_s/t defined for an inherit/none texture, or multiple attenuation's components set to 1.0). 
 - For the appearance and texture updates we opted to use two stacks to keep track of components' information
 (operations are much simpler to understand, and to include since they resemble transformations).
 - For the GUI we included the obligatory buttons and three others for scene debugging and technical analysis (show/hide axis, light visibility, show/hide normals).
