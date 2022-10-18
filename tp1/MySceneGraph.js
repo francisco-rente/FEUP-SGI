@@ -253,7 +253,7 @@ export class MySceneGraph {
             </perspective>
     */
 
-    parsePerspective(perspectiveNode, id, {near, far}) {
+    parsePerspective(perspectiveNode, id, { near, far }) {
         //TODO: error handling
         const angle = this.reader.getFloat(perspectiveNode, 'angle');
 
@@ -280,7 +280,7 @@ export class MySceneGraph {
     </ortho>*/
 
 
-    parseOrthoCamera(orthoNode, id, {near, far}) {
+    parseOrthoCamera(orthoNode, id, { near, far }) {
         const left = this.reader.getFloat(orthoNode, 'left');
         const right = this.reader.getFloat(orthoNode, 'right');
         const top = this.reader.getFloat(orthoNode, 'top');
@@ -336,8 +336,8 @@ export class MySceneGraph {
             if (!(far != null && !isNaN(far))) return "unable to parse far of the view for ID " + id;
 
             const [success, value] = child.nodeName === "perspective" ?
-                this.parsePerspective(child, id, {near, far}) :
-                this.parseOrthoCamera(child, id, {near, far});
+                this.parsePerspective(child, id, { near, far }) :
+                this.parseOrthoCamera(child, id, { near, far });
 
             if (!success) return value;
             this.views[id] = value;
@@ -459,12 +459,11 @@ export class MySceneGraph {
                         const aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
                         global.push(aux);
-                    } else if(attributeTypes[j] === "target") {
+                    } else if (attributeTypes[j] === "target") {
                         const aux = this.parseCoordinates3D(grandChildren[attributeIndex], "light target for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
                         global.push(aux);
-                    }
-                    else if (attributeTypes[j] === "color") {
+                    } else if (attributeTypes[j] === "color") {
                         const aux = this.parseColor(grandChildren[attributeIndex], attributeNames[j] + " illumination for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
                         global.push(aux);
@@ -962,7 +961,8 @@ export class MySceneGraph {
                - M/m should be perpetuated to every node
             */
 
-            let success = true, string = "";
+            let success = true,
+                string = "";
             console.log("PARSING MATERIALS: " + componentID);
             // console.log(grandChildren[materialsIndex]);
             [success, string] = this.parseMaterialNode(grandChildren[materialsIndex], component);
@@ -1014,9 +1014,9 @@ export class MySceneGraph {
 
                 compObj.addChild(childCompObj);
             }
-        // console.log("Adding child " + childCompObj + " to " + compId);
-        // add the component object (parsed in the loop above) to the parent component
-        // TODO: check here for recursive component connections?
+            // console.log("Adding child " + childCompObj + " to " + compId);
+            // add the component object (parsed in the loop above) to the parent component
+            // TODO: check here for recursive component connections?
 
     }
 
@@ -1123,7 +1123,7 @@ export class MySceneGraph {
      * @param {message to be displayed in case of error} messageError
      */
     parseCoordinates4D(node, messageError) {
-        let  position = [];
+        let position = [];
 
         //Get x, y, z
         position = this.parseCoordinates3D(node, messageError);
@@ -1204,18 +1204,8 @@ export class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        //To do: Create display loop for traversing the scene graph
-        // console.log(this.idRoot)
-
-        //console.log(this.components.find(comp => comp.id === this.idRoot))
         this.components.find(comp => comp.id === this.idRoot).display();
         //To test the parsing/creation of the primitives, call the display function directly
-
-        //this.primitives['demoRectangle'].display();
-        // this.primitives['aSphere'].display();
-        //this.primitives['aCylinder'].display();
-        //this.primitives['aTriangle'].display();
-        //this.primitives['aTorus'].display();
     }
 
 

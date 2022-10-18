@@ -15,8 +15,9 @@
 
 - Our scene portrays a camping scenario deep in the forest, composed by trees, a tent and a campfire.
 - [Scene](tp1/scenes/SGI_TP1_XML_T01_G03_v01.xml)
+- To create the tent we used rectamgles and triangles.
 - For the trees we chose to use cylinders for the trunks and cones (and a sphere) for the leaves. 
-- For the campfire, a torus was used to represent the rocks used to contain the fire,
+- When it comes to the campfire, a torus was used to represent the rocks used to contain the fire,
   and a cylinder was used to represent the fire itself.
 - The floor and the skybox are squares/rectangles scaled up. 
 - We tried to structure our scene in a way that it would be easy to increment its complexity,
