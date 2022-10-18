@@ -29,10 +29,18 @@ export class MyInterface extends CGFinterface {
     }
 
     updateInterface() {
+        this.commandGUI();
         this.lightGUI();
         this.viewGUI();
     }
 
+
+    commandGUI() {
+        let commandFolder = this.gui.addFolder("CommandControl");
+        commandFolder.add(this.scene, 'displayAxis').name("Display Axis");
+        commandFolder.add(this.scene, 'visibleLights').name("Display Lights");
+        commandFolder.open();
+    }
 
     viewGUI() {
         let viewFolder = this.gui.addFolder("ViewControl");

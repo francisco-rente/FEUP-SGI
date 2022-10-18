@@ -39,7 +39,11 @@ export class XMLscene extends CGFscene {
         this.gl.enable(this.gl.CULL_FACE);
         this.gl.depthFunc(this.gl.LEQUAL);
 
+
+        this.displayAxis = false;
         this.axis = new CGFaxis(this);
+
+        this.visibleLights = true;
         this.setUpdatePeriod(100);
     }
 
@@ -212,10 +216,10 @@ export class XMLscene extends CGFscene {
         this.applyViewMatrix();
 
         this.pushMatrix();
-        this.axis.display();
+        if(this.displayAxis) this.axis.display();
 
         for (var i = 0; i < this.lights.length; i++) {
-            // this.lights[i].setVisible(true);
+            this.lights[i].setVisible(this.visibleLights);
             this.lights[i].update();
         }
 
@@ -236,7 +240,9 @@ export class XMLscene extends CGFscene {
     checkKeys() {
         if (this.gui.isKeyPressed("KeyM")) {
             console.log("Key M pressed");
-            ++this.appearence_index;
+            // prevent overflow of the index
+            this.appearence_index = (Number.MAX_SAFE_INTEGER === this.appearence_index)
+                ? 0 : this.appearence_index + 1;
         }
     }
 

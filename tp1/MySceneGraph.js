@@ -422,7 +422,7 @@ export class MySceneGraph {
             switch (children[i].nodeName) {
                 case "omni":
                     attributeNames.push(...["location", "ambient", "diffuse", "specular", "attenuation"]);
-                    attributeTypes.push(...["omni_position", "color", "color", "color", "attenuation"]);
+                    attributeTypes.push(...["position", "color", "color", "color", "attenuation"]);
                     break;
                 case "spot":
                     attributeNames.push(...["location", "target", "ambient", "diffuse", "specular", "attenuation"]);
@@ -896,8 +896,6 @@ export class MySceneGraph {
 
                 this.primitives[primitiveId] = triangle;
                 console.log("triangle added to primitives" + primitiveId);
-            } else {
-                console.warn("To do: Parse other primitives.");
             }
         }
         this.log("Parsed primitives");
@@ -947,7 +945,6 @@ export class MySceneGraph {
             const childrenIndex = nodeNames.indexOf("children");
 
             let component = new MyComponent(this.scene, componentID);
-            this.onXMLMinorError("To do: Parse components.");
             // Transformations
 
             let matrix = mat4.create();
