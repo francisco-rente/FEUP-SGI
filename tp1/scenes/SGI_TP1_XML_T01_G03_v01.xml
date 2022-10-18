@@ -12,15 +12,6 @@
             <to x="-10" y="2" z="-5"/>
         </perspective>
 
-
-        <!--    * @param left   Number Farthest left on the x-axis
-                * @param right  Number Farthest right on the x-axis
-                * @param bottom Number Farthest down on the y-axis
-                * @param top    Number Farthest up on the y-axis
-                * @param near   Number Distance to the near clipping plane along the -Z axis
-                * @param far    Number Distance to the far clipping plane along the -Z axis-->
-
-
         <ortho id="upperOrthoView" near="5" far="50" left="-10" right="10" top="20" bottom="-10">
             <from x="0" y="20" z="0"/>
             <to x="0" y="6" z="0"/>
@@ -62,7 +53,6 @@
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0"/>
             <specular r="1.0" g="1.0" b="1.0" a="1.0"/>
             <attenuation constant="1.0" linear="0.0" quadratic="0.0"/>
-
         </spot>
     </lights>
 
@@ -101,6 +91,12 @@
             <specular r="1.0" g="0.30" b="0.0" a="0.0"/>
         </material>
 
+        <material id="aurora" shininess="10">
+            <emission r="0.0" g="0.30" b="1.0" a="1.0"/>
+            <ambient r="0.0" g="0.64" b="0.9" a="0.0"/>
+            <diffuse r="0.0" g="0.30" b="1.0" a="0.0"/>
+            <specular r="0.0" g="0.30" b="1.0" a="0.5"/>
+        </material>
 
     </materials>
 
@@ -133,6 +129,15 @@
 
         <transformation id="tentSwapSide">
             <rotate axis="y" angle="180"/>
+        </transformation>
+
+
+        <transformation id="scaleSkyBox">
+            <scale x="15" y="15" z="15"/>
+        </transformation>
+
+        <transformation id="moveSkyBox">
+            <scale x="0" y="30" z="0"/>
         </transformation>
 
     </transformations>
@@ -216,10 +221,11 @@
             <transformation>
                 <translate x="0" y="60" z="0"/>
                 <rotate axis="x" angle="90"/>
-                <scale x="15" y="15" z="15"/>
+                <transformationref id="scaleSkyBox"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
+                <material id="aurora"/>
             </materials>
             <texture id="sky" length_t="1.0" length_s="1.0"/>
             <children>
@@ -230,7 +236,7 @@
         <component id="skyBoxSide1">
             <transformation>
                 <translate x="0" y="30" z="-30"/>
-                <scale x="15" y="15" z="15"/>
+                <transformationref id="scaleSkyBox"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -246,7 +252,7 @@
             <transformation>
                 <translate x="0" y="30" z="30"/>
                 <rotate axis="y" angle="180"/>
-                <scale x="15" y="15" z="15"/>
+                <transformationref id="scaleSkyBox"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -261,7 +267,7 @@
             <transformation>
                 <translate x="30" y="30" z="0"/>
                 <rotate axis="y" angle="-90"/>
-                <scale x="15" y="15" z="15"/>
+                <transformationref id="scaleSkyBox"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -276,7 +282,7 @@
             <transformation>
                 <translate x="-30" y="30" z="0"/>
                 <rotate axis="y" angle="90"/>
-                <scale x="15" y="15" z="15"/>
+                <transformationref id="scaleSkyBox"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
