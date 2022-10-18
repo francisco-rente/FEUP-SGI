@@ -770,17 +770,17 @@ export class MySceneGraph {
             } else if (primitiveType == 'sphere') {
                 //radius
                 var radius = this.reader.getFloat(grandChildren[0], 'radius');
-                if (!(radius != null && !isNaN(radius) && radius != 0))
+                if (!(radius != null && !isNaN(radius) && radius > 0))
                     return "unable to parse radius of the primitive coordinates for ID = " + primitiveId;
 
                 //slices
                 var slices = this.reader.getFloat(grandChildren[0], 'slices');
-                if (!(slices != null && !isNaN(slices) && slices != 0))
+                if (!(slices != null && !isNaN(slices) && slices > 0))
                     return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
                 //stacks
                 var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
-                if (!(stacks != null && !isNaN(stacks) && stacks != 0))
+                if (!(stacks != null && !isNaN(stacks) && stacks > 0))
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
 
                 var sphere = new MySphere(this.scene, primitiveId, radius, slices, stacks);
@@ -790,27 +790,27 @@ export class MySceneGraph {
             } else if (primitiveType == 'cylinder') {
                 //base
                 var base = this.reader.getFloat(grandChildren[0], 'base');
-                if (!(base != null && !isNaN(base) && base != 0))
+                if (!(base != null && !isNaN(base) && base > 0))
                     return "unable to parse base of the primitive coordinates for ID = " + primitiveId;
 
                 //top
                 var top = this.reader.getFloat(grandChildren[0], 'top');
-                if (!(top != null && !isNaN(top) && top != 0))
+                if (!(top != null && !isNaN(top) && top > 0))
                     return "unable to parse top of the primitive coordinates for ID = " + primitiveId;
 
                 //height
                 var height = this.reader.getFloat(grandChildren[0], 'height');
-                if (!(height != null && !isNaN(height) && height != 0))
+                if (!(height != null && !isNaN(height) && height > 0))
                     return "unable to parse height of the primitive coordinates for ID = " + primitiveId;
 
                 //slices
-                var slices = this.reader.getInteger(grandChildren[0], 'slices');
-                if (!(slices != null && !isNaN(slices) && slices != 0))
+                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                if (!(slices != null && !isNaN(slices) && slices > 0))
                     return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
                 //stacks
-                var stacks = this.reader.getInteger(grandChildren[0], 'stacks');
-                if (!(stacks != null && !isNaN(stacks) && stacks != 0))
+                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                if (!(stacks != null && !isNaN(stacks) && stacks >0 ))
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
 
 
@@ -821,22 +821,22 @@ export class MySceneGraph {
             } else if (primitiveType == 'torus') {
                 //inner
                 var inner = this.reader.getFloat(grandChildren[0], 'inner');
-                if (!(inner != null && !isNaN(inner) && inner != 0))
+                if (!(inner != null && !isNaN(inner) && inner > 0))
                     return "unable to parse inner of the primitive coordinates for ID = " + primitiveId;
 
                 //outer
                 var outer = this.reader.getFloat(grandChildren[0], 'outer');
-                if (!(outer != null && !isNaN(outer) && outer != 0))
+                if (!(outer != null && !isNaN(outer) && outer > 0))
                     return "unable to parse outer of the primitive coordinates for ID = " + primitiveId;
 
                 //slices
                 var slices = this.reader.getInteger(grandChildren[0], 'slices');
-                if (!(slices != null && !isNaN(slices) && slices != 0))
+                if (!(slices != null && !isNaN(slices) && slices > 0))
                     return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
                 //loops
                 var loops = this.reader.getFloat(grandChildren[0], 'loops');
-                if (!(loops != null && !isNaN(loops) && loops != 0))
+                if (!(loops != null && !isNaN(loops) && loops > 0))
                     return "unable to parse loops of the primitive coordinates for ID = " + primitiveId;
 
                 var torus = new MyTorus(this.scene, primitiveId, inner, outer, slices, loops)
@@ -938,6 +938,8 @@ export class MySceneGraph {
 
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
+                    if(transformationID == null || !this.transformations[transformationID])
+                        return "unable to parse transformationref of the component for ID = " + componentID;
                     mat4.multiply(matrix, matrix, this.transformations[transformationID])
                 } else {
                     let copied = mat4.clone(matrix);
@@ -947,19 +949,9 @@ export class MySceneGraph {
 
             }
 
-
             // console.log("matrix: " + matrix + " componentID: " + componentID);
             component.transformation = matrix;
 
-
-            // Materials
-            /*
-               - mandatory material declaration
-               - inherit -> inherits parents material
-               - if multiple declared, default is the first one
-               - when multiple declared, when M/m is pressed it cycles through them
-               - M/m should be perpetuated to every node
-            */
 
             let success = true,
                 string = "";
@@ -1039,8 +1031,6 @@ export class MySceneGraph {
                     if (!this.materials[materialID]) return [false, "Material " + materialID + " not found"];
                     component.addMaterial(this.materials[materialID])
                 }
-
-                console.log("materialID: " + materialID + "for " + component.id);
             } else return [false, "Unknown tag <" + material.nodeName + ">"];
         }
         return [true, null];
@@ -1062,7 +1052,7 @@ export class MySceneGraph {
             length_t = this.reader.getFloat(texture_info, 'length_t');
 
             this.log("length_s: " + length_s + " length_t: " + length_t);
-            if (0 > length_s > 1 && 0 > length_t > 1)
+            if (length_t <= 0 || length_s <= 0 || length_t == null || length_s == null)
                 return [false, "Texture length_s and length_t must be between 0 and 1"];
         }
 

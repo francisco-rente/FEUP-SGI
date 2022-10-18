@@ -12,8 +12,8 @@ import { CGFobject } from '../../lib/CGF.js';
 export class MyCylinder extends CGFobject {
 	constructor(scene, id, base, top, height, slices, stacks) {
 		super(scene);
-		this.slices = Math.round(slices);
-		this.stacks = Math.round(stacks);
+		this.slices = Math.ceil(slices);
+		this.stacks = Math.ceil(stacks);
 		this.height = height;
 		this.base = base;
 		this.top = top;

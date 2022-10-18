@@ -29,7 +29,7 @@
 ### Technical information
 
 - Parsing encompasses all the rules given by the project statement and extra rules were added for violations. 
-- Restrictions were set in place for the sxs grammar (e.g. at least a perspective/transformation, positive values for certain attributes,
+- Restrictions were set in place for the sxs grammar (e.g. at least a perspective/transformation, correct values for certain attributes - positive stack number,
 ids in the tree, missing attributes), terminating the program if they are not met.
 - Other, more specific error conditions that could develop into runtime errors or problems
 were also in place (e.g. recursive component references, invalid references, invalid primitive definitions - degenerate triangles etc.)
@@ -51,8 +51,8 @@ We found this [link](https://gamedev.stackexchange.com/questions/197931/how-can-
 - Memory consumption from the CGF cloning. In order to reuse the Appearence added previously, we need to ensure its immutability,
 for inherit scenarios and recursive path, so a "cloning" step (creating a new CGFApearance with the same attributes) is necessary.
 - Problems arose when trying to implement texture inheritance with appearence.apply(). 
-Since we couldn't maintain a record of the textures already applied and the JS language works with references/pointers,
-so the textures in each appearance were often set to null or rewritten, but we managed to solve them using two stacks.
+Since we couldn't maintain a record of the textures already applied and the JS language works with references/pointers, 
+the textures in each appearance were often set to null or rewritten, but we managed to solve them using two stacks.
 A solution could be to forcibly add an inner stack into the CGFappearance class, but we didn't want to modify the CGF code.
 - KeyM: latency of response when pressing keys.
 
