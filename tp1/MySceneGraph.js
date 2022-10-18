@@ -668,7 +668,7 @@ export class MySceneGraph {
                 break;
             case 'scale':
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
-                console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
+                // console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
                 //mat4.fromScaling(transfMatrix, coordinates);
                 mat4.scale(transfMatrix, transfMatrix, coordinates);
                 break;
@@ -678,9 +678,9 @@ export class MySceneGraph {
                     return transformation_tag;
                 let angle = this.reader.getFloat(transformation_tag, 'angle');
                 angle = DEGREE_TO_RAD * angle;
-                console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
+                // console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
                 // mat4.fromRotation(transfMatrix, angle, axis);
-                console.log(transfMatrix);
+                // console.log(transfMatrix);
                 switch (axis) {
                     case 'x':
                         mat4.rotateX(transfMatrix, transfMatrix, angle);
@@ -881,7 +881,7 @@ export class MySceneGraph {
                 let triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]);
 
                 this.primitives[primitiveId] = triangle;
-                console.log("triangle added to primitives" + primitiveId);
+                // console.log("triangle added to primitives" + primitiveId);
             }
         }
         this.log("Parsed primitives");
@@ -949,7 +949,7 @@ export class MySceneGraph {
             }
 
 
-            console.log("matrix: " + matrix + " componentID: " + componentID);
+            // console.log("matrix: " + matrix + " componentID: " + componentID);
             component.transformation = matrix;
 
 
@@ -964,7 +964,7 @@ export class MySceneGraph {
 
             let success = true, string = "";
             console.log("PARSING MATERIALS: " + componentID);
-            console.log(grandChildren[materialsIndex]);
+            // console.log(grandChildren[materialsIndex]);
             [success, string] = this.parseMaterialNode(grandChildren[materialsIndex], component);
             if (!success) return string;
 
@@ -1123,7 +1123,7 @@ export class MySceneGraph {
      * @param {message to be displayed in case of error} messageError
      */
     parseCoordinates4D(node, messageError) {
-        var position = [];
+        let  position = [];
 
         //Get x, y, z
         position = this.parseCoordinates3D(node, messageError);
