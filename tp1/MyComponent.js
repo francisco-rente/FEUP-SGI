@@ -29,6 +29,8 @@ export class MyComponent extends CGFobject {
 
         for (const primitive of this._primitives) {
             primitive.updateTexCoords(this._texture_coord);
+            if (this.scene.activeNormals) primitive.enableNormalViz();
+            else primitive.disableNormalViz();
             primitive.display();
         }
         for (let child of this._children) {
@@ -49,7 +51,6 @@ export class MyComponent extends CGFobject {
     }
 
     sendAppearanceToScene() {
-
         const texture = this.getTextureToApply();
         let appearance;
 
@@ -59,7 +60,6 @@ export class MyComponent extends CGFobject {
         else if (this._materials[0] === "inherit") appearance = this._scene.getAppearanceStackTop();
         else appearance = this._materials[this.scene.appearence_index % this._materials.length];
 
-        //console.log("setting texture to " + texture);
         appearance.setTexture(texture);
         appearance.setTextureWrap('REPEAT', 'REPEAT');
         this._scene.pushAppearance(appearance);
@@ -68,14 +68,6 @@ export class MyComponent extends CGFobject {
 
 
     getTextureToApply() {
-        /*switch (this.texture) {
-            case "none":
-                return null;
-            case "inherit":
-                return this._scene.getTopTexture().texture; //TODO: reevaluate cloning of the top
-            default:
-                return this.texture;
-        }*/
         return this._scene.getTopTexture();
     }
 

@@ -1,10 +1,10 @@
-import {CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader} from '../lib/CGF.js';
-import {MyRectangle} from './primitives/MyRectangle.js';
-import {MySphere} from './primitives/MySphere.js';
-import {MyCylinder} from './primitives/MyCylinder.js';
-import {MyTorus} from "./primitives/MyTorus.js";
-import {MyTriangle} from "./primitives/MyTriangle.js";
-import {MyComponent} from "./MyComponent.js";
+import { CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader } from '../lib/CGF.js';
+import { MyRectangle } from './primitives/MyRectangle.js';
+import { MySphere } from './primitives/MySphere.js';
+import { MyCylinder } from './primitives/MyCylinder.js';
+import { MyTorus } from "./primitives/MyTorus.js";
+import { MyTriangle } from "./primitives/MyTriangle.js";
+import { MyComponent } from "./MyComponent.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -245,121 +245,106 @@ export class MySceneGraph {
         return null;
     }
 
+
+    /*
+            <perspective id="ss" near="ff" far="ff" angle="ff">
+            <from x="ff" y="ff" z="ff" />
+            <to x="ff" y="ff" z="ff" />
+            </perspective>
+    */
+
+    parsePerspective(perspectiveNode, id, { near, far }) {
+        //TODO: error handling
+        const angle = this.reader.getFloat(perspectiveNode, 'angle');
+
+        let from = null;
+        let to = null;
+
+        for (const grandChild of perspectiveNode.children) {
+            if (grandChild.nodeName === "from") from = this.parseCoordinates3D(grandChild, "from");
+            else if (grandChild.nodeName === "to") to = this.parseCoordinates3D(grandChild, "to");
+            else this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
+        }
+
+        if (from == null || to == null || typeof from === 'string' || typeof to === 'string') {
+            this.onXMLMinorError("Error parsing perspective view");
+            return [false, "Missing from/to in perspective view"];
+        }
+        return [true, new CGFcamera(angle * DEGREE_TO_RAD, near, far, from, to)];
+    }
+
+    /*<ortho id="ss"  near="ff" far="ff" left="ff" right="ff" top="ff" bottom="ff" >
+    <from x="ff" y="ff" z="ff" />
+    <to x="ff" y="ff" z="ff" />
+    <up x="ff" y="ff" z="ff" /> <!-- opcional, default 0,1,0 -->
+    </ortho>*/
+
+
+    parseOrthoCamera(orthoNode, id, { near, far }) {
+        const left = this.reader.getFloat(orthoNode, 'left');
+        const right = this.reader.getFloat(orthoNode, 'right');
+        const top = this.reader.getFloat(orthoNode, 'top');
+        const bottom = this.reader.getFloat(orthoNode, 'bottom');
+
+        let from = null;
+        let to = null;
+        let up = null;
+
+        for (const grandChild of orthoNode.children) {
+            if (grandChild.nodeName === "from") from = this.parseCoordinates3D(grandChild, "from");
+            else if (grandChild.nodeName === "to") to = this.parseCoordinates3D(grandChild, "to");
+            else if (grandChild.nodeName === "up") up = this.parseCoordinates3D(grandChild, "up");
+            else this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
+        }
+
+        if (from == null || to == null || typeof from === 'string' || typeof to === 'string') {
+            this.onXMLMinorError("Error parsing perspective view");
+            return "Missing from/to in perspective view";
+        }
+
+        if (typeof up === "string" || up === null) {
+            this.onXMLMinorError("up not found, using default value (0, 1, 0)");
+            up = vec3.fromValues(0, 1, 0);
+        }
+        return [true, new CGFcameraOrtho(left, right, bottom, top, near, far, from, to, up)];
+    }
+
     /**
      * Parses the <views> block.
      * @param {view block element} viewsNode
      */
     parseView(viewsNode) {
-        this.onXMLMinorError("To do: Parse views and create cameras.");
         this.defaultView = this.reader.getString(viewsNode, 'default');
         this.views = {};
         const children = viewsNode.children;
 
+        if (children.length === 0) return "No views defined";
 
-        console.log("Parsing views");
-
-        // var constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
-        // var aux = this.parseCoordinates3D(grandChildren[targetIndex], "target light for ID " + lightId);
         for (const child of children) {
+            if (child.nodeName !== "perspective" && child.nodeName !== "ortho")
+                return "Unknown view tag <" + child.nodeName + ">.";
+
             const id = this.reader.getString(child, 'id');
+            if (id == null) return "no id defined for view";
+
+            if (this.views[id] != null) return "View with id " + id + " already exists";
+
             const near = this.reader.getFloat(child, 'near');
+            if (!(near != null && !isNaN(near))) return "unable to parse near of the view for ID " + id;
+
             const far = this.reader.getFloat(child, 'far');
+            if (!(far != null && !isNaN(far))) return "unable to parse far of the view for ID " + id;
 
-            if (child.nodeName === "perspective") {
-                //TODO: error handling
-                const angle = this.reader.getFloat(child, 'angle');
+            const [success, value] = child.nodeName === "perspective" ?
+                this.parsePerspective(child, id, { near, far }) :
+                this.parseOrthoCamera(child, id, { near, far });
 
-                let from = null;
-                let to = null;
-
-                for (const grandChild of child.children) {
-                    if (grandChild.nodeName === "from") {
-                        from = this.parseCoordinates3D(grandChild, "from");
-                    }
-                    else if (grandChild.nodeName === "to") {
-                        to = this.parseCoordinates3D(grandChild, "to");
-                    }
-                    else {
-                        this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
-                    }
-                }
-
-                if(from == null || to == null || typeof from === 'string' || typeof to === 'string')  {
-                    this.onXMLMinorError("Error parsing perspective view");
-                    return "Missing from/to in perspective view";
-                }
-                if(this.views[id] != null) {
-                    this.onXMLMinorError("View with id " + id + " already exists");
-                    return "View with id " + id + " already exists";
-                }
-                this.views[id] = new CGFcamera(angle * DEGREE_TO_RAD, near, far, from, to);
-
-            } else if (child.nodeName === "ortho") {
-                const left = this.reader.getFloat(child, 'left');
-                const right = this.reader.getFloat(child, 'right');
-                const top = this.reader.getFloat(child, 'top');
-                const bottom = this.reader.getFloat(child, 'bottom');
-
-                let from = null;
-                let to = null;
-                let up = null;
-
-                for (const grandChild of child.children) {
-                    if (grandChild.nodeName === "from") {
-                        from = this.parseCoordinates3D(grandChild, "from");
-                    }
-                    else if (grandChild.nodeName === "to") {
-                        to = this.parseCoordinates3D(grandChild, "to");
-                    }
-                    else if (grandChild.nodeName === "up") {
-                        up = this.parseCoordinates3D(grandChild, "up");
-                    }
-                    else {
-                        this.onXMLMinorError("Unknown tag <" + grandChild.nodeName + ">.");
-                    }
-                }
-
-                if(from == null || to == null || typeof from === 'string' || typeof to === 'string')  {
-                    this.onXMLMinorError("Error parsing perspective view");
-                    return "Missing from/to in perspective view";
-                }
-
-                if (typeof up === "string" || up === null) {
-                    this.onXMLMinorError("up not found using default value (0, 1, 0)");
-                    up = vec3.fromValues(0, 1, 0);
-                }
-
-
-                if(this.views[id] != null) {
-                    this.onXMLMinorError("View with id " + id + " already exists");
-                    return "View with id " + id + " already exists";
-                }
-                this.views[id] = (new CGFcameraOrtho(left, right, bottom, top, near, far, from, to, up));
-            }
+            if (!success) return value;
+            this.views[id] = value;
         }
 
-        if(this.views[this.defaultView] == null) {
-            this.onXMLMinorError("Default view not found");
-            return "Default view not found";
-        }
+        if (this.views[this.defaultView] == null) return "Default view not found";
 
-
-        /*<views default="ss" >
-            <!-- tem de existir, pelo menos, uma vista de -->
-            <!-- entre as seguintes (perspective ou ortho) -->
-            <perspective id="ss" near="ff" far="ff" angle="ff">
-                <from x="ff" y="ff" z="ff" />
-                <to x="ff" y="ff" z="ff" />
-            </perspective>
-
-
-
-            <ortho id="ss"  near="ff" far="ff" left="ff" right="ff" top="ff" bottom="ff" >
-                <from x="ff" y="ff" z="ff" />
-                <to x="ff" y="ff" z="ff" />
-                <up x="ff" y="ff" z="ff" /> <!-- opcional, default 0,1,0 -->
-            </ortho>
-        </views>*/
         console.log("Parsed views");
 
         return null;
@@ -431,7 +416,7 @@ export class MySceneGraph {
                     break;
                 case "spot":
                     attributeNames.push(...["location", "target", "ambient", "diffuse", "specular", "attenuation"]);
-                    attributeTypes.push(...["position", "position", "color", "color", "color", "attenuation"]);
+                    attributeTypes.push(...["position", "target", "color", "color", "color", "attenuation"]);
                     break;
                 default:
                     this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
@@ -469,46 +454,53 @@ export class MySceneGraph {
 
             for (var j = 0; j < attributeNames.length; j++) {
                 var attributeIndex = nodeNames.indexOf(attributeNames[j]);
-                console.log("attri" + attributeTypes[j]);
-                if (attributeIndex != -1) {
-                    if (attributeTypes[j] == "position") {
-                        var aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
+                if (attributeIndex !== -1) {
+                    if (attributeTypes[j] === "position") {
+                        const aux = this.parseCoordinates4D(grandChildren[attributeIndex], "light position for ID" + lightId);
+                        if (!Array.isArray(aux)) return aux;
                         global.push(aux);
-                    } else if (attributeTypes[j] == "color") {
-                        var aux = this.parseColor(grandChildren[attributeIndex], attributeNames[j] + " illumination for ID" + lightId);
+                    } else if (attributeTypes[j] === "target") {
+                        const aux = this.parseCoordinates3D(grandChildren[attributeIndex], "light target for ID" + lightId);
+                        if (!Array.isArray(aux)) return aux;
+                        global.push(aux);
+                    } else if (attributeTypes[j] === "color") {
+                        const aux = this.parseColor(grandChildren[attributeIndex], attributeNames[j] + " illumination for ID" + lightId);
                         if (!Array.isArray(aux)) return aux;
                         global.push(aux);
                     }
                     // <attenuation constant="ff" linear="ff" quadratic="ff" />  
                     else if (attributeTypes[j] === "attenuation") {
-                        var constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
-                        if (!(constant != null && !isNaN(constant))) return "unable to parse constant-coordinate of the " + messageError;
-                        var linear = this.reader.getFloat(grandChildren[attributeIndex], 'linear');
-                        if (!(linear != null && !isNaN(linear))) return "unable to parse constant-coordinate of the " + messageError;
-                        var quadratic = this.reader.getFloat(grandChildren[attributeIndex], 'quadratic');
-                        if (!(quadratic != null && !isNaN(quadratic))) return "unable to parse constant-coordinate of the " + messageError;
-                        // TODO: has to be greater than 0
-                        if (constant + linear + quadratic === 1.0)
-                            global.push([constant, linear, quadratic])
-                        else
-                            this.onXMLMinorError("Only one attenuation component should be set to 1.0");
-                        global.push([1.0, 0.0, 0.0])
+                        const constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
+                        if (!(constant != null && !isNaN(constant)) && constant < 0)
+                            return "unable to parse constant of the attenuation for ID " + lightId;
+                        const linear = this.reader.getFloat(grandChildren[attributeIndex], 'linear');
+                        if (!(linear != null && !isNaN(linear)) && linear < 0)
+                            return "unable to parse linear of the attenuation for ID " + lightId;
+                        const quadratic = this.reader.getFloat(grandChildren[attributeIndex], 'quadratic');
+                        if (!(quadratic != null && !isNaN(quadratic)) && linear < 0)
+                            return "unable to parse quadratic of the attenuation for ID " + lightId;
+
+                        if (constant + linear + quadratic === 1.0) global.push([constant, linear, quadratic])
+                        else {
+                            this.onXMLMinorError("Only one attenuation component should be set to 1.0, setting constant to 1.0");
+                            global.push([1.0, 0.0, 0.0]);
+                        }
                     }
                 } else
                     return "light " + attributeNames[j] + " undefined for ID = " + lightId;
             }
 
             // Gets the additional attributes of the spotlight
-            if (children[i].nodeName == "spot") {
-                var angle = this.reader.getFloat(children[i], 'angle');
+            if (children[i].nodeName === "spot") {
+                const angle = this.reader.getFloat(children[i], 'angle');
                 if (!(angle != null && !isNaN(angle)))
                     return "unable to parse angle of the light for ID = " + lightId;
 
-                var exponent = this.reader.getFloat(children[i], 'exponent');
+                const exponent = this.reader.getFloat(children[i], 'exponent');
                 if (!(exponent != null && !isNaN(exponent)))
                     return "unable to parse exponent of the light for ID = " + lightId;
 
-                var targetIndex = nodeNames.indexOf("target");
+                const targetIndex = nodeNames.indexOf("target");
 
                 // Retrieves the light target.
                 var targetLight = [];
@@ -518,25 +510,18 @@ export class MySceneGraph {
                         return aux;
 
                     targetLight = aux;
-                } else
-                    return "light target undefined for ID = " + lightId;
+                } else return "light target undefined for ID = " + lightId;
 
                 global.push(...[angle, exponent, targetLight])
             }
 
             this.lights[lightId] = global;
-            console.log(this.lights[lightId]);
-
             numLights++;
         }
-
-        console.log(this.lights);
         if (numLights == 0)
             return "at least one light must be defined";
         else if (numLights > 8)
             this.onXMLMinorError("too many lights defined; WebGL imposes a limit of 8 lights");
-
-        // TODO : add default values for lights
 
         this.log("Parsed lights");
 
@@ -550,8 +535,6 @@ export class MySceneGraph {
     parseTextures(texturesNode) {
 
         //For each texture in textures block, check ID and file URL
-        this.onXMLMinorError("To do: Parse textures.");
-
         for (let texture of texturesNode.children) {
             const id = this.reader.getString(texture, 'id');
             if (id == null) return "no ID defined for texture";
@@ -563,9 +546,7 @@ export class MySceneGraph {
             if (textureFile == null) return "no file defined for texture";
             if (textureFile.length === 0) return "file path is empty";
 
-            // check if file exists
-            // const texture_file = new File("./scenes/images/" + textureFile, "r");
-            // if (!texture_file.exists()) return "file " + textureFile + " does not exist";
+            // TODO: check if file exists
 
             console.log("Texture " + id + "from " + textureFile + " loaded");
             this.textures[id] = new CGFtexture(this.scene, textureFile);
@@ -583,13 +564,13 @@ export class MySceneGraph {
 
         this.materials = [];
 
-        var grandChildren = [];
-        var nodeNames = [];
+        // var grandChildren = [];
+        // var nodeNames = [];
 
         // Any number of materials.
         for (var i = 0; i < children.length; i++) {
 
-            if (children[i].nodeName != "material") {
+            if (children[i].nodeName !== "material") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
@@ -686,7 +667,7 @@ export class MySceneGraph {
                 break;
             case 'scale':
                 var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
-                console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
+                // console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
                 //mat4.fromScaling(transfMatrix, coordinates);
                 mat4.scale(transfMatrix, transfMatrix, coordinates);
                 break;
@@ -696,9 +677,9 @@ export class MySceneGraph {
                     return transformation_tag;
                 let angle = this.reader.getFloat(transformation_tag, 'angle');
                 angle = DEGREE_TO_RAD * angle;
-                console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
+                // console.log("To do: use fromRotation here. Found in documentation but not importing. Ask teacher");
                 // mat4.fromRotation(transfMatrix, angle, axis);
-                console.log(transfMatrix);
+                // console.log(transfMatrix);
                 switch (axis) {
                     case 'x':
                         mat4.rotateX(transfMatrix, transfMatrix, angle);
@@ -823,12 +804,12 @@ export class MySceneGraph {
                     return "unable to parse height of the primitive coordinates for ID = " + primitiveId;
 
                 //slices
-                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                var slices = this.reader.getInteger(grandChildren[0], 'slices');
                 if (!(slices != null && !isNaN(slices) && slices != 0))
                     return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
                 //stacks
-                var stacks = this.reader.getFloat(grandChildren[0], 'stacks');
+                var stacks = this.reader.getInteger(grandChildren[0], 'stacks');
                 if (!(stacks != null && !isNaN(stacks) && stacks != 0))
                     return "unable to parse stacks of the primitive coordinates for ID = " + primitiveId;
 
@@ -849,7 +830,7 @@ export class MySceneGraph {
                     return "unable to parse outer of the primitive coordinates for ID = " + primitiveId;
 
                 //slices
-                var slices = this.reader.getFloat(grandChildren[0], 'slices');
+                var slices = this.reader.getInteger(grandChildren[0], 'slices');
                 if (!(slices != null && !isNaN(slices) && slices != 0))
                     return "unable to parse slices of the primitive coordinates for ID = " + primitiveId;
 
@@ -896,12 +877,10 @@ export class MySceneGraph {
                 if (!MyTriangle.checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3))
                     return "unable to parse triangle coordinates for ID = " + primitiveId;
 
-                var triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]);
+                let triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]);
 
                 this.primitives[primitiveId] = triangle;
-                console.log("triangle added to primitives" + primitiveId);
-            } else {
-                console.warn("To do: Parse other primitives.");
+                // console.log("triangle added to primitives" + primitiveId);
             }
         }
         this.log("Parsed primitives");
@@ -951,9 +930,7 @@ export class MySceneGraph {
             const childrenIndex = nodeNames.indexOf("children");
 
             let component = new MyComponent(this.scene, componentID);
-            this.onXMLMinorError("To do: Parse components.");
             // Transformations
-
             let matrix = mat4.create();
             let transformations = grandChildren[transformationIndex].children;
 
@@ -971,7 +948,7 @@ export class MySceneGraph {
             }
 
 
-            console.log("matrix: " + matrix + " componentID: " + componentID);
+            // console.log("matrix: " + matrix + " componentID: " + componentID);
             component.transformation = matrix;
 
 
@@ -984,9 +961,10 @@ export class MySceneGraph {
                - M/m should be perpetuated to every node
             */
 
-            let success = true, string = "";
+            let success = true,
+                string = "";
             console.log("PARSING MATERIALS: " + componentID);
-            console.log(grandChildren[materialsIndex]);
+            // console.log(grandChildren[materialsIndex]);
             [success, string] = this.parseMaterialNode(grandChildren[materialsIndex], component);
             if (!success) return string;
 
@@ -994,18 +972,6 @@ export class MySceneGraph {
             [success, string] = this.parseTextureNode(grandChildren[textureIndex], component);
             if (!success) return string;
 
-            //TODO:how to pass coordinates to primitives?
-            // Where do we define the inheritance of texture coordinates?
-            // Are they passed directly to the primitives in the primitiveref to some sort of stack or dict?
-            // Are the textures changed only with push pop operations?
-
-            // inherit - keeps the parent texture and dimensions
-            // none - removes the parent texture
-            // else overrides the parent texture
-            // length_s height, length_t width
-            // if inherit or none then no length_t or length_s are declared
-            // if inherit get parent texture coordinates
-            // <texture id="ss" length_s="ff" length_t="ff"/>
 
             // Children
             if (!grandChildren[childrenIndex]) return "Children must be declared in each component";
@@ -1020,6 +986,8 @@ export class MySceneGraph {
                 } else if (child.nodeName === "primitiveref") {
                     // primitives already parsed and in this.primitives array as objects (DOUBT: Hopefully)
                     let primitiveID = this.reader.getString(child, 'id');
+                    if (!primitiveID) return "Component reference must have an id";
+                    if (!this.primitives[primitiveID]) return primitiveID + " is not a valid component reference";
                     component.addPrimitive(this.primitives[primitiveID]);
                 } else {
                     return "Unknown tag <" + child.nodeName + ">";
@@ -1035,11 +1003,21 @@ export class MySceneGraph {
         for (let compId in grandGrandChildren) //<component> id
             for (let childComp of grandGrandChildren[compId]) { //<componentref> ids
                 let childCompObj = this.components.find(comp => comp.id === childComp);
-                // console.log("Adding child " + childCompObj + " to " + compId);
-                // add the component object (parsed in the loop above) to the parent component
-                // TODO: check here for recursive component connections?
-                this.components.find(comp => comp.id === compId).addChild(childCompObj);
+                if (!childCompObj) return "Component " + childComp + " not found";
+                if (compId === childComp) return "Component " + compId + " cannot be a child of itself";
+                let compObj = this.components.find(comp => comp.id === compId);
+                if (!compObj) return "Component " + compId + " not found";
+
+                if (childCompObj.children.find(child => child.id === compId))
+                    return "Component " + compId + " cannot be a child of " + childComp +
+                        " because " + childComp + " is already a child of " + compId;
+
+                compObj.addChild(childCompObj);
             }
+            // console.log("Adding child " + childCompObj + " to " + compId);
+            // add the component object (parsed in the loop above) to the parent component
+            // TODO: check here for recursive component connections?
+
     }
 
     parseMaterialNode(materials_tag, component) {
@@ -1145,7 +1123,7 @@ export class MySceneGraph {
      * @param {message to be displayed in case of error} messageError
      */
     parseCoordinates4D(node, messageError) {
-        var position = [];
+        let position = [];
 
         //Get x, y, z
         position = this.parseCoordinates3D(node, messageError);
@@ -1226,18 +1204,8 @@ export class MySceneGraph {
      * Displays the scene, processing each node, starting in the root node.
      */
     displayScene() {
-        //To do: Create display loop for traversing the scene graph
-        // console.log(this.idRoot)
-
-        //console.log(this.components.find(comp => comp.id === this.idRoot))
         this.components.find(comp => comp.id === this.idRoot).display();
         //To test the parsing/creation of the primitives, call the display function directly
-
-        //this.primitives['demoRectangle'].display();
-        // this.primitives['aSphere'].display();
-        //this.primitives['aCylinder'].display();
-        //this.primitives['aTriangle'].display();
-        //this.primitives['aTorus'].display();
     }
 
 

@@ -13,8 +13,8 @@ import { CGFobject } from '../../lib/CGF.js';
 		super(scene);
 		this.inner = inner;
 		this.outer = outer;
-		this.slices = slices;
-		this.loops = loops;
+		this.slices = Math.round(slices);
+		this.loops = Math.round(loops);
 
 		this.initBuffers();
 	}
