@@ -39,6 +39,7 @@ export class MyInterface extends CGFinterface {
         let commandFolder = this.gui.addFolder("CommandControl");
         commandFolder.add(this.scene, 'displayAxis').name("Display Axis");
         commandFolder.add(this.scene, 'visibleLights').name("Display Lights");
+        commandFolder.add(this.scene, 'activeNormals').name("Display Normals")
         commandFolder.open();
     }
 

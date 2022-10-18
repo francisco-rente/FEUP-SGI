@@ -29,6 +29,8 @@ export class MyComponent extends CGFobject {
 
         for (const primitive of this._primitives) {
             primitive.updateTexCoords(this._texture_coord);
+            if (this.scene.activeNormals) primitive.enableNormalViz();
+            else primitive.disableNormalViz();
             primitive.display();
         }
         for (let child of this._children) {

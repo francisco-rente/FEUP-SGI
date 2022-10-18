@@ -44,6 +44,8 @@ export class XMLscene extends CGFscene {
         this.axis = new CGFaxis(this);
 
         this.visibleLights = true;
+        this.activeNormals = false;
+
         this.setUpdatePeriod(100);
     }
 
