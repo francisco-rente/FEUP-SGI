@@ -22,6 +22,9 @@
 - We tried to structure our scene in a way that it would be easy to increment its complexity,
   and the file size would not be too big.
 
+
+![image.png](./scene_image.png)
+
 ### Technical information
 
 - Parsing encompasses all the rules given by the project statement and extra rules were added for violations. 
