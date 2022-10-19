@@ -1000,17 +1000,27 @@ export class MySceneGraph {
                 let compObj = this.components.find(comp => comp.id === compId);
                 if (!compObj) return "Component " + compId + " not found";
 
-                if (childCompObj.children.find(child => child.id === compId))
-                    return "Component " + compId + " cannot be a child of " + childComp +
-                        " because " + childComp + " is already a child of " + compId;
+                if (this.searchRecursive(childCompObj, compId))
+                    return "Component " + compId + " cannot be a parent of " + childComp +
+                        " because " + childComp + " is already a parent of " + compId;
 
                 compObj.addChild(childCompObj);
             }
             // console.log("Adding child " + childCompObj + " to " + compId);
             // add the component object (parsed in the loop above) to the parent component
             // TODO: check here for recursive component connections?
-
     }
+
+    searchRecursive(component, id) {
+        if (component.id === id) return component;
+        for (let child of component.children) {
+            let result = this.searchRecursive(child, id);
+            if (result) return result;
+        }
+        return null;
+    }
+
+
 
     parseMaterialNode(materials_tag, component) {
         /*
