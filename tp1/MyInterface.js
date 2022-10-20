@@ -83,6 +83,9 @@ export class MyInterface extends CGFinterface {
     }
 
     processKeyDown(event) {
+        if(event.code === "KeyM" || event.code === "Keym")
+            this.scene.incrementCounter();
+
         this.activeKeys[event.code] = true;
     };
 

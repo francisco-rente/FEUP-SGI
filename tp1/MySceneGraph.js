@@ -470,13 +470,13 @@ export class MySceneGraph {
                     }
                     // <attenuation constant="ff" linear="ff" quadratic="ff" />  
                     else if (attributeTypes[j] === "attenuation") {
-                        const constant = this.reader.getFloat(grandChildren[attributeIndex], 'constant');
+                        const constant = this.reader.getInteger(grandChildren[attributeIndex], 'constant');
                         if (!(constant != null && !isNaN(constant)) && constant < 0)
                             return "unable to parse constant of the attenuation for ID " + lightId;
-                        const linear = this.reader.getFloat(grandChildren[attributeIndex], 'linear');
+                        const linear = this.reader.getInteger(grandChildren[attributeIndex], 'linear');
                         if (!(linear != null && !isNaN(linear)) && linear < 0)
                             return "unable to parse linear of the attenuation for ID " + lightId;
-                        const quadratic = this.reader.getFloat(grandChildren[attributeIndex], 'quadratic');
+                        const quadratic = this.reader.getInteger(grandChildren[attributeIndex], 'quadratic');
                         if (!(quadratic != null && !isNaN(quadratic)) && linear < 0)
                             return "unable to parse quadratic of the attenuation for ID " + lightId;
 

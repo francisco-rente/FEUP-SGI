@@ -260,19 +260,21 @@ export class XMLscene extends CGFscene {
         // ---- END Background, camera and axis setup
     }
 
+    incrementCounter(){
+        this.appearence_index = (Number.MAX_SAFE_INTEGER === this.appearence_index)
+            ? 0 : this.appearence_index + 1;
+    }
 
     checkKeys() {
         if (this.gui.isKeyPressed("KeyM")) {
             console.log("Key M pressed");
             // prevent overflow of the index
-            this.appearence_index = (Number.MAX_SAFE_INTEGER === this.appearence_index)
-                ? 0 : this.appearence_index + 1;
         }
     }
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t) {
-        this.checkKeys();
+        // this.checkKeys();
     }
 
     updateViews() {
