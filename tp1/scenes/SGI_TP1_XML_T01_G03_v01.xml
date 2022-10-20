@@ -73,7 +73,7 @@
     <materials>
         <material id="demoMaterial" shininess="10">
             <emission r="0.1" g="0.1" b="0.1" a="1.0"/>
-            <ambient r="0.2" g="0.2" b="0.2" a="1.0"/>
+            <ambient r="0.5" g="0.3" b="0.3" a="1.0"/>
             <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
             <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
         </material>
@@ -186,7 +186,6 @@
     <components>
         <component id="demoRoot">
             <transformation>
-                <scale x="1" y="1" z="1"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -221,7 +220,8 @@
             <transformation>
                 <translate x="0" y="60" z="0"/>
                 <rotate axis="x" angle="90"/>
-                <transformationref id="scaleSkyBox"/>
+                <!--<transformationref id="scaleSkyBox"/>-->
+                <scale x="15" y="15" z="15"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -236,7 +236,8 @@
         <component id="skyBoxSide1">
             <transformation>
                 <translate x="0" y="30" z="-30"/>
-                <transformationref id="scaleSkyBox"/>
+                <!--<transformationref id="scaleSkyBox"/>-->
+                <scale x="15" y="15" z="15"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -252,7 +253,8 @@
             <transformation>
                 <translate x="0" y="30" z="30"/>
                 <rotate axis="y" angle="180"/>
-                <transformationref id="scaleSkyBox"/>
+                <!--<transformationref id="scaleSkyBox"/>-->
+                <scale x="15" y="15" z="15"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -267,7 +269,8 @@
             <transformation>
                 <translate x="30" y="30" z="0"/>
                 <rotate axis="y" angle="-90"/>
-                <transformationref id="scaleSkyBox"/>
+                <!--<transformationref id="scaleSkyBox"/>-->
+                <scale x="15" y="15" z="15"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -282,7 +285,8 @@
             <transformation>
                 <translate x="-30" y="30" z="0"/>
                 <rotate axis="y" angle="90"/>
-                <transformationref id="scaleSkyBox"/>
+                <!--<transformationref id="scaleSkyBox"/>-->
+                <scale x="15" y="15" z="15"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -296,7 +300,6 @@
 
         <component id="floor">
             <transformation>
-                <!--<translate x="1" y="1" z="0"/>-->
                 <scale x="15" y="15" z="15"/>
                 <rotate axis="x" angle="-90"/>
             </transformation>
@@ -333,7 +336,6 @@
         <component id="tentback1">
             <transformation>
                 <transformationref id="tentback"/>
-                <!--<translate x="0" y="2" z="0"/> -->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -346,12 +348,11 @@
 
         <component id="tentback2">
             <transformation>
-                <!--<translate x="0" y="0" z="5.65"/>-->
-                <transformationref id="tentback"/>
+                <!--<transformationref id="tentback"/>-->
+                <translate x="-2" y="0" z="0"/>
+                <scale x="4" y="4" z="4"/>
                 <translate x="0" y="0" z="1.414214"/>
                 <rotate axis="y" angle="180"/>
-
-                <!--<rotate axis="y" angle ="180"/>-->
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -378,8 +379,14 @@
 
         <component id="tentsideouter1">
             <transformation>
-                <transformationref id="tentSide1"/>
-                <transformationref id="tentSwapSide"/>
+
+            
+                <!--<transformationref id="tentSide1"/>-->
+                <rotate axis="x" angle="45"/>
+                <translate x="0" y="2" z="0"/>
+
+                <!--<transformationref id="tentSwapSide"/>-->
+                <rotate axis="y" angle="180"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -393,8 +400,12 @@
 
         <component id="tentsideinner2">
             <transformation>
-                <transformationref id="tentSide2"/>
-                <transformationref id="tentSwapSide"/>
+                <!--<transformationref id="tentSide2"/>-->
+                <rotate axis="x" angle="-45"/>
+                <translate x="0" y="-2" z="4"/>
+
+                <!--<transformationref id="tentSwapSide"/>-->
+                <rotate axis="y" angle="180"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -408,8 +419,6 @@
         <component id="tentsideouter2">
             <transformation>
                 <transformationref id="tentSide2"/>
-
-
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -462,86 +471,6 @@
                 <!--<componentref id="fire3"/>-->
                 <!--<componentref id="fire4"/>-->
                 <primitiveref id="fireCone"/>
-            </children>
-        </component>
-
-
-        <component id="fire">
-            <transformation>
-                <scale x="-1" y="1" z="1"/>
-                <translate x="-1" y="0" z="0"/>
-                <rotate axis="x" angle="30"/>
-            </transformation>
-            <materials>
-                <material id="demoMaterial"/>
-            </materials>
-            <texture id="inherit"/>
-            <children>
-                <primitiveref id="aTriangle"/>
-            </children>
-        </component>
-
-
-        <component id="fire1">
-            <transformation>
-                <scale x="-1" y="1" z="1"/>
-                <translate x="-1" y="0" z="0"/>
-                <rotate axis="x" angle="30"/>
-            </transformation>
-            <materials>
-                <material id="demoMaterial"/>
-            </materials>
-            <texture id="inherit"/>
-            <children>
-                <primitiveref id="aTriangle"/>
-            </children>
-        </component>
-
-        <component id="fire2">
-            <transformation>
-                <rotate axis="z" angle="-30"/>
-                <rotate axis="y" angle="-90"/>
-
-            </transformation>
-            <materials>
-                <material id="demoMaterial"/>
-            </materials>
-            <texture id="inherit"/>
-            <children>
-                <primitiveref id="aTriangle"/>
-            </children>
-        </component>
-
-        <component id="fire3">
-            <transformation>
-                <translate x="0" y="0" z="1"/>
-                <rotate axis="x" angle="-30"></rotate>
-
-            </transformation>
-            <materials>
-                <material id="demoMaterial"/>
-            </materials>
-            <texture id="inherit"/>
-            <children>
-                <primitiveref id="aTriangle"/>
-            </children>
-        </component>
-
-        <component id="fire4">
-            <transformation>
-
-                <translate x="1" y="0" z="1"/>
-                <rotate axis="z" angle="30"/>
-                <rotate axis="y" angle="90"></rotate>
-
-
-            </transformation>
-            <materials>
-                <material id="demoMaterial"/>
-            </materials>
-            <texture id="inherit"/>
-            <children>
-                <primitiveref id="aTriangle"/>
             </children>
         </component>
 
@@ -618,7 +547,8 @@
             <transformation>
                 <translate x="0" y="0" z="-2"/>
                 <scale x="5" y="5" z="1"/>
-                <transformationref id="raiseFoliage"/>
+                <!--<transformationref id="raiseFoliage"/>-->
+                <translate x="0" y="0" z="4.5"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -631,7 +561,8 @@
 
         <component id="treeFoliage2">
             <transformation>
-                <transformationref id="raiseFoliage"/>
+                <!--<transformationref id="raiseFoliage"/>-->
+                <translate x="0" y="0" z="4.5"/>
                 <scale x="4" y="4" z="2"/>
             </transformation>
             <materials>
@@ -646,7 +577,8 @@
         <component id="treeFoliage3">
             <transformation>
                 <translate x="0" y="0" z="2"/>
-                <transformationref id="raiseFoliage"/>
+                <!--<transformationref id="raiseFoliage"/>-->
+                <translate x="0" y="0" z="4.5"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
