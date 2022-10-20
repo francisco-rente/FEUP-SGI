@@ -54,11 +54,15 @@ export class MyComponent extends CGFobject {
         const texture = this.getTextureToApply();
         let appearance;
 
+        const curr_access = this.scene.appearence_index % this._materials.length;
+
         if (this._materials.length === 0 ||
-            (typeof this._materials[0] === "string" && this._materials[0] !== "inherit"))
+            (typeof this._materials[curr_access] === "string" && this._materials[curr_access] !== "inherit"))
             appearance = this._scene.createDefaultAppearance();
-        else if (this._materials[0] === "inherit") appearance = this._scene.getAppearanceStackTop();
-        else appearance = this._materials[this.scene.appearence_index % this._materials.length];
+        else if (this._materials[curr_access] === "inherit") {
+            appearance = this._scene.getAppearanceStackTop();
+        }
+        else appearance = this._materials[curr_access];
 
         appearance.setTexture(texture);
         appearance.setTextureWrap('REPEAT', 'REPEAT');
