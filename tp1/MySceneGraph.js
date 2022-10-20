@@ -934,8 +934,14 @@ export class MySceneGraph {
             let matrix = mat4.create();
             let transformations = grandChildren[transformationIndex].children;
 
-            for (const transformation of transformations) {
 
+            let count = Array.from(transformations).filter(x => x.nodeName === "transformationref").length;
+            if (count === 1 && transformations.length > 1)
+                this.onXMLMinorError("component " + componentID + " has both transformations and transformationref");
+            else if(count > 1)
+                this.onXMLMinorError("component " + componentID + " has more than one transformationref");
+
+            for (const transformation of transformations) {
                 if (transformation.nodeName === 'transformationref') {
                     let transformationID = this.reader.getString(transformation, 'id');
                     if(transformationID == null || !this.transformations[transformationID])
@@ -943,10 +949,8 @@ export class MySceneGraph {
                     mat4.multiply(matrix, matrix, this.transformations[transformationID])
                 } else {
                     let copied = mat4.clone(matrix);
-                    // mat4.multiply(new_matrix, matrix, this.get_transformation_matrix(transformation, copied));
                     matrix = this.get_transformation_matrix(transformation, copied);
                 }
-
             }
 
             // console.log("matrix: " + matrix + " componentID: " + componentID);
