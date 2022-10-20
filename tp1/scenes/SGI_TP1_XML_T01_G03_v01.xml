@@ -179,7 +179,7 @@
         </primitive>
 
         <primitive id="fireCone">
-            <cylinder base="0.5" top="0.01" height="0.8" slices="10" stacks="10"/>
+            <cylinder base="0.5" top="0.00" height="0.8" slices="10" stacks="10"/>
         </primitive>
     </primitives>
 
