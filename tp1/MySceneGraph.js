@@ -790,13 +790,17 @@ export class MySceneGraph {
             } else if (primitiveType == 'cylinder') {
                 //base
                 var base = this.reader.getFloat(grandChildren[0], 'base');
-                if (!(base != null && !isNaN(base) && base > 0))
+                if (!(base != null && !isNaN(base) && base >= 0))
                     return "unable to parse base of the primitive coordinates for ID = " + primitiveId;
 
                 //top
                 var top = this.reader.getFloat(grandChildren[0], 'top');
-                if (!(top != null && !isNaN(top) && top > 0))
+                if (!(top != null && !isNaN(top) && top >= 0))
                     return "unable to parse top of the primitive coordinates for ID = " + primitiveId;
+
+                if(top == 0 & base === 0)
+                    return "top and base cannot be 0 at the same time for ID = " + primitiveId;
+
 
                 //height
                 var height = this.reader.getFloat(grandChildren[0], 'height');
