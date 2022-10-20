@@ -278,6 +278,7 @@ export class XMLscene extends CGFscene {
     updateViews() {
         this.views = this.graph.views;
         this.camera = this.graph.views[this.graph.defaultView];
+        this.init_camera = this.graph.defaultView;
         this.interface.setActiveCamera(this.camera);
     }
 }

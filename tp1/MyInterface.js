@@ -54,7 +54,7 @@ export class MyInterface extends CGFinterface {
         let views = this.scene.views;
         let viewNames = [];
         for (let key in views) viewNames.push(key);
-        viewFolder.add(this, 'activeCamera', viewNames).name("Views").onChange(function (value) {
+        viewFolder.add(this.scene, 'init_camera', viewNames).name("Views").onChange(function (value) {
             this.scene.camera = this.scene.views[value];
             this.setActiveCamera(this.scene.camera);
         }.bind(this));
