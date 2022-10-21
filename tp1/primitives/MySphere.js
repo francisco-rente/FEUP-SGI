@@ -49,7 +49,7 @@ export class MySphere extends CGFobject {
           
                 this.texCoords.push(
                     slice / this.slices, 
-                    1 - stack / (2 * this.stacks)
+                    stack / (2 * this.stacks)
                     );
               
                 if(stack < 2*this.stacks && slice < this.slices) {
