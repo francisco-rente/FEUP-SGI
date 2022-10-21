@@ -22,6 +22,7 @@
 - The floor and the skybox are squares/rectangles scaled up. 
 - We tried to structure our scene in a way that it would be easy to increment its complexity,
   and the file size would not be too big.
+- [Screenshots](tp1/screenshots)
 
 
 ![image.png](./scene_image.png)
