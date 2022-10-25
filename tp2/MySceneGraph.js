@@ -104,10 +104,10 @@ export class MySceneGraph {
         var nodeNames = [];
 
         for (var i = 0; i < nodes.length; i++) {
-            print("found node: " + nodes[i].nodeName);
+            console.log("found node: " + nodes[i].nodeName);
             nodeNames.push(nodes[i].nodeName);
         }
-        print("NODENAMES IS: " + nodeNames);
+        console.log("NODENAMES IS: " + nodeNames);
         var error;
 
         // Processes each node, verifying errors.
@@ -130,7 +130,7 @@ export class MySceneGraph {
             return "tag <views> missing";
         else {
             if (index != VIEWS_INDEX)
-                this.onXMLMinorError("tag <views> out of order");
+                this.onXMLMinorError("tag <views> out of order" + index);
 
             //Parse views block
             if ((error = this.parseView(nodes[index])) != null)
@@ -142,7 +142,7 @@ export class MySceneGraph {
             return "tag <ambient> missing";
         else {
             if (index != AMBIENT_INDEX)
-                this.onXMLMinorError("tag <ambient> out of order");
+                this.onXMLMinorError("tag <ambient> out of order" + index);
 
             //Parse ambient block
             if ((error = this.parseAmbient(nodes[index])) != null)
@@ -154,7 +154,7 @@ export class MySceneGraph {
             return "tag <lights> missing";
         else {
             if (index != LIGHTS_INDEX)
-                this.onXMLMinorError("tag <lights> out of order");
+                this.onXMLMinorError("tag <lights> out of order" + index);
 
             //Parse lights block
             if ((error = this.parseLights(nodes[index])) != null)
@@ -165,7 +165,7 @@ export class MySceneGraph {
             return "tag <textures> missing";
         else {
             if (index != TEXTURES_INDEX)
-                this.onXMLMinorError("tag <textures> out of order");
+                this.onXMLMinorError("tag <textures> out of order" + index);
 
             //Parse textures block
             if ((error = this.parseTextures(nodes[index])) != null)
@@ -177,7 +177,7 @@ export class MySceneGraph {
             return "tag <materials> missing";
         else {
             if (index != MATERIALS_INDEX)
-                this.onXMLMinorError("tag <materials> out of order");
+                this.onXMLMinorError("tag <materials> out of order" + index);
 
             //Parse materials block
             if ((error = this.parseMaterials(nodes[index])) != null)
@@ -189,7 +189,7 @@ export class MySceneGraph {
             return "tag <transformations> missing";
         else {
             if (index != TRANSFORMATIONS_INDEX)
-                this.onXMLMinorError("tag <transformations> out of order");
+                this.onXMLMinorError("tag <transformations> out of order" + index);
 
             //Parse transformations block
             if ((error = this.parseTransformations(nodes[index])) != null)
@@ -202,7 +202,7 @@ export class MySceneGraph {
             return "tag <primitives> missing";
         else {
             if (index != PRIMITIVES_INDEX)
-                this.onXMLMinorError("tag <primitives> out of order");
+                this.onXMLMinorError("tag <primitives> out of order" + index);
 
             //Parse primitives block
             if ((error = this.parsePrimitives(nodes[index])) != null)
@@ -214,7 +214,7 @@ export class MySceneGraph {
             return "tag <animations> missing";
         else {
             if (index != ANIMATIONS_INDEX)
-                this.onXMLMinorError("tag <animations> out of order");
+                this.onXMLMinorError("tag <animations> out of order" + index);
 
             //Parse animations block
             if ((error = this.parseAnimations(nodes[index])) != null)
@@ -227,7 +227,7 @@ export class MySceneGraph {
             return "tag <components> missing";
         else {
             if (index != COMPONENTS_INDEX)
-                this.onXMLMinorError("tag <components> out of order");
+                this.onXMLMinorError("tag <components> out of order" + index);
 
             //Parse components block
             if ((error = this.parseComponents(nodes[index])) != null)
