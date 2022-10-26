@@ -748,9 +748,9 @@ export class MySceneGraph {
 
             // Validate the primitive type
             if (grandChildren.length != 1 ||
-                (grandChildren[0].nodeName != 'rectangle' && grandChildren[0].nodeName != 'triangle' &&
+                (   grandChildren[0].nodeName != 'rectangle' && grandChildren[0].nodeName != 'triangle' &&
                     grandChildren[0].nodeName != 'cylinder' && grandChildren[0].nodeName != 'sphere' &&
-                    grandChildren[0].nodeName != 'torus')) {
+                    grandChildren[0].nodeName != 'torus' && grandChildren[0].nodeName != 'patch')) {
                 return "There must be exactly 1 primitive type (rectangle, triangle, cylinder, sphere or torus)"
             }
 
@@ -901,13 +901,60 @@ export class MySceneGraph {
 
                 this.primitives[primitiveId] = triangle;
                 // console.log("triangle added to primitives" + primitiveId);
-            }
+            } else if (primitiveType === 'patch') {
+                let degreeU = this.reader.getInteger(grandChildren[0], 'degree_u');
+                if (!(degreeU != null && !isNaN(degreeU) && degreeU >= 1 && degreeU <= 3))
+                    return "unable to parse degreeU of the primitive coordinates for ID = " + primitiveId;
+
+                let partsU = this.reader.getInteger(grandChildren[0], 'parts_u');
+                if (!(partsU != null && !isNaN(partsU))){
+                    return "unable to parse partsU of the primitive coordinates for ID = " + primitiveId;
+                }    
+
+                let degreeV = this.reader.getInteger(grandChildren[0], 'degree_v');
+                if (!(degreeV != null && !isNaN(degreeV) && degreeV >= 1 && degreeV <= 3)){
+                    return "unable to parse degreeV of the primitive coordinates for ID = " + primitiveId;
+                }
+
+                let partsV = this.reader.getInteger(grandChildren[0], 'parts_v');
+                if (!(partsV != null && !isNaN(partsV))){
+                    return "unable to parse partsV of the primitive coordinates for ID = " + primitiveId;
+                }
+
+                let controlPoints = parseControlPoints(grandChildren[0], primitiveId);
+
+                let patch = new MyPatch(this.scene, primitiveId, degreeU, degreeV, partsU, partsV, controlPoints);
+
+                this.primitives[primitiveId] = triangle;
         }
         this.log("Parsed primitives");
         this.primitives[primitiveId].display();
         return null;
     }
+    }
+    parseControlPoints(node, primitiveId){
 
+
+        let children = node.children;
+
+        let controlPoints = [];
+
+        for (var i = 0; i < children.length; i++) {
+
+            if (children[i].nodeName != "controlpoint") {
+                this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
+                continue;
+            }
+
+            var x = this.reader.getInteger(children[i], 'x');
+            var y = this.reader.getInteger(children[i], 'y');
+            var z = this.reader.getInteger(children[i], 'z');
+            
+            controlPoints.push([x, y, z]);
+
+        return controlPoints
+    }
+    }
     /**
      * Parses the <animations> block.
      * @param {animations block element} animationsNode

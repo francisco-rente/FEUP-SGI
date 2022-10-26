@@ -181,6 +181,12 @@
         <primitive id="fireCone">
             <cylinder base="0.5" top="0.00" height="0.8" slices="10" stacks="10"/>
         </primitive>
+
+        <primitive id="testPatch">
+            <patch degree_u="1" parts_u="5" degree_v="1" parts_v="5">
+                <controlpoint x="0.0" y="1.0" z="1.0"/>   
+            </patch>
+        </primitive>
     </primitives>
 
 
