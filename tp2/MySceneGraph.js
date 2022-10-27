@@ -5,6 +5,7 @@ import { MyCylinder } from './primitives/MyCylinder.js';
 import { MyTorus } from "./primitives/MyTorus.js";
 import { MyTriangle } from "./primitives/MyTriangle.js";
 import { MyComponent } from "./MyComponent.js";
+import { MyPatch} from './MyPatch.js';
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -726,19 +727,24 @@ export class MySceneGraph {
 
         var grandChildren = [];
 
+        console.log("found primitives node")
+        console.log(children)
+        console.log(children.length)
         // Any number of primitives.
-        for (var i = 0; i < children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
 
             if (children[i].nodeName != "primitive") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
 
+            console.log("child of primitives is:" + primitiveId)
 
             // Get id of the current primitive.
             var primitiveId = this.reader.getString(children[i], 'id');
+            console.log("child of primitives is:" + primitiveId)
             if (primitiveId == null)
-                return "no ID defined for texture";
+                return "no ID defined for primitive";
 
             // Checks for repeated IDs.
             if (this.primitives[primitiveId] != null)
@@ -757,7 +763,8 @@ export class MySceneGraph {
             // Specifications for the current primitive.
             var primitiveType = grandChildren[0].nodeName;
 
-
+            console.log("found primitive: " + primitiveId)
+            console.log(primitiveId + " type is " + primitiveType)
             // Retrieves the primitive coordinates.
             if (primitiveType == 'rectangle') {
                 // x1
@@ -781,8 +788,8 @@ export class MySceneGraph {
                     return "unable to parse y2 of the primitive coordinates for ID = " + primitiveId;
 
                 var rect = new MyRectangle(this.scene, primitiveId, x1, x2, y1, y2);
-
                 this.primitives[primitiveId] = rect;
+                console.log("done parsing rectangle")
             } else if (primitiveType == 'sphere') {
                 //radius
                 var radius = this.reader.getFloat(grandChildren[0], 'radius');
@@ -900,7 +907,7 @@ export class MySceneGraph {
                 let triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]);
 
                 this.primitives[primitiveId] = triangle;
-                // console.log("triangle added to primitives" + primitiveId);
+                console.log("triangle added to primitives" + primitiveId);
             } else if (primitiveType === 'patch') {
                 let degreeU = this.reader.getInteger(grandChildren[0], 'degree_u');
                 if (!(degreeU != null && !isNaN(degreeU) && degreeU >= 1 && degreeU <= 3))
@@ -921,17 +928,23 @@ export class MySceneGraph {
                     return "unable to parse partsV of the primitive coordinates for ID = " + primitiveId;
                 }
 
-                let controlPoints = parseControlPoints(grandChildren[0], primitiveId);
+                let controlPoints = this.parseControlPoints(grandChildren[0], primitiveId);
 
                 let patch = new MyPatch(this.scene, primitiveId, degreeU, degreeV, partsU, partsV, controlPoints);
 
-                this.primitives[primitiveId] = triangle;
+                this.primitives[primitiveId] = patch;
         }
-        this.log("Parsed primitives");
-        this.primitives[primitiveId].display();
-        return null;
     }
-    }
+    this.log("Parsed primitives");
+    this.primitives[primitiveId].display();
+    return null;
+}
+
+
+    /**
+     * Parses control points.
+     * @param {components block element} componentsNode
+     */
     parseControlPoints(node, primitiveId){
 
 
@@ -1084,6 +1097,9 @@ export class MySceneGraph {
                     // primitives already parsed and in this.primitives array as objects (DOUBT: Hopefully)
                     let primitiveID = this.reader.getString(child, 'id');
                     if (!primitiveID) return "Component reference must have an id";
+                    console.log(primitiveID)
+                    console.log(this.primitives[primitiveID])
+                    console.log(this.primitives)
                     if (!this.primitives[primitiveID]) return primitiveID + " is not a valid component reference";
                     component.addPrimitive(this.primitives[primitiveID]);
                 } else {
