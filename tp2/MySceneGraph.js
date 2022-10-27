@@ -5,7 +5,7 @@ import { MyCylinder } from './primitives/MyCylinder.js';
 import { MyTorus } from "./primitives/MyTorus.js";
 import { MyTriangle } from "./primitives/MyTriangle.js";
 import { MyComponent } from "./MyComponent.js";
-import { MyPatch} from './MyPatch.js';
+import { MyPatch} from './primitives/MyPatch.js';
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;

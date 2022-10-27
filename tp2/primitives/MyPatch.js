@@ -1,4 +1,4 @@
-import { CGFobject } from "../lib/CGF";
+import { CGFobject } from '../../lib/CGF.js';
 
 export class MyPatch extends CGFobject{
     constructor(scene, id, degreeV, degreeU, partsU, partsV, controlPoints){
@@ -11,5 +11,4 @@ export class MyPatch extends CGFobject{
         this.controlPoints = controlPoints;
         this.initBuffers();
     }
-
 }

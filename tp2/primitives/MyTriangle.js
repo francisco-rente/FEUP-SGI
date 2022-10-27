@@ -18,7 +18,7 @@ class Vertex {
  * @param [x3, y3, z3] - Third vertex
  */
 export class MyTriangle extends CGFobject {
-P
+
     static checkProperties(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 
         // check if the triangle is degenerate (collinear vertices and zero area, or zero length edges)
