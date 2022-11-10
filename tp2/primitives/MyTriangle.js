@@ -121,8 +121,8 @@ export class MyTriangle extends CGFobject {
         // Supposing coords[0] = u, coords[1] = v
         this.texCoords = [
             0, 0,
-            this.a / coords[0], 0,
-            (this.c * this.cosA) / coords[0], (this.c * this.sinA) / coords[1]
+            this.a * coords[0], 0,
+            (this.c * this.cosA) * coords[0], (this.c * this.sinA) * coords[1]
         ]
         this.updateTexCoordsGLBuffers();
     }

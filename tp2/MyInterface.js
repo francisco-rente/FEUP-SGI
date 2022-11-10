@@ -46,8 +46,6 @@ export class MyInterface extends CGFinterface {
     viewGUI() {
         let viewFolder = this.gui.addFolder("ViewControl");
 
-        console.log("Interface initialized");
-
         this.scene.camera = this.scene.graph.views[this.scene.graph.defaultView];
         this.setActiveCamera(this.scene.camera);
 

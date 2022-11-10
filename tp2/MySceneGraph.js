@@ -69,7 +69,6 @@ export class MySceneGraph {
      * Callback to be executed after successful reading
      */
     onXMLReady() {
-        this.log("XML Loading finished.");
         var rootElement = this.reader.xmlDoc.documentElement;
 
         // Here should go the calls for different functions to parse the various blocks
@@ -105,10 +104,8 @@ export class MySceneGraph {
         var nodeNames = [];
 
         for (var i = 0; i < nodes.length; i++) {
-            console.log("found node: " + nodes[i].nodeName);
             nodeNames.push(nodes[i].nodeName);
         }
-        console.log("NODENAMES IS: " + nodeNames);
         var error;
 
         // Processes each node, verifying errors.
@@ -234,7 +231,6 @@ export class MySceneGraph {
             if ((error = this.parseComponents(nodes[index])) != null)
                 return error;
         }
-        this.log("all parsed");
     }
 
     /**
@@ -256,8 +252,6 @@ export class MySceneGraph {
             this.onXMLMinorError("no axis_length defined for scene; assuming 'length = 1'");
 
         this.referenceLength = axis_length || 1;
-
-        this.log("Parsed scene");
 
         return null;
     }
@@ -362,8 +356,6 @@ export class MySceneGraph {
 
         if (this.views[this.defaultView] == null) return "Default view not found";
 
-        console.log("Parsed views");
-
         return null;
     }
 
@@ -398,7 +390,6 @@ export class MySceneGraph {
         else
             this.background = color;
 
-        this.log("Parsed ambient");
 
         return null;
     }
@@ -540,7 +531,6 @@ export class MySceneGraph {
         else if (numLights > 8)
             this.onXMLMinorError("too many lights defined; WebGL imposes a limit of 8 lights");
 
-        this.log("Parsed lights");
 
         return null;
     }
@@ -565,7 +555,6 @@ export class MySceneGraph {
 
             // TODO: check if file exists
 
-            console.log("Texture " + id + "from " + textureFile + " loaded");
             this.textures[id] = new CGFtexture(this.scene, textureFile);
         }
 
@@ -620,10 +609,8 @@ export class MySceneGraph {
             material.setSpecular(specular[0], specular[1], specular[2], specular[3]);
 
             this.materials[materialID] = material;
-            console.log("Material " + materialID + " loaded");
         }
 
-        this.log("Parsed materials");
         return null;
     }
 
@@ -667,7 +654,6 @@ export class MySceneGraph {
             this.transformations[transformationID] = transfMatrix;
         }
 
-        this.log("Parsed transformations");
         return null;
     }
 
@@ -727,9 +713,6 @@ export class MySceneGraph {
 
         var grandChildren = [];
 
-        console.log("found primitives node")
-        console.log(children)
-        console.log(children.length)
         // Any number of primitives.
         for (let i = 0; i < children.length; i++) {
 
@@ -738,11 +721,8 @@ export class MySceneGraph {
                 continue;
             }
 
-            console.log("child of primitives is:" + primitiveId)
-
             // Get id of the current primitive.
             var primitiveId = this.reader.getString(children[i], 'id');
-            console.log("child of primitives is:" + primitiveId)
             if (primitiveId == null)
                 return "no ID defined for primitive";
 
@@ -763,8 +743,6 @@ export class MySceneGraph {
             // Specifications for the current primitive.
             var primitiveType = grandChildren[0].nodeName;
 
-            console.log("found primitive: " + primitiveId)
-            console.log(primitiveId + " type is " + primitiveType)
             // Retrieves the primitive coordinates.
             if (primitiveType == 'rectangle') {
                 // x1
@@ -789,7 +767,6 @@ export class MySceneGraph {
 
                 var rect = new MyRectangle(this.scene, primitiveId, x1, x2, y1, y2);
                 this.primitives[primitiveId] = rect;
-                console.log("done parsing rectangle")
             } else if (primitiveType == 'sphere') {
                 //radius
                 var radius = this.reader.getFloat(grandChildren[0], 'radius');
@@ -907,7 +884,6 @@ export class MySceneGraph {
                 let triangle = new MyTriangle(this.scene, primitiveId, [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]);
 
                 this.primitives[primitiveId] = triangle;
-                console.log("triangle added to primitives" + primitiveId);
             } else if (primitiveType === 'patch') {
                 let degreeU = this.reader.getInteger(grandChildren[0], 'degree_u');
                 if (!(degreeU != null && !isNaN(degreeU) && degreeU >= 1 && degreeU <= 3))
@@ -935,7 +911,6 @@ export class MySceneGraph {
                 this.primitives[primitiveId] = patch;
         }
     }
-    this.log("Parsed primitives");
     this.primitives[primitiveId].display();
     return null;
 }
@@ -951,7 +926,6 @@ export class MySceneGraph {
         let children = node.children;
 
         let controlPoints = [];
-
         for (var i = 0; i < children.length; i++) {
 
             if (children[i].nodeName != "controlpoint") {
@@ -964,9 +938,8 @@ export class MySceneGraph {
             var z = this.reader.getInteger(children[i], 'z');
             
             controlPoints.push([x, y, z]);
-
+        }
         return controlPoints
-    }
     }
     /**
      * Parses the <animations> block.
@@ -1067,14 +1040,11 @@ export class MySceneGraph {
                 }
             }
 
-            // console.log("matrix: " + matrix + " componentID: " + componentID);
             component.transformation = matrix;
 
 
             let success = true,
                 string = "";
-            console.log("PARSING MATERIALS: " + componentID);
-            // console.log(grandChildren[materialsIndex]);
             [success, string] = this.parseMaterialNode(grandChildren[materialsIndex], component);
             if (!success) return string;
 
@@ -1097,9 +1067,6 @@ export class MySceneGraph {
                     // primitives already parsed and in this.primitives array as objects (DOUBT: Hopefully)
                     let primitiveID = this.reader.getString(child, 'id');
                     if (!primitiveID) return "Component reference must have an id";
-                    console.log(primitiveID)
-                    console.log(this.primitives[primitiveID])
-                    console.log(this.primitives)
                     if (!this.primitives[primitiveID]) return primitiveID + " is not a valid component reference";
                     component.addPrimitive(this.primitives[primitiveID]);
                 } else {
@@ -1127,9 +1094,6 @@ export class MySceneGraph {
 
                 compObj.addChild(childCompObj);
             }
-            // console.log("Adding child " + childCompObj + " to " + compId);
-            // add the component object (parsed in the loop above) to the parent component
-            // TODO: check here for recursive component connections?
     }
 
     searchRecursive(component, id) {
@@ -1182,7 +1146,6 @@ export class MySceneGraph {
             length_s = this.reader.getFloat(texture_info, 'length_s');
             length_t = this.reader.getFloat(texture_info, 'length_t');
 
-            this.log("length_s: " + length_s + " length_t: " + length_t);
             if (length_t <= 0 || length_s <= 0 || length_t == null || length_s == null)
                 return [false, "Texture length_s and length_t must be between 0 and 1"];
         }
@@ -1191,12 +1154,9 @@ export class MySceneGraph {
             component.setTexture(texture_id);
             if (length_s !== null || length_t !== null)
                 this.onXMLMinorError("Texture length_s and length_t are not applicable to inherit or none");
-            // console.log("Component " + component.id + " has implicit texture " + texture_id);
         } else {
             if (length_t === null || length_s === null)
                 return [false, "Texture length_s and length_t must be declared"];
-            /* console.log("Component " + component.id + " has texture " + texture_id +
-             " with length_s " + length_s + " and length_t " + length_t);*/
             if (this.textures[texture_id] === undefined) return [false, "Texture " + texture_id + " not found"];
             component.setTexture(this.textures[texture_id]);
             component.setTextureCoordinates([length_s, length_t]);
@@ -1205,7 +1165,6 @@ export class MySceneGraph {
         if (typeof component.getTexture() == "undefined")
             return [false, `Texture ${texture_id} not found`];
 
-        console.log("Parsed texture reference: " + texture_id + " for component " + component.id);
         return [true, null]
     }
 

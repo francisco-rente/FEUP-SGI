@@ -183,8 +183,10 @@
         </primitive>
 
         <primitive id="testPatch">
-            <patch degree_u="1" parts_u="5" degree_v="1" parts_v="5">
-                <controlpoint x="0.0" y="1.0" z="1.0"/>   
+            <patch degree_u="1" parts_u="5" degree_v="2" parts_v="5">
+                <controlpoint x="2.0" y="1.0" z="1.0"/>
+                <controlpoint x="2.0" y="5.0" z="1.0"/>  
+                <controlpoint x="2.0" y="5.0" z="5.0"/>   
             </patch>
         </primitive>
     </primitives>
@@ -217,6 +219,7 @@
                 <componentref id="forest"/>
                 <componentref id="tent"/>
                 <componentref id="campfire"/>
+                <primitiveref id="testPatch"/>
             </children>
         </component>
 
@@ -339,7 +342,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="canvas" length_s="1" length_t="1"/>
+            <texture id="canvas" length_s="0.5" length_t="0.5"/>
             <children>
 
                 <componentref id="tentsideinner1"/>
