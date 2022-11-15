@@ -14,6 +14,7 @@ export class MyComponent extends CGFobject {
         this._texture_coord = [1, 1];
         this._parent_texture_coord = [1, 1];
 
+        this._hightlight = false;
         this._materials = []; // array of materials or inherit string
 
         this.transformation = [];
@@ -152,5 +153,9 @@ export class MyComponent extends CGFobject {
             default:
                 this._scene.pushTexture(this.texture);
         }
+    }
+
+    highlight() {
+        (this._hightlight) ? this._hightlight = false : this._hightlight = true;
     }
 }

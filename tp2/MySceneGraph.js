@@ -904,9 +904,18 @@ export class MySceneGraph {
                     return "unable to parse partsV of the primitive coordinates for ID = " + primitiveId;
                 }
 
-                let controlPoints = this.parseControlPoints(grandChildren[0], primitiveId);
+                let success = true,
+                    value = null;
+                [success, value] = this.parseControlPoints(grandChildren[0], primitiveId);
+                if (!success) return value;
+                let controlPoints = value;
+
 
                 let patch = new MyPatch(this.scene, primitiveId, degreeU, degreeV, partsU, partsV, controlPoints);
+
+                if(!MyPatch.checkControlPoints(degreeU, degreeV, controlPoints.length)){
+                    return "unable to parse control points of the primitive coordinates for ID = " + primitiveId;
+                }
 
                 this.primitives[primitiveId] = patch;
         }
@@ -918,28 +927,37 @@ export class MySceneGraph {
 
     /**
      * Parses control points.
-     * @param {components block element} componentsNode
+     * @param node
+     * @param primitiveId
      */
     parseControlPoints(node, primitiveId){
-
-
         let children = node.children;
 
         let controlPoints = [];
-        for (var i = 0; i < children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
 
-            if (children[i].nodeName != "controlpoint") {
+            if (children[i].nodeName !== "controlpoint") {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
 
-            var x = this.reader.getInteger(children[i], 'x');
-            var y = this.reader.getInteger(children[i], 'y');
-            var z = this.reader.getInteger(children[i], 'z');
+            const x = this.reader.getFloat(children[i], 'x');
+            if (!(x != null && !isNaN(x)))
+                return [false, "unable to parse x-coordinate of the control point for ID = " + primitiveId];
+
+            // y
+            const y = this.reader.getFloat(children[i], 'y');
+            if (!(y != null && !isNaN(y)))
+                return [false, "unable to parse y-coordinate of the control point for ID = " + primitiveId];
+
+            // z
+            const z = this.reader.getFloat(children[i], 'z');
+            if (!(z != null && !isNaN(z)))
+                return [false, "unable to parse z-coordinate of the control point for ID = " + primitiveId];
             
-            controlPoints.push([x, y, z]);
+            controlPoints.push([x, y, z, 1]);
         }
-        return controlPoints
+        return [true, controlPoints];
     }
     /**
      * Parses the <animations> block.
