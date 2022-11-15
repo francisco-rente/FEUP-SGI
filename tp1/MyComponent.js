@@ -14,7 +14,6 @@ export class MyComponent extends CGFobject {
         this._texture_coord = [1, 1];
         this._parent_texture_coord = [1, 1];
 
-        this._hightlight = false;
         this._materials = []; // array of materials or inherit string
 
         this.transformation = [];
@@ -34,6 +33,8 @@ export class MyComponent extends CGFobject {
             else primitive.disableNormalViz();
             primitive.display();
         }
+
+
         for (let child of this._children) {
             this._scene.pushMatrix();
             child.updateTexCoords(this._texture_coord);
@@ -156,6 +157,6 @@ export class MyComponent extends CGFobject {
     }
 
     highlight() {
-        (this._hightlight) ? this._hightlight = false : this._hightlight = true;
+        (this._highlight) ? this._highlight = false : this._highlight = true;
     }
 }

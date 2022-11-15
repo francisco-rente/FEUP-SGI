@@ -17,15 +17,17 @@ export class MyComponent extends CGFobject {
         this._materials = []; // array of materials or inherit string
 
         this.transformation = [];
+
+        this.hightlight = false;
     }
 
 
     display() {
+        if(this.hightlight) this.scene.setHighlightShader();
         this.sendTextureToScene();
         this.sendAppearanceToScene();
         this._scene.multMatrix(this.transformation);
         this.updateCoords();
-
 
         for (const primitive of this._primitives) {
             primitive.updateTexCoords(this._texture_coord);
@@ -33,6 +35,9 @@ export class MyComponent extends CGFobject {
             else primitive.disableNormalViz();
             primitive.display();
         }
+
+        if(this.hightlight) this.scene.resetShader();
+
         for (let child of this._children) {
             this._scene.pushMatrix();
             child.updateTexCoords(this._texture_coord);
@@ -152,5 +157,12 @@ export class MyComponent extends CGFobject {
             default:
                 this._scene.pushTexture(this.texture);
         }
+    }
+
+
+    highlight() {
+        console.log("highlighting");
+        (this.hightlight) ? this.hightlight = false : this.hightlight = true;
+        return this.hightlight;
     }
 }

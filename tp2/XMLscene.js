@@ -1,5 +1,4 @@
-import {CGFappearance, CGFscene, CGFtexture} from '../lib/CGF.js';
-import {CGFaxis, CGFcamera} from '../lib/CGF.js';
+import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis} from '../lib/CGF.js';
 
 
 var DEGREE_TO_RAD = Math.PI / 180;
@@ -19,6 +18,12 @@ export class XMLscene extends CGFscene {
         this.appearence_index = 0;
         this.interface = myinterface;
         this.lights = [];
+
+        this.highLightScaleFactor = 1.0;
+        this.highLightColor = [1, 0, 0, 1];
+        this.highLightPhase = 1;
+        this.highLightAmplitude = 1;
+        this.highLightFrequency = 1;
     }
 
     /**
@@ -46,7 +51,10 @@ export class XMLscene extends CGFscene {
         this.visibleLights = true;
         this.activeNormals = false;
 
-        this.setUpdatePeriod(100);
+        this.highlightShader = new CGFshader(this.gl,
+            "shaders/highlight.vert", "shaders/highlight.frag");
+
+        this.setUpdatePeriod(50);
     }
 
     /**
@@ -99,7 +107,7 @@ export class XMLscene extends CGFscene {
             if (this.graph.lights.hasOwnProperty(key)) {
                 const light = this.graph.lights[key];
                 this.lights[i].name = key; // for interface dropdown
-                if(light[1] === "omni"){
+                if (light[1] === "omni") {
                     this.parseOmniLight(this.lights[i], light[2], light[3], light[4], light[5], light[6]);
                     /*this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
                     this.lights[i].setAmbient(light[3][0], light[3][1], light[3][2], light[3][3]);
@@ -205,6 +213,16 @@ export class XMLscene extends CGFscene {
     }
 
 
+    setHighlightShader() {
+        this.setActiveShader(this.highlightShader);
+        this.activeShader.setUniformsValues({ uSampler: 0 });
+    }
+
+    resetShader() {
+        this.setActiveShader(this.defaultShader);
+    }
+
+
     /** Handler called when the graph is finally loaded.
      * As loading is asynchronous, this may be called already after the application has started the run loop
      */
@@ -215,6 +233,11 @@ export class XMLscene extends CGFscene {
 
         this.setGlobalAmbientLight(this.graph.ambient[0], this.graph.ambient[1], this.graph.ambient[2], this.graph.ambient[3]);
 
+        // map of ids to components in the graph.components
+        this.components = new Map();
+        this.graph.components.forEach(component => {
+            this.components.set(component.id, component);
+        });
 
         this.initLights();
         this.updateViews();
@@ -240,7 +263,7 @@ export class XMLscene extends CGFscene {
         this.applyViewMatrix();
 
         this.pushMatrix();
-        if(this.displayAxis) this.axis.display();
+        if (this.displayAxis) this.axis.display();
 
         for (var i = 0; i < this.lights.length; i++) {
             this.lights[i].setVisible(this.visibleLights);
@@ -260,7 +283,7 @@ export class XMLscene extends CGFscene {
         // ---- END Background, camera and axis setup
     }
 
-    incrementCounter(){
+    incrementCounter() {
         this.appearence_index = (Number.MAX_SAFE_INTEGER === this.appearence_index)
             ? 0 : this.appearence_index + 1;
     }
@@ -274,7 +297,16 @@ export class XMLscene extends CGFscene {
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t) {
-        // this.checkKeys();
+        // Optmize timefactor
+        // Should you mod it by 1000?
+        const timeFactor = (Math.sin(this.highLightPhase + this.highLightFrequency * t) + 1) / 2;
+
+        // TODO: Fix this
+        const new_color = this.highLightColor.slice(0, 3).map(color => color / 255);
+
+        console.log(timeFactor, this.highLightPhase, this.highLightFrequency, t, new_color);
+        this.highlightShader.setUniformsValues({timeFactor: timeFactor,
+            scaleFactor: this.highLightScaleFactor, color : new_color});
     }
 
     updateViews() {

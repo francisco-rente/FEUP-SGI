@@ -5,6 +5,12 @@ import {CGFinterface, CGFapplication, dat} from '../lib/CGF.js';
  */
 
 export class MyInterface extends CGFinterface {
+
+
+    static highlightable = ["treeFoliage1", "treeFoliage2", "treeFoliage3"]
+
+
+
     /**
      * @constructor
      */
@@ -32,6 +38,7 @@ export class MyInterface extends CGFinterface {
         this.commandGUI();
         this.lightGUI();
         this.viewGUI();
+        this.highlightGUI();
     }
 
 
@@ -81,7 +88,7 @@ export class MyInterface extends CGFinterface {
     }
 
     processKeyDown(event) {
-        if(event.code === "KeyM" || event.code === "Keym")
+        if (event.code === "KeyM" || event.code === "Keym")
             this.scene.incrementCounter();
 
         this.activeKeys[event.code] = true;
@@ -99,4 +106,28 @@ export class MyInterface extends CGFinterface {
         return this.activeKeys[keyCode] || false;
     }
 
+    highlightGUI() {
+        let highlightFolder = this.gui.addFolder("HighlightControl");
+        highlightFolder.open();
+
+        highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor");
+
+
+        highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
+            this.scene.highLightColor = value;
+        }.bind(this));
+
+        highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
+        highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");
+        highlightFolder.add(this.scene, 'highLightPhase', 0, 2 * Math.PI).name("Phase");
+
+        let highlightedObjectsFolder = highlightFolder.addFolder("Highlightable Objects");
+
+        for (const id of MyInterface.highlightable) {
+            const component = this.scene.components.get(id);
+            if(!component) continue;
+            if (component.hightlight) highlightFolder.add(component, 'highlight').name(id);
+            else highlightedObjectsFolder.add(component, 'highlight').name(id).listen();
+        }
+    }
 }
