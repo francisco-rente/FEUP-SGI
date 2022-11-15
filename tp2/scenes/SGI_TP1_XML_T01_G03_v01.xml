@@ -704,6 +704,8 @@
             <children>
                 <primitiveref id="aCylinder"/>
             </children>
+            <highlighted r="1.0" g="0.0" b="0.0" scale_h="1.0" />
+
         </component>
 
         <component id="treeFoliage1">
@@ -720,6 +722,9 @@
             <children>
                 <primitiveref id="treeCone"/>
             </children>
+
+
+            <highlighted r="1.0" g="0.0" b="0.0" scale_h="1.0" />
         </component>
 
         <component id="treeFoliage2">

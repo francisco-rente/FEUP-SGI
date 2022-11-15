@@ -1033,6 +1033,7 @@ export class MySceneGraph {
             const materialsIndex = nodeNames.indexOf("materials");
             const textureIndex = nodeNames.indexOf("texture");
             const childrenIndex = nodeNames.indexOf("children");
+            const highlightIndex = nodeNames.indexOf("highlighted");
 
             let component = new MyComponent(this.scene, componentID);
             // Transformations
@@ -1070,6 +1071,11 @@ export class MySceneGraph {
             [success, string] = this.parseTextureNode(grandChildren[textureIndex], component);
             if (!success) return string;
 
+
+            if(highlightIndex != -1){
+                [success, string] = this.parseHighlightNode(grandChildren[highlightIndex], component);
+                if (!success) return string;
+            }
 
             // Children
             if (!grandChildren[childrenIndex]) return "Children must be declared in each component";
@@ -1122,6 +1128,35 @@ export class MySceneGraph {
         }
         return null;
     }
+
+
+    parseHighlightNode(node, component) {
+
+        // <highlighted r="ff" g="ff" b="ff" scale_h="ff" />
+        const r = this.reader.getFloat(node, 'r');
+        if (!(r != null && !isNaN(r) && r >= 0 && r <= 1))
+            return "unable to parse R component of the " + component.id + " highlight color";
+
+        // G
+        const g = this.reader.getFloat(node, 'g');
+        if (!(g != null && !isNaN(g) && g >= 0 && g <= 1))
+            return "unable to parse G component of the " + component.id + " highlight color";
+
+        // B
+        const b = this.reader.getFloat(node, 'b');
+        if (!(b != null && !isNaN(b) && b >= 0 && b <= 1))
+            return "unable to parse B component of the " + component.id + " highlight color";
+
+        // scale_h
+        const scale_h = this.reader.getFloat(node, 'scale_h');
+        if (!(scale_h != null && !isNaN(scale_h) && scale_h >= 0 && scale_h <= 1))
+            return "unable to parse scale_h of the " + component.id + " highlight color";
+
+        component.isHighlighted = true;
+        component.hightlightInfo = {color: [r,g,b], scale: scale_h};
+        return [true, ""];
+    }
+
 
 
 

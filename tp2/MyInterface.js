@@ -6,11 +6,6 @@ import {CGFinterface, CGFapplication, dat} from '../lib/CGF.js';
 
 export class MyInterface extends CGFinterface {
 
-
-    static highlightable = ["treeFoliage1", "treeFoliage2", "treeFoliage3"]
-
-
-
     /**
      * @constructor
      */
@@ -110,12 +105,12 @@ export class MyInterface extends CGFinterface {
         let highlightFolder = this.gui.addFolder("HighlightControl");
         highlightFolder.open();
 
-        highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor");
 
-
-        highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
+        // TODO: what are these supposed to do?
+        // highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor");
+        /*highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
             this.scene.highLightColor = value;
-        }.bind(this));
+        }.bind(this));*/
 
         highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
         highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");
@@ -123,11 +118,14 @@ export class MyInterface extends CGFinterface {
 
         let highlightedObjectsFolder = highlightFolder.addFolder("Highlightable Objects");
 
-        for (const id of MyInterface.highlightable) {
-            const component = this.scene.components.get(id);
+        // TODO: why javascript?
+        let highlightableObjects = this.scene.components;
+        highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.isHighlighted);
+
+        for (const component of highlightableObjects) {
             if(!component) continue;
-            if (component.hightlight) highlightFolder.add(component, 'highlight').name(id);
-            else highlightedObjectsFolder.add(component, 'highlight').name(id).listen();
+            if (component.hightlight) highlightFolder.add(component, 'highlight').name(component.id);
+            else highlightedObjectsFolder.add(component, 'highlight').name(component.id).listen();
         }
     }
 }

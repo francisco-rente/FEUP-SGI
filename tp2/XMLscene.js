@@ -54,6 +54,8 @@ export class XMLscene extends CGFscene {
         this.highlightShader = new CGFshader(this.gl,
             "shaders/highlight.vert", "shaders/highlight.frag");
 
+        this.highlightShader.setUniformsValues({uSampler: 0}); // TODO: is this necessary?
+
         this.setUpdatePeriod(50);
     }
 
@@ -109,26 +111,9 @@ export class XMLscene extends CGFscene {
                 this.lights[i].name = key; // for interface dropdown
                 if (light[1] === "omni") {
                     this.parseOmniLight(this.lights[i], light[2], light[3], light[4], light[5], light[6]);
-                    /*this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
-                    this.lights[i].setAmbient(light[3][0], light[3][1], light[3][2], light[3][3]);
-                    this.lights[i].setDiffuse(light[4][0], light[4][1], light[4][2], light[4][3]);
-                    this.lights[i].setSpecular(light[5][0], light[5][1], light[5][2], light[5][3]);
-                    this.lights[i].setConstantAttenuation(light[6][0]);
-                    this.lights[i].setLinearAttenuation(light[6][1]);
-                    this.lights[i].setQuadraticAttenuation(light[6][2]);    */
                 }
                 if (light[1] === "spot") {
                     this.parseSpotLight(this.lights[i], light[2], light[3], light[4], light[5], light[6], light[7], light[8], light[9]);
-                    /*this.lights[i].setPosition(light[2][0], light[2][1], light[2][2], light[2][3]);
-                    this.lights[i].setAmbient(light[4][0], light[4][1], light[4][2], light[4][3]);
-                    this.lights[i].setDiffuse(light[5][0], light[5][1], light[5][2], light[5][3]);
-                    this.lights[i].setSpecular(light[6][0], light[6][1], light[6][2], light[6][3]);
-                    this.lights[i].setConstantAttenuation(light[7][0]);
-                    this.lights[i].setLinearAttenuation(light[7][1]);
-                    this.lights[i].setQuadraticAttenuation(light[7][2]);    
-                    this.lights[i].setSpotCutOff(light[8]);
-                    this.lights[i].setSpotExponent(light[9]);
-                    this.lights[i].setSpotDirection(light[3][0]- light[2][0], light[3][1]-light[2][1], light[3][2]-light[2][2]);*/
                 }
 
                 this.lights[i].setVisible(true);
@@ -213,9 +198,14 @@ export class XMLscene extends CGFscene {
     }
 
 
-    setHighlightShader() {
+    setHighlightShader(color, maxScale) {
         this.setActiveShader(this.highlightShader);
-        this.activeShader.setUniformsValues({ uSampler: 0 });
+
+        // TODO: Should we update the shader only when the color changes?
+        // TODO: Should we update the hightLightColor and Scaling of the scene for updates?
+        //      Or is the state saved in the shader?
+
+        this.activeShader.setUniformsValues({color: color, scaleFactor: maxScale});
     }
 
     resetShader() {
@@ -297,16 +287,18 @@ export class XMLscene extends CGFscene {
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t) {
-        // Optmize timefactor
+        // TODO: Optimize timefactor
         // Should you mod it by 1000?
         const timeFactor = (Math.sin(this.highLightPhase + this.highLightFrequency * t) + 1) / 2;
 
-        // TODO: Fix this
-        const new_color = this.highLightColor.slice(0, 3).map(color => color / 255);
+        // const new_color = this.highLightColor.slice(0, 3).map(color => color / 255);
 
-        console.log(timeFactor, this.highLightPhase, this.highLightFrequency, t, new_color);
-        this.highlightShader.setUniformsValues({timeFactor: timeFactor,
-            scaleFactor: this.highLightScaleFactor, color : new_color});
+        // TODO: is a default value for color and scale needed? Or placing them throughout the code is enough?
+        /*this.highlightShader.setUniformsValues({timeFactor: timeFactor,
+            scaleFactor: this.highLightScaleFactor, color : new_color});*/
+
+        // TODO: Is there a way to know if the highlight shader is active?
+        this.highlightShader.setUniformsValues({timeFactor: timeFactor});
     }
 
     updateViews() {

@@ -18,12 +18,24 @@ export class MyComponent extends CGFobject {
 
         this.transformation = [];
 
+
+        this.isHighlighted = false;
         this.hightlight = false;
+        this.hightlightInfo = {};
     }
 
 
+
+    set isHighlighted(value) {
+        this._isHighlighted = value;
+    }
+
+    get isHighlighted() {
+        return this._isHighlighted;
+    }
+
     display() {
-        if(this.hightlight) this.scene.setHighlightShader();
+        if(this.hightlight) this.scene.setHighlightShader(this.hightlightInfo.color, this.hightlightInfo.scale);
         this.sendTextureToScene();
         this.sendAppearanceToScene();
         this._scene.multMatrix(this.transformation);
