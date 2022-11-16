@@ -248,14 +248,31 @@
     <!--TODO: did rotate just switch to rotation for all of them, or just animation???-->
     <animations>
         <keyframeanim id="animation1">
-            <keyframe instant="0.0">
+            <keyframe instant="5.0">
                 <translation x="0" y="0" z="0"/>
                 <rotation axis="x" angle="0"/>
                 <rotation axis="y" angle="0"/>
                 <rotation axis="z" angle="0"/>
                 <scale x="1" y="1" z="1"/>
             </keyframe>
-            <keyframe instant="1.5">
+
+            <keyframe instant="10.0">
+                <translation x="0" y="0" z="0"/>
+                <rotation axis="x" angle="0"/>
+                <rotation axis="y" angle="90"/>
+                <rotation axis="z" angle="0"/>
+                <scale x="1" y="1" z="1"/>
+            </keyframe>
+
+            <keyframe instant="15.0">
+                <translation x="0" y="20" z="0"/>
+                <rotation axis="x" angle="0"/>
+                <rotation axis="y" angle="180"/>
+                <rotation axis="z" angle="0"/>
+                <scale x="1.2" y="1.2" z="1.2"/>
+            </keyframe>
+
+            <keyframe instant="20.0">
                 <translation x="0" y="0" z="0"/>
                 <rotation axis="x" angle="0"/>
                 <rotation axis="y" angle="0"/>
@@ -487,6 +504,7 @@
             <transformation>
                 <translate x="-4" y="0" z="-2"/>
             </transformation>
+            <animation id="animation1" />
             <materials>
                 <material id="demoMaterial"/>
             </materials>
@@ -578,6 +596,7 @@
                 <!--<transformationref id="tentSwapSide"/>-->
                 <rotate axis="y" angle="180"/>
             </transformation>
+
             <materials>
                 <material id="demoMaterial"/>
             </materials>

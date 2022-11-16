@@ -661,22 +661,24 @@ export class MySceneGraph {
 
 
     get_transformation_matrix(transformation_tag, transfMatrix) {
+        let coordinates = [];
         switch (transformation_tag.nodeName) {
-
-            case 'translate':
-                var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
+            case 'translate' : //TODO: check if it's working
+                case 'translation':
+                coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
                 if (!Array.isArray(coordinates))
                     return coordinates;
                 let matrix_copy = mat4.clone(transfMatrix);
                 mat4.translate(transfMatrix, matrix_copy, coordinates);
                 break;
             case 'scale':
-                var coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
+                coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
                 // console.log("To do: use fromScaling here. Found in documentation but not importing. Ask teacher");
                 //mat4.fromScaling(transfMatrix, coordinates);
                 mat4.scale(transfMatrix, transfMatrix, coordinates);
                 break;
             case 'rotate':
+                case 'rotation':
                 let axis = this.reader.getString(transformation_tag, 'axis');
                 if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
@@ -962,6 +964,10 @@ export class MySceneGraph {
         return [true, controlPoints];
     }
 
+
+
+
+
     /**
      * Parses the <animations> block.
      * @param {animations block element} animationsNode
@@ -999,11 +1005,10 @@ export class MySceneGraph {
 
             let instants = {};
             for (let j = 0; j < keyframeInstants.length; j++) {
-                // get instant
                 const instant = this.reader.getFloat(keyframeInstants[j], 'instant');
                 if (!(instant != null && !isNaN(instant)))
                     return "unable to parse instant of the animation for ID = " + animationId;
-                const matrix = this.parseKeyFrameTransformations(keyframeInstants[i].children);
+                const matrix = this.parseKeyFrameTransformations(keyframeInstants[j].children);
                 if (matrix == null) return "unable to parse transformations of the animation for ID = " + animationId;
                 instants[instant] = matrix;
             }
@@ -1034,8 +1039,8 @@ export class MySceneGraph {
             if (!this.checkOrder(curr_trans_type, keyframeNode.nodeName)) return null;
             curr_trans_type = keyframeNode.nodeName;
 
-            let copiedMatrix = mat4.create();
-            matrix = this.get_transformation_matrix(keyframeNode, copiedMatrix);
+            let copied = mat4.clone(matrix);
+            matrix = this.get_transformation_matrix(keyframeNode, copied);
         }
         return matrix;
     }
@@ -1214,13 +1219,12 @@ export class MySceneGraph {
     }
 
     parseAnimationNode(node, component) {
-        if (!this.reader.hasAttribute(node, 'id')) {
-            return [false, "unable to parse animation id of the " + component.id];
-        }
+        if (!this.reader.hasAttribute(node, 'id')) return [false, "unable to parse animation id of the " + component.id];
 
         const animationID = this.reader.getString(node, 'id');
-        /*if (!this.animations[animationID]) return [false, "unable to parse animation id of the " + component.id];
-        component.animation = this.animations[animationID];*/
+        if (!this.animations[animationID]) return [false, "unable to parse animation id of the " + component.id];
+        component.animation = this.animations[animationID];
+        return [true, ""];
     }
 
 

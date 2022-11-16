@@ -9,8 +9,6 @@ export class MyPatch extends CGFobject {
         this.partsU = partsU;
         this.partsV = partsV;
         this.controlPoints = controlPoints;
-        console.log(this.controlPoints);
-        console.log(this.changeArray());
 
         let surface = new CGFnurbsSurface(this.degreeU, this.degreeV, this.changeArray());
         this.obj = new CGFnurbsObject(this.scene, this.partsU, this.partsV, surface);

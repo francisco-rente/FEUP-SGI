@@ -22,6 +22,9 @@ export class MyComponent extends CGFobject {
         this.isHighlighted = false;
         this.hightlight = false;
         this.hightlightInfo = {};
+
+        this.animation = null;
+        this.animationState = null;
     }
 
 

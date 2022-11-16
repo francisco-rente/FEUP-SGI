@@ -107,7 +107,11 @@ export class MyInterface extends CGFinterface {
 
 
         // TODO: what are these supposed to do?
-        // highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor");
+        // TODO: should you change the shader instead of the variable?
+        highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor").onChange(function (value) {
+            this.scene.updateShaderScaleFactor(value);
+        }.bind(this));
+
         highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
             this.scene.highLightColor = value;
         }.bind(this));

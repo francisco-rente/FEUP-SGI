@@ -12,14 +12,14 @@ export class MyKeyframeAnimation extends MyAnimation {
     static checkKeyFramesOrder(keyframes) {
         return Object.keys(keyframes).reduce((acc, curr) => {
             if (acc === false) return false;
-            if (curr < acc) return false;
+            if (parseFloat(curr) < parseFloat(acc)) return false;
             return curr;
         });
     }
 
     constructor(scene, id, keyframes) {
         super();
-        this._scene = scene;
+        this._scene = scene;z
         this._id = id;
         this.keyframes = keyframes; // {instant -> matrix}
     }

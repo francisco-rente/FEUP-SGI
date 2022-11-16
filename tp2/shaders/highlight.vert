@@ -7,8 +7,11 @@ uniform mat4 uPMatrix;
 uniform mat4 uNMatrix;
 
 varying vec2 vTextureCoord;
+
+
 uniform float timeFactor;
 uniform float scaleFactor;
+uniform float maxScaleFactor;
 
 
 // TODO: what does this mean?
@@ -25,7 +28,7 @@ void main() {
     // why is this not smooth?
     // vec3 offset = (timeFactor / 10.0) * scaleFactor * aVertexNormal;
 
-    vec3 offset = (timeFactor * 10.0) * aVertexNormal;
+    vec3 offset = timeFactor * (10.0 * scaleFactor) * aVertexNormal;
 
     // TODO: make this work
     /**vec3 maxOffset = (scaleFactor * aVertexNormal);
