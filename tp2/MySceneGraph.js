@@ -1,11 +1,12 @@
-import { CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader } from '../lib/CGF.js';
-import { MyRectangle } from './primitives/MyRectangle.js';
-import { MySphere } from './primitives/MySphere.js';
-import { MyCylinder } from './primitives/MyCylinder.js';
-import { MyTorus } from "./primitives/MyTorus.js";
-import { MyTriangle } from "./primitives/MyTriangle.js";
-import { MyComponent } from "./MyComponent.js";
-import { MyPatch} from './primitives/MyPatch.js';
+import {CGFappearance, CGFcamera, CGFcameraOrtho, CGFtexture, CGFXMLreader} from '../lib/CGF.js';
+import {MyRectangle} from './primitives/MyRectangle.js';
+import {MySphere} from './primitives/MySphere.js';
+import {MyCylinder} from './primitives/MyCylinder.js';
+import {MyTorus} from "./primitives/MyTorus.js";
+import {MyTriangle} from "./primitives/MyTriangle.js";
+import {MyComponent} from "./MyComponent.js";
+import {MyPatch} from './primitives/MyPatch.js';
+import {MyKeyframeAnimation} from "./MyKeyframeAnimation.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -21,6 +22,7 @@ var TRANSFORMATIONS_INDEX = 6;
 var PRIMITIVES_INDEX = 7;
 var ANIMATIONS_INDEX = 8;
 var COMPONENTS_INDEX = 9;
+
 
 /**
  * MySceneGraph class, representing the scene graph.
@@ -264,7 +266,7 @@ export class MySceneGraph {
             </perspective>
     */
 
-    parsePerspective(perspectiveNode, id, { near, far }) {
+    parsePerspective(perspectiveNode, id, {near, far}) {
         //TODO: error handling
         const angle = this.reader.getFloat(perspectiveNode, 'angle');
 
@@ -291,7 +293,7 @@ export class MySceneGraph {
     </ortho>*/
 
 
-    parseOrthoCamera(orthoNode, id, { near, far }) {
+    parseOrthoCamera(orthoNode, id, {near, far}) {
         const left = this.reader.getFloat(orthoNode, 'left');
         const right = this.reader.getFloat(orthoNode, 'right');
         const top = this.reader.getFloat(orthoNode, 'top');
@@ -347,8 +349,8 @@ export class MySceneGraph {
             if (!(far != null && !isNaN(far))) return "unable to parse far of the view for ID " + id;
 
             const [success, value] = child.nodeName === "perspective" ?
-                this.parsePerspective(child, id, { near, far }) :
-                this.parseOrthoCamera(child, id, { near, far });
+                this.parsePerspective(child, id, {near, far}) :
+                this.parseOrthoCamera(child, id, {near, far});
 
             if (!success) return value;
             this.views[id] = value;
@@ -734,7 +736,7 @@ export class MySceneGraph {
 
             // Validate the primitive type
             if (grandChildren.length != 1 ||
-                (   grandChildren[0].nodeName != 'rectangle' && grandChildren[0].nodeName != 'triangle' &&
+                (grandChildren[0].nodeName != 'rectangle' && grandChildren[0].nodeName != 'triangle' &&
                     grandChildren[0].nodeName != 'cylinder' && grandChildren[0].nodeName != 'sphere' &&
                     grandChildren[0].nodeName != 'torus' && grandChildren[0].nodeName != 'patch')) {
                 return "There must be exactly 1 primitive type (rectangle, triangle, cylinder, sphere or torus)"
@@ -890,17 +892,17 @@ export class MySceneGraph {
                     return "unable to parse degreeU of the primitive coordinates for ID = " + primitiveId;
 
                 let partsU = this.reader.getInteger(grandChildren[0], 'parts_u');
-                if (!(partsU != null && !isNaN(partsU))){
+                if (!(partsU != null && !isNaN(partsU))) {
                     return "unable to parse partsU of the primitive coordinates for ID = " + primitiveId;
-                }    
+                }
 
                 let degreeV = this.reader.getInteger(grandChildren[0], 'degree_v');
-                if (!(degreeV != null && !isNaN(degreeV) && degreeV >= 1 && degreeV <= 3)){
+                if (!(degreeV != null && !isNaN(degreeV) && degreeV >= 1 && degreeV <= 3)) {
                     return "unable to parse degreeV of the primitive coordinates for ID = " + primitiveId;
                 }
 
                 let partsV = this.reader.getInteger(grandChildren[0], 'parts_v');
-                if (!(partsV != null && !isNaN(partsV))){
+                if (!(partsV != null && !isNaN(partsV))) {
                     return "unable to parse partsV of the primitive coordinates for ID = " + primitiveId;
                 }
 
@@ -913,16 +915,16 @@ export class MySceneGraph {
 
                 let patch = new MyPatch(this.scene, primitiveId, degreeU, degreeV, partsU, partsV, controlPoints);
 
-                if(!MyPatch.checkControlPoints(degreeU, degreeV, controlPoints.length)){
+                if (!MyPatch.checkControlPoints(degreeU, degreeV, controlPoints.length)) {
                     return "unable to parse control points of the primitive coordinates for ID = " + primitiveId;
                 }
 
                 this.primitives[primitiveId] = patch;
+            }
         }
+        this.primitives[primitiveId].display();
+        return null;
     }
-    this.primitives[primitiveId].display();
-    return null;
-}
 
 
     /**
@@ -930,7 +932,7 @@ export class MySceneGraph {
      * @param node
      * @param primitiveId
      */
-    parseControlPoints(node, primitiveId){
+    parseControlPoints(node, primitiveId) {
         let children = node.children;
 
         let controlPoints = [];
@@ -954,24 +956,28 @@ export class MySceneGraph {
             const z = this.reader.getFloat(children[i], 'z');
             if (!(z != null && !isNaN(z)))
                 return [false, "unable to parse z-coordinate of the control point for ID = " + primitiveId];
-            
+
             controlPoints.push([x, y, z, 1]);
         }
         return [true, controlPoints];
     }
+
     /**
      * Parses the <animations> block.
      * @param {animations block element} animationsNode
      */
     parseAnimations(animationsNode) {
         let children = animationsNode.children;
-        this.animations = [];
-        let grandChildren = [];
-        let greatGrandChildren = [];
+        this.animations = {};
+        let keyframeInstants = [];
         let nodeNames = [];
 
-        for (var i = 0; i < children.length; i++) {
-            if (children[i].nodeName != 'keyframeanim') {
+
+        if (children.length === 0) return "no animations";
+
+
+        for (let i = 0; i < children.length; i++) {
+            if (children[i].nodeName !== 'keyframeanim') {
                 this.onXMLMinorError("unknown tag <" + children[i].nodeName + ">");
                 continue;
             }
@@ -985,11 +991,53 @@ export class MySceneGraph {
             if (this.animations[animationId] != null)
                 return "ID must be unique for each animation (conflict: ID = " + animationId + ")";
 
-            grandChildren = children[i].children;
-            nodeNames = [];
+            keyframeInstants = children[i].children;
 
+            // keyframeAnim
+            // keyframe instants
+            // transformations
 
+            let instants = {};
+            for (let j = 0; j < keyframeInstants.length; j++) {
+                // get instant
+                const instant = this.reader.getFloat(keyframeInstants[j], 'instant');
+                if (!(instant != null && !isNaN(instant)))
+                    return "unable to parse instant of the animation for ID = " + animationId;
+                const matrix = this.parseKeyFrameTransformations(keyframeInstants[i].children);
+                if (matrix == null) return "unable to parse transformations of the animation for ID = " + animationId;
+                instants[instant] = matrix;
+            }
+
+            if (!MyKeyframeAnimation.checkKeyFramesOrder(instants))
+                return "Wrong linear order for animation id = " + animationId;
+
+            this.animations[animationId] = new MyKeyframeAnimation(this.scene, animationId, instants);
         }
+    }
+
+
+    checkOrder(currentTransformation, nextTransformation) {
+        // order is: translation, rotation, scale
+        if (currentTransformation === nextTransformation) return true;
+        else if (currentTransformation === 'translation' && nextTransformation === 'rotation') return true;
+        else if  (currentTransformation === 'rotation' && nextTransformation === 'scale') return true;
+        return false;
+    }
+
+    parseKeyFrameTransformations(transformations) {
+        let curr_trans_type = "translation";
+
+        let matrix = mat4.create();
+        matrix = mat4.identity(matrix);
+
+        for (let keyframeNode of transformations) {
+            if (!this.checkOrder(curr_trans_type, keyframeNode.nodeName)) return null;
+            curr_trans_type = keyframeNode.nodeName;
+
+            let copiedMatrix = mat4.create();
+            matrix = this.get_transformation_matrix(keyframeNode, copiedMatrix);
+        }
+        return matrix;
     }
 
 
@@ -1034,6 +1082,8 @@ export class MySceneGraph {
             const textureIndex = nodeNames.indexOf("texture");
             const childrenIndex = nodeNames.indexOf("children");
             const highlightIndex = nodeNames.indexOf("highlighted");
+            const animationIndex = nodeNames.indexOf("animation");
+
 
             let component = new MyComponent(this.scene, componentID);
             // Transformations
@@ -1072,10 +1122,16 @@ export class MySceneGraph {
             if (!success) return string;
 
 
-            if(highlightIndex != -1){
+            if (highlightIndex !== -1) {
                 [success, string] = this.parseHighlightNode(grandChildren[highlightIndex], component);
                 if (!success) return string;
             }
+
+            if (animationIndex !== -1) {
+                [success, string] = this.parseAnimationNode(grandChildren[animationIndex], component);
+                if (!success) return string;
+            }
+
 
             // Children
             if (!grandChildren[childrenIndex]) return "Children must be declared in each component";
@@ -1135,29 +1191,37 @@ export class MySceneGraph {
         // <highlighted r="ff" g="ff" b="ff" scale_h="ff" />
         const r = this.reader.getFloat(node, 'r');
         if (!(r != null && !isNaN(r) && r >= 0 && r <= 1))
-            return "unable to parse R component of the " + component.id + " highlight color";
+            return [false, "unable to parse R component of the " + component.id + " highlight color"];
 
         // G
         const g = this.reader.getFloat(node, 'g');
         if (!(g != null && !isNaN(g) && g >= 0 && g <= 1))
-            return "unable to parse G component of the " + component.id + " highlight color";
+            return [false, "unable to parse G component of the " + component.id + " highlight color"];
 
         // B
         const b = this.reader.getFloat(node, 'b');
         if (!(b != null && !isNaN(b) && b >= 0 && b <= 1))
-            return "unable to parse B component of the " + component.id + " highlight color";
+            return [false, "unable to parse B component of the " + component.id + " highlight color"];
 
         // scale_h
         const scale_h = this.reader.getFloat(node, 'scale_h');
         if (!(scale_h != null && !isNaN(scale_h) && scale_h >= 0 && scale_h <= 1))
-            return "unable to parse scale_h of the " + component.id + " highlight color";
+            return [false, "unable to parse scale_h of the " + component.id + " highlight color"];
 
         component.isHighlighted = true;
-        component.hightlightInfo = {color: [r,g,b], scale: scale_h};
+        component.hightlightInfo = {color: [r, g, b], scale: scale_h};
         return [true, ""];
     }
 
+    parseAnimationNode(node, component) {
+        if (!this.reader.hasAttribute(node, 'id')) {
+            return [false, "unable to parse animation id of the " + component.id];
+        }
 
+        const animationID = this.reader.getString(node, 'id');
+        /*if (!this.animations[animationID]) return [false, "unable to parse animation id of the " + component.id];
+        component.animation = this.animations[animationID];*/
+    }
 
 
     parseMaterialNode(materials_tag, component) {

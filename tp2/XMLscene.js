@@ -291,7 +291,8 @@ export class XMLscene extends CGFscene {
         // Should you mod it by 1000?
         const timeFactor = (Math.sin(this.highLightPhase + this.highLightFrequency * t) + 1) / 2;
 
-        // const new_color = this.highLightColor.slice(0, 3).map(color => color / 255);
+        // Should we use this as a mixture instead of the texture?
+        const new_color = this.highLightColor.slice(0, 3).map(color => color / 255);
 
         // TODO: is a default value for color and scale needed? Or placing them throughout the code is enough?
         /*this.highlightShader.setUniformsValues({timeFactor: timeFactor,

@@ -108,9 +108,9 @@ export class MyInterface extends CGFinterface {
 
         // TODO: what are these supposed to do?
         // highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor");
-        /*highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
+        highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
             this.scene.highLightColor = value;
-        }.bind(this));*/
+        }.bind(this));
 
         highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
         highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");

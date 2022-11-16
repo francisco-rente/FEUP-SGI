@@ -25,15 +25,13 @@ void main() {
     // why is this not smooth?
     // vec3 offset = (timeFactor / 10.0) * scaleFactor * aVertexNormal;
 
-    vec3 offset = mod(timeFactor * 4.0, 5.0) * aVertexNormal;
+    vec3 offset = (timeFactor * 10.0) * aVertexNormal;
 
-    vec3 maxOffset = (scaleFactor * aVertexNormal);
-    if (offset.x > maxOffset.x) {
+    // TODO: make this work
+    /**vec3 maxOffset = (scaleFactor * aVertexNormal);
+    if (offset.x > maxOffset.x || offset.y > maxOffset.y || offset.z > maxOffset.z) {
         offset = maxOffset;
-    }
-
-    // if scaleFactor > scale_h, then offset = 0?
-    // if scaleFactor < scale_h, then offset = scaleFactor * aVertexNormal?
+    }*/
 
     gl_Position = (uPMatrix * uMVMatrix * vec4((aVertexPosition + offset), 1.0));
 }
