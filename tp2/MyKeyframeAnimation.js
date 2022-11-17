@@ -19,7 +19,7 @@ export class MyKeyframeAnimation extends MyAnimation {
 
     constructor(scene, id, keyframes) {
         super();
-        this._scene = scene;z
+        this._scene = scene;
         this._id = id;
         this.keyframes = keyframes; // {instant -> matrix}
     }

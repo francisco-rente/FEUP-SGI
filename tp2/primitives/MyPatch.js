@@ -28,11 +28,6 @@ export class MyPatch extends CGFobject {
             vertices.push(v_vertices);
         }*/
 
-        // not working
-        /*for (let i = 0; i < this.degreeU + 1; i++) {
-            vertices.push(this.controlPoints.slice(i * (this.degreeU + 1), (i + 1) * (this.degreeV + 1)));
-        }*/
-
         // does the same as the commented code above
         vertices = [...Array(this.degreeU + 1).keys()].map(i => {
             return [...[...Array(this.degreeV + 1).keys()].map(j =>

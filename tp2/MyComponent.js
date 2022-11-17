@@ -20,7 +20,7 @@ export class MyComponent extends CGFobject {
 
 
         this.isHighlighted = false;
-        this.hightlight = false;
+        this.highlight = false;
         this.hightlightInfo = {};
 
         this.animation = null;
@@ -38,7 +38,7 @@ export class MyComponent extends CGFobject {
     }
 
     display() {
-        if(this.hightlight) this.scene.setHighlightShader(this.hightlightInfo.color, this.hightlightInfo.scale);
+        if(this.highlight) this.scene.setHighlightShader(this.hightlightInfo.color, this.hightlightInfo.scale);
         this.sendTextureToScene();
         this.sendAppearanceToScene();
         this._scene.multMatrix(this.transformation);
@@ -51,7 +51,7 @@ export class MyComponent extends CGFobject {
             primitive.display();
         }
 
-        if(this.hightlight) this.scene.resetShader();
+        if(this.highlight) this.scene.resetShader();
 
         for (let child of this._children) {
             this._scene.pushMatrix();
@@ -63,7 +63,6 @@ export class MyComponent extends CGFobject {
         this._scene.popTexture();
         this._scene.popAppearance();
     }
-
 
     updateCoords() {
         if (this._texture === "inherit") this._texture_coord = this._parent_texture_coord;
@@ -177,7 +176,7 @@ export class MyComponent extends CGFobject {
 
     highlight() {
         console.log("highlighting");
-        (this.hightlight) ? this.hightlight = false : this.hightlight = true;
-        return this.hightlight;
+        (this.highlight) ? this.highlight = false : this.highlight = true;
+        return this.highlight;
     }
 }

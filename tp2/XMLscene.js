@@ -289,7 +289,7 @@ export class XMLscene extends CGFscene {
 
     updateShaderScaleFactor(value){
         console.log("updateShaderScaleFactor: " + value);
-        this.highlightShader.setUniformsValues({scaleFactor: this.highLightScaleFactor});
+        this.highlightShader.setUniformsValues({scaleFactor: value});
     }
 
 
