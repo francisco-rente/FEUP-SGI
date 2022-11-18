@@ -68,6 +68,7 @@
         <texture id="skybox3" file="scenes/images/skybox/skybox2.png"/>
         <texture id="skybox4" file="scenes/images/skybox/skybox3.png"/>
         <texture id="sky" file="scenes/images/skybox/nightsky.jpg"/>
+        <texture id="painting" file="scenes/images/starry_night.jpg"/>
     </textures>
 
     <materials>
@@ -186,11 +187,11 @@
         <primitive id="painting">
             <!--TODO: add light in cordner to reflect on painting-->
             <patch degree_u="1" degree_v="1" parts_u="10" parts_v="10">
-                <controlpoint x="0.0" y="1.0" z="0.0"/>
-                <controlpoint x="1.0" y="1.0" z="0.0"/>
+                <controlpoint x="0.0" y="0.0" z="0.0"/>
+                <controlpoint x="1.0" y="0.0" z="0.0"/>
 
-                <controlpoint x="0.0" y="1.0" z="1.0"/>
-                <controlpoint x="1.0" y="1.0" z="1.0"/>
+                <controlpoint x="0.0" y="0.0" z="1.0"/>
+                <controlpoint x="1.0" y="0.0" z="1.0"/>
             </patch>
         </primitive>
 
@@ -244,26 +245,6 @@
             </patch>
         </primitive>
 
-
-
-<!--
-        <primitive id="circle">
-            <patch degree_u="1" degree_v="3" parts_u="20" parts_v="20">
-
-                <controlpoint x="2.0" y="0" z="0.0"/>
-                <controlpoint x="2.0" y="1.3" z="0.0"/>
-                
-                <controlpoint x="0.0" y="1.3" z="0.0"/>
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-
-                <controlpoint x="2" y="0" z="0.0"/>
-                <controlpoint x="2" y="-1.3" z="0.0"/>
-
-                <controlpoint x="0.0" y="-1.3" z="0.0"/>
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-            </patch>
-        </primitive>
-    -->
         <primitive id="circle">
             <patch degree_u="1" degree_v="3" parts_u="20" parts_v="20">
 
@@ -424,13 +405,16 @@
 
         <component id="painting">
             <transformation>
-                <scale x="10.0" y="10.0" z="2.0"/>
+                <translate x="-5" y="0" z="0"/>
+                <rotate axis="x" angle="-90"/>
+                <rotate axis="z" angle="-90"/>
+                <scale x="2.0" y="2.0" z="1.0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
                 <material id="aurora"/>
             </materials>
-            <texture id="sky" length_t="1" length_s="1"/>
+            <texture id="painting" length_t="1" length_s="1"/>
             <children>
                 <primitiveref id="painting"/>
             </children>
