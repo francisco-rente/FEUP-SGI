@@ -347,7 +347,9 @@
 
         <component id="barrel">
             <transformation>
-                <translate x="0" y="5" z="0"/>
+                <rotation axis="x" angle="-90"/>
+                <scale x="1" y="1" z="2"/>
+                <translation x="6" y="-12" z="0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -357,18 +359,34 @@
                 <componentref id="barrel_side1"/>
                 <componentref id="barrel_side2"/>
                 <componentref id="barrel_top1"/>
+                <componentref id="barrel_top2"/>
             </children>
         </component>
 
         <component id="barrel_top1">
             <transformation>
-                <translate x="0" y="6" z="0"/>
-                <scale x="1.5" y="1.5" z="1.5"/>
+                <scale x="2" y="2" z="1"/>
+                <translation x="-0.5" y="0" z="0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="canvas" length_t="1" length_s="1"/>
+            <texture id="inherit" length_t="1" length_s="1"/>
+            <children>
+                <primitiveref id="circle"/>
+            </children>
+        </component>
+
+        <component id="barrel_top2">
+            <transformation>
+                <rotate axis="x" angle="180"/>
+                <scale x="2" y="2" z="1"/>
+                <translation x="-0.5" y="0" z="-2"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
             <children>
                 <primitiveref id="circle"/>
             </children>
