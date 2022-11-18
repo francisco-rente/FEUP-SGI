@@ -19,8 +19,6 @@ export class XMLscene extends CGFscene {
         this.interface = myinterface;
         this.lights = [];
 
-        this.highLightScaleFactor = 1.0;
-        this.highLightColor = [1, 0, 0, 1];
         this.highLightPhase = 1;
         this.highLightAmplitude = 1;
         this.highLightFrequency = 1;
@@ -198,14 +196,9 @@ export class XMLscene extends CGFscene {
     }
 
 
-    setHighlightShader(color, maxScale) {
+    setHighlightShader(color, scaleFactor) {
+        this.highlightShader.setUniformsValues({color: color, scaleFactor: scaleFactor});
         this.setActiveShader(this.highlightShader);
-
-        // TODO: Should we update the shader only when the color changes? Or in each update?
-        // TODO: Should we update the hightLightColor and Scaling of the scene for updates?
-        //      Or is the state saved in the shader?
-
-        this.activeShader.setUniformsValues({color: color, maxScaleFactor: maxScale});
     }
 
     resetShader() {
@@ -287,30 +280,12 @@ export class XMLscene extends CGFscene {
     }
 
 
-    updateShaderScaleFactor(value){
-        console.log("updateShaderScaleFactor: " + value);
-        this.highlightShader.setUniformsValues({scaleFactor: value});
-    }
-
-
-
     // called periodically (as per setUpdatePeriod() in init())
     update(t) {
 
-        if(this.startTime === null) this.startTime = t;
+        // if(this.startTime === null) this.startTime = t;
 
-        // TODO: Optimize timefactor
-        // Should you mod it by 1000?
-        const timeFactor = (Math.sin(this.highLightPhase + this.highLightFrequency * t) + 1) / 2;
-
-        // Should we use this as a mixture instead of the texture?
-        // const new_color = this.highLightColor.slice(0, 3).map(color => color / 255);
-
-        // TODO: is a default value for color and scale needed? Or placing them throughout the code is enough?
-        /*this.highlightShader.setUniformsValues({timeFactor: timeFactor,
-            scaleFactor: this.highLightScaleFactor, color : new_color});*/
-
-        // TODO: Is there a way to know if the highlight shader is active?
+        const timeFactor = (Math.sin(t) + 1) / 2;
         this.highlightShader.setUniformsValues({timeFactor: timeFactor});
     }
 

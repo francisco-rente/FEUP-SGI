@@ -15,7 +15,6 @@ uniform float scaleFactor;
 
 void main() {
     vTextureCoord = aTextureCoord;
-    vec3 offset = timeFactor * (scaleFactor) * aVertexNormal;
-
+    vec3 offset = timeFactor * scaleFactor * aVertexNormal;
     gl_Position = (uPMatrix * uMVMatrix * vec4((aVertexPosition + offset), 1.0));
 }

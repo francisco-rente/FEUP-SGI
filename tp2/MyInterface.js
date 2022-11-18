@@ -103,33 +103,26 @@ export class MyInterface extends CGFinterface {
 
     highlightGUI() {
         let highlightFolder = this.gui.addFolder("HighlightControl");
-        highlightFolder.open();
 
+        // highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
+        // highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");
+        // highlightFolder.add(this.scene, 'highLightPhase', 0, 2 * Math.PI).name("Phase");
 
-        // TODO: what are these supposed to do?
-        // TODO: should you change the shader instead of the variable?
-        highlightFolder.add(this.scene, 'highLightScaleFactor', 0.1, 3).name("Scale Factor").onChange(function (value) {
-            this.scene.updateShaderScaleFactor(value);
-        }.bind(this));
-
-        highlightFolder.addColor(this.scene, 'highLightColor').name("Color").onChange(function (value) {
-            this.scene.highLightColor = value;
-        }.bind(this));
-
-        highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
-        highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");
-        highlightFolder.add(this.scene, 'highLightPhase', 0, 2 * Math.PI).name("Phase");
-
-        let highlightedObjectsFolder = highlightFolder.addFolder("Highlightable Objects");
-
-        // TODO: why javascript?
         let highlightableObjects = this.scene.components;
-        highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.isHighlighted);
+        highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.hasHighlight);
 
         for (const component of highlightableObjects) {
-            if(!component) continue;
-            if (component.hightlight) highlightFolder.add(component, 'highlight').name(component.id);
-            else highlightedObjectsFolder.add(component, 'highlight').name(component.id).listen();
+            const componentHighLightFolder = highlightFolder.addFolder(component.id);
+            if (component.hightlight) componentHighLightFolder.add(component, 'highlight').name(component.id);
+            else componentHighLightFolder.add(component, 'highlight').name(component.id).listen();
+
+            componentHighLightFolder.addColor(component, 'highlightColor').name("Color").onChange(function (value) {
+                // TODO: is the opacity necessary or even allowed in shader
+                component.highlightColor = value;
+            }.bind(component));
+            componentHighLightFolder.add(component, 'highlightScale', 0.1, 4).name("Scale Factor").onChange(function (value) {
+                component.highlightScale = value;
+            }.bind(component));
         }
     }
 }

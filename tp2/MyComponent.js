@@ -19,14 +19,15 @@ export class MyComponent extends CGFobject {
         this.transformation = [];
 
 
-        this.isHighlighted = false;
-        this.highlight = false;
-        this.hightlightInfo = {};
+        this.hasHighlight = false;
+
+        this.highlighted = false;
+        this.highlightColor = [1, 0, 0];
+        this.highlightScale = 1;
 
         this.animation = null;
         this.animationState = null;
     }
-
 
 
     set isHighlighted(value) {
@@ -38,7 +39,11 @@ export class MyComponent extends CGFobject {
     }
 
     display() {
-        if(this.highlight) this.scene.setHighlightShader(this.hightlightInfo.color, this.hightlightInfo.scale);
+
+        if (this.highlighted) this.scene.setHighlightShader(
+            this.highlightColor.map((value) => value / 255),
+            this.highlightScale);
+
         this.sendTextureToScene();
         this.sendAppearanceToScene();
         this._scene.multMatrix(this.transformation);
@@ -51,7 +56,8 @@ export class MyComponent extends CGFobject {
             primitive.display();
         }
 
-        if(this.highlight) this.scene.resetShader();
+        if(this.highlighted) this.scene.resetShader();
+
 
         for (let child of this._children) {
             this._scene.pushMatrix();
@@ -80,8 +86,7 @@ export class MyComponent extends CGFobject {
             appearance = this._scene.createDefaultAppearance();
         else if (this._materials[curr_access] === "inherit") {
             appearance = this._scene.getAppearanceStackTop();
-        }
-        else appearance = this._materials[curr_access];
+        } else appearance = this._materials[curr_access];
 
         appearance.setTexture(texture);
         appearance.setTextureWrap('REPEAT', 'REPEAT');
@@ -175,8 +180,7 @@ export class MyComponent extends CGFobject {
 
 
     highlight() {
-        console.log("highlighting");
-        (this.highlight) ? this.highlight = false : this.highlight = true;
-        return this.highlight;
+        (this.highlighted) ? this.highlighted = false : this.highlighted = true;
+        return this.highlighted;
     }
 }

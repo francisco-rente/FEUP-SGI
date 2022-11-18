@@ -1213,8 +1213,10 @@ export class MySceneGraph {
         if (!(scale_h != null && !isNaN(scale_h) && scale_h >= 0 && scale_h <= 1))
             return [false, "unable to parse scale_h of the " + component.id + " highlight color"];
 
-        component.isHighlighted = true;
-        component.hightlightInfo = {color: [r, g, b], scale: scale_h};
+        component.hasHighlight = true;
+        component.highlightColor = [r, g, b];
+        component.highlightScale = scale_h;
+
         return [true, ""];
     }
 
