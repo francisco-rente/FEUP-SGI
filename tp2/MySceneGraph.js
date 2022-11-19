@@ -1023,6 +1023,12 @@ export class MySceneGraph {
     }
 
 
+    /**
+     * Checks order of the supplied keyframes transformations.
+     * @param currentTransformation
+     * @param nextTransformation
+     * @returns {boolean}
+     */
     checkOrder(currentTransformation, nextTransformation) {
         // order is: translation, rotation, scale
         if (currentTransformation === nextTransformation) return true;
@@ -1031,6 +1037,11 @@ export class MySceneGraph {
         return false;
     }
 
+    /**
+     * Parses the <keyframe> transformations and returns an object with the transformations.
+     * @param transformations
+     * @returns {null|{rotation: number[], translation: number[], scale: number[]}}
+     */
     parseKeyFrameTransformations(transformations) {
         let curr_trans_type = "translation";
 
@@ -1231,6 +1242,12 @@ export class MySceneGraph {
     }
 
 
+    /**
+     * Parses the <highlight> node and adds info to compontent
+     * @param node
+     * @param component
+     * @returns {(boolean|string)[]}
+     */
     parseHighlightNode(node, component) {
 
         // <highlighted r="ff" g="ff" b="ff" scale_h="ff" />
@@ -1254,7 +1271,7 @@ export class MySceneGraph {
             return [false, "unable to parse scale_h of the " + component.id + " highlight color"];
 
         component.hasHighlight = true;
-        component.highlightColor = [r, g, b];
+        component.highlightColor = [r, g, b].map(x => x * 255);
         component.highlightScale = scale_h;
 
         return [true, ""];
