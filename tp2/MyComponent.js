@@ -26,7 +26,6 @@ export class MyComponent extends CGFobject {
         this.highlightScale = 1;
 
         this.animation = null;
-        this.animationState = null;
     }
 
 
@@ -39,6 +38,7 @@ export class MyComponent extends CGFobject {
     }
 
     display() {
+        if (this.animation && !this.animation.isVisible) return;
 
         if (this.highlighted) this.scene.setHighlightShader(
             this.highlightColor.map((value) => value / 255),
@@ -46,7 +46,10 @@ export class MyComponent extends CGFobject {
 
         this.sendTextureToScene();
         this.sendAppearanceToScene();
+
+        if (this.animation !== null) this.animation.apply();
         this._scene.multMatrix(this.transformation);
+
         this.updateCoords();
 
         for (const primitive of this._primitives) {
@@ -56,7 +59,7 @@ export class MyComponent extends CGFobject {
             primitive.display();
         }
 
-        if(this.highlighted) this.scene.resetShader();
+        if (this.highlighted) this.scene.resetShader();
 
 
         for (let child of this._children) {

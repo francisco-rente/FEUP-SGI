@@ -7,6 +7,7 @@ import {MyTriangle} from "./primitives/MyTriangle.js";
 import {MyComponent} from "./MyComponent.js";
 import {MyPatch} from './primitives/MyPatch.js';
 import {MyKeyframeAnimation} from "./MyKeyframeAnimation.js";
+import {MyKeyFrame} from "./MyKeyFrame.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -664,7 +665,7 @@ export class MySceneGraph {
         let coordinates = [];
         switch (transformation_tag.nodeName) {
             case 'translate' : //TODO: check if it's working
-                case 'translation':
+            case 'translation':
                 coordinates = this.parseCoordinates3D(transformation_tag, "translate transformation");
                 if (!Array.isArray(coordinates))
                     return coordinates;
@@ -678,7 +679,7 @@ export class MySceneGraph {
                 mat4.scale(transfMatrix, transfMatrix, coordinates);
                 break;
             case 'rotate':
-                case 'rotation':
+            case 'rotation':
                 let axis = this.reader.getString(transformation_tag, 'axis');
                 if (axis != 'x' && axis != 'y' && axis != 'z')
                     return transformation_tag;
@@ -965,16 +966,13 @@ export class MySceneGraph {
     }
 
 
-
-
-
     /**
      * Parses the <animations> block.
      * @param {animations block element} animationsNode
      */
     parseAnimations(animationsNode) {
         let children = animationsNode.children;
-        this.animations = {};
+        this.animations = [];
         let keyframeInstants = [];
         let nodeNames = [];
 
@@ -1003,19 +1001,23 @@ export class MySceneGraph {
             // keyframe instants
             // transformations
 
-            let instants = {};
+            let instants = [];
             for (let j = 0; j < keyframeInstants.length; j++) {
                 const instant = this.reader.getFloat(keyframeInstants[j], 'instant');
                 if (!(instant != null && !isNaN(instant)))
                     return "unable to parse instant of the animation for ID = " + animationId;
-                const matrix = this.parseKeyFrameTransformations(keyframeInstants[j].children);
-                if (matrix == null) return "unable to parse transformations of the animation for ID = " + animationId;
-                instants[instant] = matrix;
+
+                const transformations = this.parseKeyFrameTransformations(keyframeInstants[j].children);
+                if (transformations === null) return "unable to parse transformations of the animation for ID = " + animationId;
+
+                instants[j] = new MyKeyFrame(instant,
+                    transformations.translation,
+                    transformations.rotation,
+                    transformations.scale);
             }
 
             if (!MyKeyframeAnimation.checkKeyFramesOrder(instants))
                 return "Wrong linear order for animation id = " + animationId;
-
             this.animations[animationId] = new MyKeyframeAnimation(this.scene, animationId, instants);
         }
     }
@@ -1025,24 +1027,64 @@ export class MySceneGraph {
         // order is: translation, rotation, scale
         if (currentTransformation === nextTransformation) return true;
         else if (currentTransformation === 'translation' && nextTransformation === 'rotation') return true;
-        else if  (currentTransformation === 'rotation' && nextTransformation === 'scale') return true;
+        else if (currentTransformation === 'rotation' && nextTransformation === 'scale') return true;
         return false;
     }
 
     parseKeyFrameTransformations(transformations) {
         let curr_trans_type = "translation";
 
-        let matrix = mat4.create();
-        matrix = mat4.identity(matrix);
+        let transformationsObj = {translation: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1]};
+        transformationsObj.rotation = [0, 0, 0];
+
 
         for (let keyframeNode of transformations) {
             if (!this.checkOrder(curr_trans_type, keyframeNode.nodeName)) return null;
             curr_trans_type = keyframeNode.nodeName;
 
-            let copied = mat4.clone(matrix);
-            matrix = this.get_transformation_matrix(keyframeNode, copied);
+            if (keyframeNode.nodeName === 'translation') {
+                const x = this.reader.getFloat(keyframeNode, 'x');
+                if (!(x != null && !isNaN(x))) return null;
+
+                const y = this.reader.getFloat(keyframeNode, 'y');
+                if (!(y != null && !isNaN(y))) return null;
+
+                const z = this.reader.getFloat(keyframeNode, 'z');
+                if (!(z != null && !isNaN(z))) return null;
+
+                transformationsObj[keyframeNode.nodeName] = [x, y, z];
+            } else if (keyframeNode.nodeName === 'rotation') {
+                const axis = this.reader.getString(keyframeNode, 'axis');
+                if (axis == null)
+                    return null;
+
+                const angle = this.reader.getFloat(keyframeNode, 'angle');
+                if (!(angle != null && !isNaN(angle)))
+                    return null;
+
+                const radAngle = angle * DEGREE_TO_RAD;
+                if (axis === 'x') transformationsObj["rotation"][0] = radAngle;
+                else if (axis === 'y') transformationsObj["rotation"][1] = radAngle;
+                else if (axis === 'z') transformationsObj["rotation"][2] = radAngle;
+            } else if (keyframeNode.nodeName === 'scale') {
+                const x = this.reader.getFloat(keyframeNode, 'x');
+                if (!(x != null && !isNaN(x)))
+                    return null;
+
+                const y = this.reader.getFloat(keyframeNode, 'y');
+                if (!(y != null && !isNaN(y)))
+                    return null;
+
+                const z = this.reader.getFloat(keyframeNode, 'z');
+                if (!(z != null && !isNaN(z)))
+                    return null;
+
+                transformationsObj[keyframeNode.nodeName] = [x, y, z];
+            }
+
         }
-        return matrix;
+        return transformationsObj;
+
     }
 
 
@@ -1222,10 +1264,11 @@ export class MySceneGraph {
 
     parseAnimationNode(node, component) {
         if (!this.reader.hasAttribute(node, 'id')) return [false, "unable to parse animation id of the " + component.id];
-
         const animationID = this.reader.getString(node, 'id');
         if (!this.animations[animationID]) return [false, "unable to parse animation id of the " + component.id];
         component.animation = this.animations[animationID];
+        console.log(component.animation);
+        console.log("animationID: " + animationID);
         return [true, ""];
     }
 
