@@ -1,7 +1,7 @@
 import {MyAnimation} from "./MyAnimation.js";
 
 export class MyKeyframeAnimation extends MyAnimation {
-    ;
+
 
     static checkKeyFramesOrder(keyframes) {
         return keyframes.map(
@@ -30,10 +30,11 @@ export class MyKeyframeAnimation extends MyAnimation {
             this.rotateMatrix(keyframes[0].rotation, keyframes[0].rotation, 0);
             this.scaleMatrix(keyframes[0].scale, keyframes[0].scale, 0);
         }
+        console.log(this.keyframes);
     }
 
     update(time) {
-        if (time < this.keyframes[0].instant) return; // animation not started yet
+        if (time <= this.keyframes[0].instant) return; // animation not started yet
         this.isVisible = true;
         if (this.keyframes.length === 1) return; // animation has only one keyframe, has been calculated in constructor
 
@@ -42,10 +43,10 @@ export class MyKeyframeAnimation extends MyAnimation {
             && time >= this.keyframes[this.keyframes.length - 1].instant) {
             //TODO: is the current matrix the last keyframe matrix?
 
-            /*this.currentMatrix = mat4.create();
+            this.currentMatrix = mat4.create();
             this.translateMatrix(this.keyframes[this.keyframes.length - 1].translation, this.keyframes[this.keyframes.length - 1].translation, 0);
             this.rotateMatrix(this.keyframes[this.keyframes.length - 1].rotation, this.keyframes[this.keyframes.length - 1].rotation, 0);
-            this.scaleMatrix(this.keyframes[this.keyframes.length - 1].scale, this.keyframes[this.keyframes.length - 1].scale, 0);*/
+            this.scaleMatrix(this.keyframes[this.keyframes.length - 1].scale, this.keyframes[this.keyframes.length - 1].scale, 0);
 
             return;
         }
@@ -55,6 +56,7 @@ export class MyKeyframeAnimation extends MyAnimation {
             if (time <= keyframe.instant) {
                 this.nextKeyframeIndex = index;
                 this.currentKeyframeIndex = index - 1;
+                return true;
             }
         });
 
