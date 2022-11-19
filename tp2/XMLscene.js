@@ -54,7 +54,7 @@ export class XMLscene extends CGFscene {
 
         this.highlightShader.setUniformsValues({uSampler: 0}); // TODO: is this necessary?
 
-        this.setUpdatePeriod(20);
+        this.setUpdatePeriod(10);
     }
 
     /**
@@ -293,6 +293,9 @@ export class XMLscene extends CGFscene {
 
 
         const timeFactor = (Math.sin(t) + 1) / 2;
+        //console.log(t)
+        //console.log(Math.sin(t))
+        //console.log(timeFactor)
         this.highlightShader.setUniformsValues({timeFactor: timeFactor});
     }
 

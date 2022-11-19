@@ -1035,9 +1035,7 @@ export class MySceneGraph {
         let curr_trans_type = "translation";
 
         let transformationsObj = {translation: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1]};
-        transformationsObj.rotation = [0, 0, 0];
-
-
+        
         for (let keyframeNode of transformations) {
             if (!this.checkOrder(curr_trans_type, keyframeNode.nodeName)) return null;
             curr_trans_type = keyframeNode.nodeName;
