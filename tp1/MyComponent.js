@@ -33,6 +33,8 @@ export class MyComponent extends CGFobject {
             else primitive.disableNormalViz();
             primitive.display();
         }
+
+
         for (let child of this._children) {
             this._scene.pushMatrix();
             child.updateTexCoords(this._texture_coord);
@@ -152,5 +154,9 @@ export class MyComponent extends CGFobject {
             default:
                 this._scene.pushTexture(this.texture);
         }
+    }
+
+    highlight() {
+        (this._highlight) ? this._highlight = false : this._highlight = true;
     }
 }
