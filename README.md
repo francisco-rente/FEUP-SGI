@@ -21,8 +21,13 @@ is well-structured, easy to understand and change/scale.
 -----
 
 ### [TP2 - ...](tp2)
-- (items briefly describing main strong points)
-
+- Parsing encompasses all the rules given by the project statement and extra rules were added for violations.
+- The interaction between the code components (Scene, component display, interface, etc.)
+  is well-structured, easy to understand and change/scale.
+- New animation classes were added to the project, to support the animations.
+- GUI incremented to support the highlight features.
+- [Scene](tp2/scenes/SGI_TP1_XML_T01_G03_v03.xml)
+  - Portrays a camping scenario in the forest.
 ----
 
 ### [TP3 - ...](tp3)

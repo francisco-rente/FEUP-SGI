@@ -302,7 +302,7 @@
                 <scale x="1" y="1" z="1"/>
             </keyframe>
             <keyframe instant="20.0">
-                <translation x="0" y="5" z="0"/>
+                <translation x="0" y="0" z="0"/>
                 <rotation axis="x" angle="0"/>
                 <rotation axis="y" angle="0"/>
                 <rotation axis="z" angle="0"/>

@@ -53,7 +53,6 @@ export class MyPatch extends CGFobject {
     }
 
     static checkControlPoints(degreeU, degreeV, controlPointsLen) {
-        //TODO: check order
         return controlPointsLen === (degreeU + 1) * (degreeV + 1);
     }
 }
