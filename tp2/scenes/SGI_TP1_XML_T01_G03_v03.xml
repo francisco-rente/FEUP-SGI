@@ -99,6 +99,13 @@
             <specular r="0.0" g="0.30" b="1.0" a="0.5"/>
         </material>
 
+        <material id="kite" shininess="10">
+            <emission r="0.82" g="0.73" b="0.05" a="1.0"/>
+            <ambient r="0.82" g="0.73" b="0.05" a="1.0"/>
+            <diffuse r="0.82" g="0.73" b="0.05" a="1.0"/>
+            <specular r="0.82" g="0.73" b="0.05" a="1.0"/>
+        </material>
+
     </materials>
 
     <transformations>
@@ -182,7 +189,6 @@
         <primitive id="fireCone">
             <cylinder base="0.5" top="0.00" height="0.8" slices="10" stacks="10"/>
         </primitive>
-
 
         <primitive id="painting">
             <!--TODO: add light in cordner to reflect on painting-->
@@ -309,6 +315,50 @@
                 <scale x="1" y="1" z="1"/>
             </keyframe>
         </keyframeanim>
+
+
+        <keyframeanim id="kite">
+
+            <keyframe instant="2.0">
+            </keyframe>
+
+            <keyframe instant="10.0">
+                <translation x="-10" y="10" z="-5"/>
+               <rotation axis="x" angle="60"/>
+                <rotation axis="y" angle="40"/>
+            </keyframe>
+
+
+            <keyframe instant="13.0">
+                <translation x="-11" y="12" z="-7"/>
+                <rotation axis="x" angle="60"/>
+                <rotation axis="y" angle="40"/>
+            </keyframe>
+
+            <keyframe instant="16.0">
+                <translation x="-8" y="10" z="-5"/>
+                <rotation axis="x" angle="60"/>
+                <rotation axis="y" angle="40"/>
+            </keyframe>
+
+            <keyframe instant="20.0">
+                <translation x="-1" y="15" z="-3"/>
+                <rotation axis="x" angle="60"/>
+                <rotation axis="y" angle="40"/>
+            </keyframe>
+
+            <keyframe instant="20.0">
+                <translation x="-1" y="15" z="-3"/>
+                <rotation axis="x" angle="60"/>
+                <rotation axis="y" angle="40"/>
+            </keyframe>
+
+            <keyframe instant="26.0">
+                <translation x="6" y="2" z="0"/>
+            <rotation axis="x" angle="90"/>
+            </keyframe>
+
+        </keyframeanim>
     </animations>
 
 
@@ -329,6 +379,88 @@
                 <componentref id="painting"/>
                 <componentref id="rounded_tent"/>
                 <componentref id="barrel"/>
+                <componentref id="kite"/>
+            </children>
+        </component>
+
+        <component id="kite">
+            <transformation>
+                <translation x="0" y="2" z="0"/>
+            </transformation>
+            <animation id="kite" />
+            <materials>
+                <material id="kite"/>
+            </materials>
+            <texture id="none"/>
+            <children>
+                <componentref id="kitePiece1"/>     
+                <componentref id="kitePiece2"/> 
+                <componentref id="kitePiece3"/>
+                <componentref id="kitePiece4"/>
+            </children>
+            <highlighted r="0.0" g="1.0" b="0.0" scale_h="1.0" />
+        </component>
+
+
+        <component id="kitePiece1">
+            <transformation>
+                <scale x="2.0" y="1.5" z="1.0"/>
+                <translate x="1" y="0" z="0"/>
+                <rotation axis="x" angle="-180"/>
+                <rotation axis="z" angle="180"/>
+                 
+            </transformation>
+            <materials>
+                <material id="inherit"/>
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="aTriangle"/>
+            </children>
+        </component>
+
+                <component id="kitePiece2">
+            <transformation>
+                <scale x="2.0" y="3.0" z="1.0"/>
+                <rotation axis="x" angle="-180"/>
+            </transformation>
+            <materials>
+                <material id="inherit"/>
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="aTriangle"/>
+            </children>
+        </component>
+
+                <component id="kitePiece3">
+            <transformation>
+                <scale x="2.0" y="1.5" z="1.0"/>
+            </transformation>
+            <materials>
+                <material id="inherit"/>
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="aTriangle"/>
+            </children>
+        </component>
+
+
+                <component id="kitePiece4">
+            <transformation>
+                <scale x="2.0" y="3.0" z="1.0"/>
+                <translate x="1" y="0" z="0"/>
+                <rotation axis="x" angle="-180"/>
+                <rotation axis="y" angle="-180"/>
+            </transformation>
+            <!--<animation id="kite" />-->
+            <materials>
+                <material id="inherit"/>
+            </materials>
+            <texture id="inherit"/>
+            <children>
+                <primitiveref id="aTriangle"/>
             </children>
         </component>
 
