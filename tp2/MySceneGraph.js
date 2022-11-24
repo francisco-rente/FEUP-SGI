@@ -6,7 +6,7 @@ import {MyTorus} from "./primitives/MyTorus.js";
 import {MyTriangle} from "./primitives/MyTriangle.js";
 import {MyComponent} from "./MyComponent.js";
 import {MyPatch} from './primitives/MyPatch.js';
-import {MyKeyframeAnimation} from "./MyKeyframeAnimation.js";
+import {MyKeyframeAnimation} from "./animations/MyKeyframeAnimation.js";
 import {MyKeyFrame} from "./MyKeyFrame.js";
 
 

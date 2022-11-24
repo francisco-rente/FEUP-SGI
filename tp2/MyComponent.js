@@ -47,8 +47,8 @@ export class MyComponent extends CGFobject {
         this.sendTextureToScene();
         this.sendAppearanceToScene();
 
-        if (this.animation !== null) this.animation.apply();
         this._scene.multMatrix(this.transformation);
+        if (this.animation !== null) this.animation.apply();
 
         this.updateCoords();
 
