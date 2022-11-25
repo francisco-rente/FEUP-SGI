@@ -19,9 +19,7 @@ export class XMLscene extends CGFscene {
         this.interface = myinterface;
         this.lights = [];
 
-        this.highLightPhase = 1;
-        this.highLightAmplitude = 1;
-        this.highLightFrequency = 1;
+        this.completeShader = false;
     }
 
     /**
@@ -52,8 +50,7 @@ export class XMLscene extends CGFscene {
         this.highlightShader = new CGFshader(this.gl,
             "shaders/highlight.vert", "shaders/highlight.frag");
 
-        this.highlightShader.setUniformsValues({uSampler: 0}); // TODO: is this necessary?
-
+        this.highlightShader.setUniformsValues({uSampler: 0, complete: this.completeShader});
         this.setUpdatePeriod(20);
     }
 
@@ -145,14 +142,13 @@ export class XMLscene extends CGFscene {
         this.pushAppearance(this.createDefaultAppearance());
     }
 
-    cloneMaterial(material, texture) {
+    cloneMaterial(material) {
         const newMaterial = new CGFappearance(this);
         newMaterial.setAmbient(material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
         newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
         newMaterial.setSpecular(material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
         newMaterial.setShininess(material.shininess);
-        // newMaterial.id = material.id;
-        //newMaterial.texture = new CGFtexture(this, material.texture.image.src)
+
 
         newMaterial.texture = material.texture;
         return newMaterial;
@@ -272,13 +268,6 @@ export class XMLscene extends CGFscene {
             ? 0 : this.appearence_index + 1;
     }
 
-    checkKeys() {
-        if (this.gui.isKeyPressed("KeyM")) {
-            console.log("Key M pressed");
-            // prevent overflow of the index
-        }
-    }
-
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t) {
@@ -289,8 +278,6 @@ export class XMLscene extends CGFscene {
             for (let key in this.graph.animations)
                 this.graph.animations[key].update((t - this.startTime) / 1000);
 
-        //const timeFactor = (Math.sin(t) + 1) / 2;
-        //const timeFactor = (Math.sin(Math.floor(t%1000/100)) + 1) / 2;
         const timeFactor = (Math.sin(((t / 1000 % 1000))) + 1) / 2;
         this.highlightShader.setUniformsValues({timeFactor: timeFactor});
     }
