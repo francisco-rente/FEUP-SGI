@@ -277,10 +277,20 @@
     <animations>
         <keyframeanim id="animation1">
             <keyframe instant="0.0">
+                <translation x="0" y="0" z="0"/>
+                <rotation axis="x"angle="0"/>
+                <rotation axis="y"angle="0"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
+
             </keyframe>
 
             <keyframe instant="5.0">
-                <rotation axis="y" angle="90"/>
+                <translation x="0" y="0" z="0"/>
+                <rotation axis="x"angle="0"/>
+                <rotation axis="y"angle="90"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
             <keyframe instant="10.0">
@@ -292,6 +302,11 @@
             </keyframe>
 
             <keyframe instant="15.0">
+                <translation x="0" y="0" z="0"/>
+                <rotation axis="x"angle="0"/>
+                <rotation axis="y"angle="0"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
         </keyframeanim>
@@ -304,8 +319,10 @@
 
             <keyframe instant="15.0">
                 <translation x="-10" y="10" z="-5"/>
-               <rotation axis="x" angle="60"/>
+                <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
 
@@ -313,29 +330,40 @@
                 <translation x="-11" y="12" z="-7"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
             <keyframe instant="21.0">
                 <translation x="-8" y="10" z="-5"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
             <keyframe instant="25.0">
                 <translation x="-1" y="15" z="-3"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
             <keyframe instant="25.0">
                 <translation x="-1" y="15" z="-3"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
             <keyframe instant="31.0">
                 <translation x="6" y="2.01" z="14"/>
-            <rotation axis="x" angle="90"/>
+                <rotation axis="x" angle="90"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z"angle="0"/>
+                <scale sx="1" sy="1" sz="1"/>
             </keyframe>
 
         </keyframeanim>
@@ -365,7 +393,7 @@
 
         <component id="kite">
             <transformation>
-                <translation x="0" y="2" z="0"/>
+                <translate x="0" y="2" z="0"/>
             </transformation>
             <animation id="kite" />
             <materials>
@@ -385,8 +413,8 @@
             <transformation>
                 <scale x="2.0" y="1.5" z="1.0"/>
                 <translate x="1" y="0" z="0"/>
-                <rotation axis="x" angle="-180"/>
-                <rotation axis="z" angle="180"/>
+                <rotate axis="x" angle="-180"/>
+                <rotate axis="z" angle="180"/>
                  
             </transformation>
             <materials>
@@ -402,7 +430,7 @@
                 <component id="kitePiece2">
             <transformation>
                 <scale x="2.0" y="3.0" z="1.0"/>
-                <rotation axis="x" angle="-180"/>
+                <rotate axis="x" angle="-180"/>
             </transformation>
             <materials>
                 <material id="inherit"/>
@@ -432,8 +460,8 @@
             <transformation>
                 <scale x="2.0" y="3.0" z="1.0"/>
                 <translate x="1" y="0" z="0"/>
-                <rotation axis="x" angle="-180"/>
-                <rotation axis="y" angle="-180"/>
+                <rotate axis="x" angle="-180"/>
+                <rotate axis="y" angle="-180"/>
             </transformation>
             <!--<animation id="kite" />-->
             <materials>
@@ -448,9 +476,9 @@
 
         <component id="barrel">
             <transformation>
-                <rotation axis="x" angle="-90"/>
+                <rotate axis="x" angle="-90"/>
                 <scale x="1" y="1" z="2"/>
-                <translation x="6" y="-12" z="0"/>
+                <translate x="6" y="-12" z="0"/>
             </transformation>
             <animation id="animation1" />
             <materials>
@@ -468,7 +496,7 @@
         <component id="barrel_top1">
             <transformation>
                 <scale x="2" y="2" z="1"/>
-                <translation x="-0.5" y="0" z="0"/>
+                <translate x="-0.5" y="0" z="0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -483,7 +511,7 @@
             <transformation>
                 <rotate axis="x" angle="180"/>
                 <scale x="2" y="2" z="1"/>
-                <translation x="-0.5" y="0" z="-2"/>
+                <translate x="-0.5" y="0" z="-2"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
