@@ -319,42 +319,42 @@
 
         <keyframeanim id="kite">
 
-            <keyframe instant="2.0">
+            <keyframe instant="7.0">
             </keyframe>
 
-            <keyframe instant="10.0">
+            <keyframe instant="15.0">
                 <translation x="-10" y="10" z="-5"/>
                <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
             </keyframe>
 
 
-            <keyframe instant="13.0">
+            <keyframe instant="18.0">
                 <translation x="-11" y="12" z="-7"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
             </keyframe>
 
-            <keyframe instant="16.0">
+            <keyframe instant="21.0">
                 <translation x="-8" y="10" z="-5"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
             </keyframe>
 
-            <keyframe instant="20.0">
+            <keyframe instant="25.0">
                 <translation x="-1" y="15" z="-3"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
             </keyframe>
 
-            <keyframe instant="20.0">
+            <keyframe instant="25.0">
                 <translation x="-1" y="15" z="-3"/>
                 <rotation axis="x" angle="60"/>
                 <rotation axis="y" angle="40"/>
             </keyframe>
 
-            <keyframe instant="26.0">
-                <translation x="6" y="2" z="0"/>
+            <keyframe instant="31.0">
+                <translation x="6" y="2.01" z="14"/>
             <rotation axis="x" angle="90"/>
             </keyframe>
 
@@ -398,7 +398,6 @@
                 <componentref id="kitePiece3"/>
                 <componentref id="kitePiece4"/>
             </children>
-            <highlighted r="0.0" g="1.0" b="0.0" scale_h="1.0" />
         </component>
 
 
@@ -417,6 +416,7 @@
             <children>
                 <primitiveref id="aTriangle"/>
             </children>
+            <highlighted r="0.0" g="1.0" b="0.0" scale_h="1.0"/>
         </component>
 
                 <component id="kitePiece2">
@@ -444,6 +444,7 @@
             <children>
                 <primitiveref id="aTriangle"/>
             </children>
+            <highlighted r="0.0" g="1.0" b="0.0" scale_h="1.0"/>
         </component>
 
 
