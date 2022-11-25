@@ -552,7 +552,7 @@
                 <rotate axis="y" angle="-110"/>
                 <rotate axis="x" angle="-90"/>
                 <rotate axis="z" angle="-90"/>
-                <scale x="5.0" y="6.0" z="1.0"/>
+                <scale x="5.0" y="6.0" z="3.0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
