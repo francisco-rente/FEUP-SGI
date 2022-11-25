@@ -1,17 +1,20 @@
-#ifdef GL_ES
+#version 300 es
 precision highp float;
-#endif
 
-varying vec2 vTextureCoord;
-uniform float timeFactor;
+in vec4 vFinalColor;
+in vec2 vTextureCoord;
+out vec4 fragColor;
 uniform sampler2D uSampler;
+uniform bool uUseTexture;
+uniform float timeFactor;
 uniform vec3 color;
 
 void main() {
-    vec4 textureColor =  texture2D(uSampler, vTextureCoord);
-
-    //TODO: how to add the default material color as the texture color?
-    // if vTextureCoord is null then use material color?
-
-    gl_FragColor =  mix (textureColor, vec4(color, 1.0), timeFactor);
+    if (uUseTexture)
+    {
+        vec4 textureColor = texture(uSampler, vTextureCoord);
+        fragColor = mix(textureColor,vec4(color, 1.0), timeFactor);
+    }
+    else
+    fragColor = mix(vFinalColor,vec4(color, 1.0), timeFactor);
 }
