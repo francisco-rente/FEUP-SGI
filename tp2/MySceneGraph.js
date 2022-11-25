@@ -1002,10 +1002,16 @@ export class MySceneGraph {
             // transformations
 
             let instants = [];
+
+            if(keyframeInstants.length === 0) return "no keyframe instants";
+
             for (let j = 0; j < keyframeInstants.length; j++) {
                 const instant = this.reader.getFloat(keyframeInstants[j], 'instant');
                 if (!(instant != null && !isNaN(instant)))
                     return "unable to parse instant of the animation for ID = " + animationId;
+
+                if(instant < 0) return "instant must be positive for ID = " + animationId;
+
 
                 const transformations = this.parseKeyFrameTransformations(keyframeInstants[j].children);
                 if (transformations === null) return "unable to parse transformations of the animation for ID = " + animationId;
@@ -1043,6 +1049,8 @@ export class MySceneGraph {
      * @returns {null|{rotation: number[], translation: number[], scale: number[]}}
      */
     parseKeyFrameTransformations(transformations) {
+        if(transformations.length !== 5) return null;
+
         let curr_trans_type = "translation";
 
         let transformationsObj = {translation: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1]};
@@ -1093,7 +1101,6 @@ export class MySceneGraph {
 
         }
         return transformationsObj;
-
     }
 
 
