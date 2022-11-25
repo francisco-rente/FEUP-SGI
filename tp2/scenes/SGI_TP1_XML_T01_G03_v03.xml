@@ -191,8 +191,7 @@
         </primitive>
 
         <primitive id="painting">
-            <!--TODO: add light in cordner to reflect on painting-->
-            <patch degree_u="1" degree_v="1" parts_u="10" parts_v="10">
+            <patch degree_u="1" degree_v="1" parts_u="20" parts_v="20">
                 <controlpoint x="0.0" y="0.0" z="0.0"/>
                 <controlpoint x="1.0" y="0.0" z="0.0"/>
 
@@ -549,10 +548,11 @@
 
         <component id="painting">
             <transformation>
-                <translate x="-5" y="0" z="0"/>
+                <translate x="5" y="0" z="-1"/>
+                <rotate axis="y" angle="-110"/>
                 <rotate axis="x" angle="-90"/>
                 <rotate axis="z" angle="-90"/>
-                <scale x="2.0" y="2.0" z="1.0"/>
+                <scale x="5.0" y="6.0" z="1.0"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
