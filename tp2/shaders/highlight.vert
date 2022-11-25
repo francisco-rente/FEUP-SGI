@@ -8,7 +8,7 @@ in vec2 aTextureCoord;
 uniform bool uUseTexture;
 uniform float timeFactor;
 uniform float scaleFactor;
-
+uniform bool complete;
 
 struct lightProperties {
     vec4 position;                  // Default: (0, 0, 1, 0)
@@ -37,8 +37,8 @@ uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 uniform mat4 uNMatrix;
 
-uniform bool uLightEnabled;	// not being used
-uniform bool uLightModelTwoSided;	// not being used
+uniform bool uLightEnabled;    // not being used
+uniform bool uLightModelTwoSided;    // not being used
 
 #define NUMBER_OF_LIGHTS 8
 
@@ -73,7 +73,7 @@ vec4 lighting(vec4 vertex, vec3 E, vec3 N) {
                     float cos_cur_angle = dot(sd, -L);
                     float cos_inner_cone_angle = cos(radians(clamp(uLight[i].spot_cutoff, 0.0, 89.0)));
 
-                    spot_effect = pow(clamp(cos_cur_angle/ cos_inner_cone_angle, 0.0, 1.0), clamp(uLight[i].spot_exponent, 0.0, 128.0));
+                    spot_effect = pow(clamp(cos_cur_angle / cos_inner_cone_angle, 0.0, 1.0), clamp(uLight[i].spot_exponent, 0.0, 128.0));
                 }
 
                 att = 1.0 / (uLight[i].constant_attenuation + uLight[i].linear_attenuation * dist + uLight[i].quadratic_attenuation * dist * dist);
@@ -92,7 +92,7 @@ vec4 lighting(vec4 vertex, vec3 E, vec3 N) {
 
             if (lambertTerm > 0.0) {
                 vec3 R = reflect(-L, N);
-                float specular = pow( max( dot(R, E), 0.0 ), uFrontMaterial.shininess);
+                float specular = pow(max(dot(R, E), 0.0), uFrontMaterial.shininess);
 
                 Is = uLight[i].specular * uFrontMaterial.specular * specular;
             }
@@ -106,7 +106,6 @@ vec4 lighting(vec4 vertex, vec3 E, vec3 N) {
 
     result += uGlobalAmbient * uFrontMaterial.ambient + uFrontMaterial.emission;
     result = clamp(result, vec4(0.0), vec4(1.0));
-
     return result;
 }
 
@@ -122,7 +121,7 @@ void main() {
     vec3 eyeVec = -vec3(vertex.xyz);
     vec3 E = normalize(eyeVec);
 
-    vFinalColor = lighting(vertex, E, N);
+    if (complete) vFinalColor = lighting(vertex, E, N);
 
     gl_Position = uPMatrix * vertex;
 

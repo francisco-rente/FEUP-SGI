@@ -104,16 +104,20 @@ export class MyInterface extends CGFinterface {
     highlightGUI() {
         let highlightFolder = this.gui.addFolder("HighlightControl");
 
-        // highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
-        // highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");
-        // highlightFolder.add(this.scene, 'highLightPhase', 0, 2 * Math.PI).name("Phase");
+
+        // switches between the full shader computation and the reduced calculations
+        highlightFolder.add(this.scene, 'completeShader').name("Complete Shader").onChange(function (value) {
+            console.log(value);
+            this.scene.highlightShader.setUniformsValues({complete: value});
+        }.bind(this));
 
         let highlightableObjects = this.scene.components;
         highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.hasHighlight);
 
+
         for (const component of highlightableObjects) {
             const componentHighLightFolder = highlightFolder.addFolder(component.id);
-            if (component.hightlight) componentHighLightFolder.add(component, 'highlight').name(component.id);
+            if (component.highlight) componentHighLightFolder.add(component, 'highlight').name(component.id);
             else componentHighLightFolder.add(component, 'highlight').name(component.id).listen();
 
             componentHighLightFolder.addColor(component, 'highlightColor').name("Color").onChange(function (value) {
