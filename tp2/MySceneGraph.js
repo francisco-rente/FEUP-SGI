@@ -1328,7 +1328,7 @@ export class MySceneGraph {
             length_t = this.reader.getFloat(texture_info, 'length_t');
 
             if (length_t <= 0 || length_s <= 0 || length_t == null || length_s == null)
-                return [false, "Texture length_s and length_t must be between 0 and 1"];
+                return [false, "Texture length_s and length_t must be between positive numbers"];
         }
 
         if (texture_id === 'inherit' || texture_id === 'none') {
