@@ -121,8 +121,6 @@ export class MyInterface extends CGFinterface {
                 component.highlightColor = value;
             }.bind(component));
 
-            component.highlightColor = component.highlightColor.map((value) => value * 255);
-
             componentHighLightFolder.add(component, 'highlightScale', 0.1, 4).name("Scale Factor").onChange(function (value) {
                 component.highlightScale = value;
             }.bind(component));

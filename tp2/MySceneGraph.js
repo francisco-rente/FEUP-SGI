@@ -1076,15 +1076,15 @@ export class MySceneGraph {
                 else if (axis === 'y') transformationsObj["rotation"][1] = radAngle;
                 else if (axis === 'z') transformationsObj["rotation"][2] = radAngle;
             } else if (keyframeNode.nodeName === 'scale') {
-                const x = this.reader.getFloat(keyframeNode, 'x');
+                const x = this.reader.getFloat(keyframeNode, 'sx');
                 if (!(x != null && !isNaN(x)))
                     return null;
 
-                const y = this.reader.getFloat(keyframeNode, 'y');
+                const y = this.reader.getFloat(keyframeNode, 'sy');
                 if (!(y != null && !isNaN(y)))
                     return null;
 
-                const z = this.reader.getFloat(keyframeNode, 'z');
+                const z = this.reader.getFloat(keyframeNode, 'sz');
                 if (!(z != null && !isNaN(z)))
                     return null;
 
@@ -1267,7 +1267,7 @@ export class MySceneGraph {
 
         // scale_h
         const scale_h = this.reader.getFloat(node, 'scale_h');
-        if (!(scale_h != null && !isNaN(scale_h) && scale_h >= 0 && scale_h <= 1))
+        if (!(scale_h != null && !isNaN(scale_h) && scale_h >= 0))
             return [false, "unable to parse scale_h of the " + component.id + " highlight color"];
 
         component.hasHighlight = true;
