@@ -145,14 +145,14 @@ export class XMLscene extends CGFscene {
         this.pushAppearance(this.createDefaultAppearance());
     }
 
-    cloneMaterial(material, texture) {
+    cloneMaterial(material) {
         const newMaterial = new CGFappearance(this);
         newMaterial.setAmbient(material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
         newMaterial.setDiffuse(material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
         newMaterial.setSpecular(material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
         newMaterial.setShininess(material.shininess);
         // newMaterial.id = material.id;
-        //newMaterial.texture = new CGFtexture(this, material.texture.image.src)
+        // newMaterial.texture = new CGFtexture(this, material.texture.image.src)
 
         newMaterial.texture = material.texture;
         return newMaterial;
@@ -259,9 +259,9 @@ export class XMLscene extends CGFscene {
             this.setDefaultAppearance();
 
             // Displays the scene (MySceneGraph function).
+            this.boardView.display();
             this.graph.displayScene();
         }
-
 
         this.popMatrix();
         // ---- END Background, camera and axis setup

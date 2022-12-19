@@ -8,7 +8,7 @@ import {MyComponent} from "./MyComponent.js";
 import {MyPatch} from './primitives/MyPatch.js';
 import {MyKeyframeAnimation} from "./animations/MyKeyframeAnimation.js";
 import {MyKeyFrame} from "./animations/MyKeyFrame.js";
-import {MyBoard} from "./MyBoard.js";
+import {MyBoardView} from "./game/View/MyBoardView.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -238,13 +238,13 @@ export class MySceneGraph {
         }
 
         //board
-        if ((index = nodeNames.indexOf("board")) == -1)
+        if ((index = nodeNames.indexOf("board")) === -1)
             return "tag <board> missing";
         else {
-            if (index != BOARD_INDEX)
+            if (index !== BOARD_INDEX)
                 this.onXMLMinorError("tag <board> out of order" + index);
 
-            //Parse components block
+            //Parse board block
             if ((error = this.parseBoard(nodes[index])) != null)
                 return error;
         }
@@ -256,42 +256,60 @@ export class MySceneGraph {
      * @param {board block element} boardNode
      */
     parseBoard(boardNode) {
-        let board = [];
-        //var board = this.reader.getString(boardNode, 'board');
+        let materials = [];
+        let textures = [];
+        let position = [0, 0, 0];
+        let size = [1, 1, 1];
+
+        // order of the elements
+        // black square
+        // white square
+        // black piece
+        // white piece
+
+        console.log("Parsing board");
+
+        console.log(boardNode.children);
+
         for (let child of boardNode.children) {
-            if(child.nodeName == "position"){
-                position = this.parseCoordinates3D(child, "position");
-            }
-            else if (child.nodeName == "textures") {
-                for(let texture = 0; texture<child.children.length; texture++){
-                    if(child.children[texture].nodeName == "texture"){
-                        var id = this.reader.getString(child.children[texture], 'id');
-                        var length_s = this.reader.getFloat(child.children[texture], 'length_s');
-                        var length_t = this.reader.getFloat(child.children[texture], 'length_t');
-                        textures[i].append([id, length_s, length_t])
-                    }
-                    else{
-                        this.onXMLMinorError("unknown tag <" + texture.nodeName + "> inside <textures>");
-                    }
+            if (child.nodeName === "position") position = this.parseCoordinates3D(child, "position");
+            else if (child.nodeName === "size") size = this.parseCoordinates3D(child, "size");
+            else if (child.nodeName === "textures") {
+                for (let textureNode of child.children)
+                    if (textureNode.nodeName === "texture") textures.push(this.parseBoardTexture(textureNode))
+                    else this.onXMLMinorError("unknown tag <" + textureNode.nodeName + "> inside <textures>");
+            } else if (child.nodeName === "materials") {
+                for (let materialsNode of child.children) {
+                    if (materialsNode.nodeName === "material") {
+                        const id = this.reader.getString(materialsNode, 'id');
+                        if (id == null) return "no ID defined for material";
+                        materials.push(this.materials[id]);
+                    } else this.onXMLMinorError("unknown tag <" + materialsNode.nodeName + "> inside <materials>");
                 }
-            }
-            else if(child.nodeName == "materials") {
-                for(let i = 0;  i<child.children; i++){
-                    if(child.nodeName[material].nodeName == "material"){
-                        var id = this.reader.getString(child.children[i], 'id');
-                        materials.append(id);
-                    }
-                    else{
-                        this.onXMLMinorError("unknown tag <" + material.nodeName + "> inside <materials>");
-                    }
-                }
-            }
-            else{
-                this.onXMLMinorError("unknown tag <" + child.nodeName + "> inside <board>");
-            }
+            } else this.onXMLMinorError("unknown tag <" + child.nodeName + "> inside <board>");
         }
-        this.board = new MyBoard(this, textures, materials, position);
+
+        console.log("Board parsed");
+        console.log("Position: " + position);
+        console.log("Size: " + size);
+        console.log("Textures: " + textures);
+        console.log("Materials: " + materials);
+
+        this.scene.boardView = new MyBoardView(this.scene, textures, materials, position, size);
     }
+
+
+    parseBoardTexture(textureNode) {
+        // TODO: error checking
+        let textureInfo = {};
+        const id = this.reader.getString(textureNode, 'id');
+        if (id == null) return "no ID defined for texture";
+        textureInfo["texture"] = this.textures[id];
+        textureInfo["length_s"] = this.reader.getFloat(textureNode, 'length_s');
+        textureInfo["length_t"] = this.reader.getFloat(textureNode, 'length_t');
+        return textureInfo;
+    }
+
 
     /**
      * Parses the <scene> block.
@@ -1103,7 +1121,7 @@ export class MySceneGraph {
         let curr_trans_type = "translation";
 
         let transformationsObj = {translation: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1]};
-        
+
         for (let keyframeNode of transformations) {
             if (!this.checkOrder(curr_trans_type, keyframeNode.nodeName)) return null;
             curr_trans_type = keyframeNode.nodeName;
