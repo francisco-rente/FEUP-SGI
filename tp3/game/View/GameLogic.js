@@ -1,6 +1,6 @@
 export class GameLogic {
     board = [];
-    GameLogic() {
+    constructor() {
         this.gameBoard = [
             [1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1],
@@ -16,8 +16,6 @@ export class GameLogic {
     }
 
     getBoard() {
-        console.log("inside logic")
-        console.log(this.gameBoard)
         return this.gameBoard;
     }
 

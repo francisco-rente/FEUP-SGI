@@ -32,9 +32,6 @@ export class MyBoardView {
         this.position = position;
         this.size = size;
         this.logic = new GameLogic();
-        console.log("about to print board")
-        console.log(this.logic.getBoard());
-        console.log(this.logic.board);
     }
     initMaterials(materials) {
         this.materials["blackSquare"] = materials[0];
@@ -90,14 +87,11 @@ export class MyBoardView {
 
         for (let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
-
-                console.log(this.logic)
-                console.log(this.logic.getBoard())
                 let color = this.logic.getBoard()[i][j];
-                if(color == 0) continue;
                 this.scene.pushMatrix();
 
                 let appearance;
+                let texture;
 
                 switch (color) {
                     case 1:
@@ -110,16 +104,22 @@ export class MyBoardView {
                         texture = this.textures["whitePiece"]["texture"];
                         appearance = this.materials["whitePiece"];
                         appearance.setTexture(texture);
+                        break;
 
                     case 3:
                         texture = this.textures["blackKing"]["texture"];
                         appearance = this.materials["blackKing"];
                         appearance.setTexture(texture);
+                        break; 
 
                     case 4:
                         texture = this.textures["whiteKing"]["texture"];
                         appearance = this.materials["whiteKing"];
                         appearance.setTexture(texture);
+                        break;
+
+                    case 0:
+                        continue;
                 
                     default:
                         console.log("Invalid piece on "+ [i, j])
