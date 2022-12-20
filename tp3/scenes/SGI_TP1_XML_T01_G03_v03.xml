@@ -980,6 +980,8 @@
             <material id="fire"/><!-- white squares-->
             <material id="fireStrong"/> <!-- black pieces-->
             <material id="fireStrong"/> <!-- white pieces-->
+            <material id="fireStrong"/> <!-- black kings-->
+            <material id="fireStrong"/> <!-- white kings-->
             <material id="fireStrong"/> <!-- board -->
         </materials>
         <textures>
@@ -987,6 +989,8 @@
             <texture id="rocks" length_s="1.0" length_t = "1.0"/><!-- white squares-->
             <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black pieces-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white pieces-->
+            <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black kings-->
+            <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white kings-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- board-->            
         </textures>
     </board>

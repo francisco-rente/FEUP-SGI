@@ -1,5 +1,6 @@
 import { MyCylinder } from "../../primitives/MyCylinder.js";
 import {MyRectangle} from "../../primitives/MyRectangle.js";
+import {GameLogic} from "./GameLogic.js";
 
 /**
  * Board class, creating the objects
@@ -30,24 +31,18 @@ export class MyBoardView {
         this.initMaterials(materials);
         this.position = position;
         this.size = size;
-        this.board = 
-    [
-    [1, 1, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0]]
-
+        this.logic = new GameLogic();
+        console.log("about to print board")
+        console.log(this.logic.getBoard());
+        console.log(this.logic.board);
     }
-
     initMaterials(materials) {
         this.materials["blackSquare"] = materials[0];
         this.materials["whiteSquare"] = materials[1];
         this.materials["blackPiece"] = materials[2];
         this.materials["whitePiece"] = materials[3];
+        this.materials["blackKing"] = materials[4];
+        this.materials["whiteKing"] = materials[5];
     }
 
     initTextures(textures) {
@@ -55,6 +50,8 @@ export class MyBoardView {
         this.textures["whiteSquare"] = {"texture": textures[1][0], "length_s": textures[1][1], "length_t": textures[1][2]};
         this.textures["blackPiece"] = {"texture": textures[2][0], "length_s": textures[2][1], "length_t": textures[2][2]};
         this.textures["whitePiece"] = {"texture": textures[3][0], "length_s": textures[3][1], "length_t": textures[3][2]};
+        this.textures["blackKing"] = {"texture": textures[4][0], "length_s": textures[4][1], "length_t": textures[4][2]};
+        this.textures["whiteKing"] = {"texture": textures[5][0], "length_s": textures[5][1], "length_t": textures[5][2]};
     }
 
 
@@ -94,27 +91,40 @@ export class MyBoardView {
         for (let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
 
-                
-                let color = this.board[i][j];
+                console.log(this.logic)
+                console.log(this.logic.getBoard())
+                let color = this.logic.getBoard()[i][j];
                 if(color == 0) continue;
                 this.scene.pushMatrix();
 
                 let appearance;
-                if (color === 1) {
-                    const texture = this.textures["blackPiece"]["texture"];
-                    appearance = this.materials["blackPiece"];
-                    appearance.setTexture(texture);
-                }
-                else if(color === 2){
-                    const texture = this.textures["whitePiece"]["texture"];
-                    appearance = this.materials["whitePiece"];
-                    appearance.setTexture(texture);
-                }
-                else{
-                    console.log("Invalid color in piece on "+ [i, j])
-                    continue;
-                }
+
+                switch (color) {
+                    case 1:
+                        texture = this.textures["blackPiece"]["texture"];
+                        appearance = this.materials["blackPiece"];
+                        appearance.setTexture(texture);
+                        break;
+
+                    case 2:
+                        texture = this.textures["whitePiece"]["texture"];
+                        appearance = this.materials["whitePiece"];
+                        appearance.setTexture(texture);
+
+                    case 3:
+                        texture = this.textures["blackKing"]["texture"];
+                        appearance = this.materials["blackKing"];
+                        appearance.setTexture(texture);
+
+                    case 4:
+                        texture = this.textures["whiteKing"]["texture"];
+                        appearance = this.materials["whiteKing"];
+                        appearance.setTexture(texture);
                 
+                    default:
+                        console.log("Invalid piece on "+ [i, j])
+                        continue;
+                }
                 appearance.setTextureWrap('REPEAT', 'REPEAT');
                 this.scene.pushAppearance(appearance);
                 this.scene.applyAppearance();
