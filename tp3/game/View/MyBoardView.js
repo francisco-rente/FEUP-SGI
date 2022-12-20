@@ -1,3 +1,4 @@
+import { MyCylinder } from "../../primitives/MyCylinder.js";
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 
 /**
@@ -19,6 +20,7 @@ export class MyBoardView {
     materials = {};
     position = [0, 0, 0];
     size = [10, 10, 10];
+    board = [];
 
 
     // Missing size TODO
@@ -28,6 +30,17 @@ export class MyBoardView {
         this.initMaterials(materials);
         this.position = position;
         this.size = size;
+        this.board = 
+    [
+    [1, 1, 0, 0, 0, 0, 0, 0],
+    [1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0]]
+
     }
 
     initMaterials(materials) {
@@ -76,6 +89,41 @@ export class MyBoardView {
             }
         }
 
+        const pieceSide = new MyCylinder(this.scene, "PieceSide", this.size[0]/8/2, this.size[0]/8/2, 0.5, 20, 20);
 
+        for (let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+
+                
+                let color = this.board[i][j];
+                if(color == 0) continue;
+                this.scene.pushMatrix();
+
+                let appearance;
+                if (color === 1) {
+                    const texture = this.textures["blackPiece"]["texture"];
+                    appearance = this.materials["blackPiece"];
+                    appearance.setTexture(texture);
+                }
+                else if(color === 2){
+                    const texture = this.textures["whitePiece"]["texture"];
+                    appearance = this.materials["whitePiece"];
+                    appearance.setTexture(texture);
+                }
+                else{
+                    console.log("Invalid color in piece on "+ [i, j])
+                    continue;
+                }
+                
+                appearance.setTextureWrap('REPEAT', 'REPEAT');
+                this.scene.pushAppearance(appearance);
+                this.scene.applyAppearance();
+                //this.scene.translate(i * this.size[1] / 8 + Math.sqrt(this.size[0]/8), j * this.size[1]/8 + Math.sqrt(this.size[1]/8), 0);
+                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);  
+                pieceSide.display();
+                this.scene.popMatrix();
+            }
+        }
+        
     }
 }
