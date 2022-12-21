@@ -42,6 +42,7 @@ export class XMLscene extends CGFscene {
         this.gl.enable(this.gl.CULL_FACE);
         this.gl.depthFunc(this.gl.LEQUAL);
 
+        this.setPickEnabled(true);
 
         this.displayAxis = false;
         this.axis = new CGFaxis(this);
@@ -56,6 +57,26 @@ export class XMLscene extends CGFscene {
 
         this.setUpdatePeriod(20);
     }
+
+
+    logPicking()
+	{
+		if (this.pickMode == false) {
+			// results can only be retrieved when picking mode is false
+			if (this.pickResults != null && this.pickResults.length > 0) {
+				for (var i=0; i< this.pickResults.length; i++) {
+					var obj = this.pickResults[i][0];
+					if (obj)
+					{
+						var customId = this.pickResults[i][1];				
+						console.log("Picked object: " + obj + ", with pick id " + customId);
+					}
+				}
+				this.pickResults.splice(0,this.pickResults.length);
+			}		
+		}
+	}
+
 
     /**
      * Initializes the scene cameras.
@@ -235,9 +256,14 @@ export class XMLscene extends CGFscene {
     display() {
         // ---- BEGIN Background, camera and axis setup
 
+        this.logPicking();
+        this.clearPickRegistration();
+        
         // Clear image and depth buffer everytime we update the scene
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.gl.enable(this.gl.DEPTH_TEST);
+
 
         // Initialize Model-View matrix as identity (no transformation
         this.updateProjectionMatrix();

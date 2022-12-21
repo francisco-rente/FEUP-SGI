@@ -34,6 +34,8 @@ export class MyBoardView {
         this.size = size;
         this.logic = new GameLogic();
     }
+
+
     initMaterials(materials) {
         this.materials["blackSquare"] = materials[0];
         this.materials["whiteSquare"] = materials[1];
@@ -130,6 +132,9 @@ export class MyBoardView {
                 this.scene.applyAppearance();
                 this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);
                 pieceSide.display();
+                //console.log("Registering for pick: " + (100 + i * 10 + j) + " at " + [i, j]);
+                this.scene.registerForPick(100 + i * 10 + j, pieceSide); //100 para o caso de i = 0 e j = 0
+                //this.scene.registerForPick([i, j], pieceSide); 
                 this.scene.popMatrix();
             }
         }
