@@ -12,6 +12,11 @@ export class GameLogic {
         ];
         this.playerTurn = 1;
         this.selected = [-1, -1];
+        this.previousMoves = [];
+    }
+
+    getPreviousMoves() {
+        return this.previousMoves;
     }
 
     getBoard() {
@@ -66,10 +71,15 @@ export class GameLogic {
                 if (aux_board[i][j] !== 0 && aux_board[i + x_dir][j + y_dir] === 0 && i + x_dir >= 0 && i + x_dir <= 7 && j + y_dir >= 0 && j + y_dir <= 7) {
                     aux_board[i][j] = 0;
                 }
+                else {
+                    console.log("Invalid move");
+                    return false;
+                }
             }
+            this.gameBoard = aux_board;
         }
 
-        
+
         if((this.playerTurn === 1 && x === 7) || (this.playerTurn === 2 && x === 0)){
             this.gameBoard[x][y] = this.playerTurn + 2;
         }
@@ -79,6 +89,7 @@ export class GameLogic {
         this.selected = [-1, -1];
         this.gameBoard[this.selected[0]][this.selected[1]] = 0;
         this.playerTurn = this.playerTurn === 1 ? 2 : 1;
+        this.previousMoves.push([x, y]);
         return this.gameBoard;
     }
 }
