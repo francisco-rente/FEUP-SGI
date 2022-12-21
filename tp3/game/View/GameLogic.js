@@ -1,5 +1,4 @@
 export class GameLogic {
-    board = [];
     constructor() {
         this.gameBoard = [
             [1, 1, 1, 1, 1, 1, 1, 1],
@@ -47,33 +46,39 @@ export class GameLogic {
             return false;
         }
 
-        if(this.gameBoard[this.selectPiece[0]][this.selectPiece[1]] === this.playerTurn){ //if normal piece selected
-            if(this.gameBoard[x][y] === 0){ //if moving to empty space
-                if(this.selectPiece[0] - x === (this.playerTurn === 1 ? 1 : -1) && Math.abs(this.selectPiece[1] - y) === 1 && this.gameBoard[x][y] === 0){ //simple move
-                    this.gameBoard[x][y] = this.playerTurn;
-                    this.selectPiece = [-1, -1];
-                    this.gameBoard[this.selectPiece[0]][this.selectPiece[1]] = 0;
-                    this.playerTurn = this.playerTurn === 1 ? 2 : 1;
-                }
-                //TODO: juntar os reis e os não reis?
-                //TODO: comer peças (nota: posso comer várias numa só jogada)
+        let isKing = this.gameBoard[this.selected[0]][this.selected[1]] === this.playerTurn + 2;
 
-        }
-        else if(this.gameBoard[this.selectPiece[0]][this.selectPiece[1]] === this.playerTurn + 2){ //if king selected
-            if(Math.abs(this.selectPiece[1] - y) === 1 && this.gameBoard[x][y] === 0){ //simple move
-                this.gameBoard[x][y] = this.playerTurn;
-                this.selectPiece = [-1, -1];
-                this.gameBoard[this.selectPiece[0]][this.selectPiece[1]] = 0;
-                this.playerTurn = this.playerTurn === 1 ? 2 : 1;
-            }
-            //TODO: comer peças (nota: posso comer várias numa só jogada)
-        }
-        else{ //if enemy or no piece selected
-            console.log("Invalid piece selection")
+        if((this.selected[0] - x)*(this.playerTurn === 1 ? 1 : -1) <= 0 && !isKing){
+            console.log("Invalid move");
             return false;
         }
-            
+        
+
+        if(Math.abs(this.selected[1] - y) === 1 && Math.abs(this.selected[0] - x) === 1){ 
+            //do nothing
+        }
+        else{
+            let aux_board = this.gameBoard;
+
+            let x_dir = this.selected[0] - x > 0 ? -1 : 1;
+            let y_dir = this.selected[1] - y > 0 ? -1 : 1;
+            for (let i = this.selected[0] + x_dir, j = this.selected[1] + y_dir; i !== x; i += x_dir, j += y_dir) {
+                if (aux_board[i][j] !== 0 && aux_board[i + x_dir][j + y_dir] === 0 && i + x_dir >= 0 && i + x_dir <= 7 && j + y_dir >= 0 && j + y_dir <= 7) {
+                    aux_board[i][j] = 0;
+                }
+            }
+        }
+
+        
+        if((this.playerTurn === 1 && x === 7) || (this.playerTurn === 2 && x === 0)){
+            this.gameBoard[x][y] = this.playerTurn + 2;
+        }
+        else{
+            this.gameBoard[x][y] = this.playerTurn;
+        }
+        this.selected = [-1, -1];
+        this.gameBoard[this.selected[0]][this.selected[1]] = 0;
+        this.playerTurn = this.playerTurn === 1 ? 2 : 1;
         return this.gameBoard;
-    }
     }
 }
