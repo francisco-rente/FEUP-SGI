@@ -48,7 +48,9 @@ export class MyBoardView {
 
                 this.scene.pushAppearance(appearance);
                 this.scene.applyAppearance();
-                this.scene.translate(i * this.size[0] / 8, j * this.size[1] / 8, 0);
+                this.scene.rotate(-Math.PI / 2, 1, 0, 0);
+                this.scene.translate(i * this.size[0] / 8  + 15, j * this.size[1] / 8 - 15, 0+  1); //TODO: tirar o +15 -15 e o +1
+                this.scene.registerForPick((i + 1) * 10 + (j + 1), square); 
                 square.display();
                 this.scene.popMatrix();
             }
@@ -69,10 +71,10 @@ export class MyBoardView {
 
                 this.scene.pushAppearance(appearance);
                 this.scene.applyAppearance();
-                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);
-                this.scene.registerForPick((i + 1) * 10 + (j + 1), pieceSide); //100 para o caso de i = 0 e j = 0
+                this.scene.rotate(-Math.PI / 2, 1, 0, 0);
+                this.scene.translate((i + 0.5) * this.size[1] / 8 + 15, (j + 0.5) * this.size[1]/8 - 15, 0+ 1); //TODO: tirar o +15 -15 e o +1
+                this.scene.registerForPick((i + 1) * 10 + (j + 1), pieceSide);
                 pieceSide.display();
-                //console.log("Registering for pick: " + (100 + i * 10 + j) + " at " + [i, j]);
                 this.scene.popMatrix();
             }
         }
