@@ -12,12 +12,6 @@ import {GameLogic} from "./GameLogic.js";
  * @param position - Position of the board
  */
 export class MyBoardView {
-    // order of the elements
-    // black square
-    // white square
-    // black piece
-    // white piece
-
     textures = {};
     materials = {};
     position = [0, 0, 0];
@@ -25,7 +19,6 @@ export class MyBoardView {
     board = [];
 
 
-    // Missing size TODO
     constructor(scene, textures, materials, position, size) {
         this.scene = scene;
         this.initTextures(textures);
@@ -34,6 +27,93 @@ export class MyBoardView {
         this.size = size;
         this.logic = new GameLogic();
     }
+
+
+    display() {
+        this.displayBoardTable();
+        this.displayPieces();
+    }
+
+
+
+    displayBoardTable() {
+        const square = new MyRectangle(this.scene, "Square", 0, this.size[0] / 8, 0, this.size[1] / 8);
+
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                this.scene.pushMatrix();
+
+                const appearance = this.getBoardSquareAppearance([i, j]);
+                if(appearance === null) continue;
+
+                this.scene.pushAppearance(appearance);
+                this.scene.applyAppearance();
+                this.scene.translate(i * this.size[0] / 8, j * this.size[1] / 8, 0);
+                square.display();
+                this.scene.popMatrix();
+            }
+        }
+    }
+
+
+
+    displayPieces() {
+        const pieceSide = new MyCylinder(this.scene, "PieceSide", this.size[0]/8/2, this.size[0]/8/2, 0.5, 20, 20);
+
+        for (let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                let color = this.logic.getBoard()[i][j];
+                this.scene.pushMatrix();
+                const appearance = this.getPieceAppearance(color, [i, j]);
+                if(appearance === null) continue;
+
+                this.scene.pushAppearance(appearance);
+                this.scene.applyAppearance();
+                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);
+                this.scene.registerForPick((i + 1) * 10 + (j + 1), pieceSide); //100 para o caso de i = 0 e j = 0
+                pieceSide.display();
+                //console.log("Registering for pick: " + (100 + i * 10 + j) + " at " + [i, j]);
+                this.scene.popMatrix();
+            }
+        }
+
+        // TODO: This should not be here, but it works
+        // Maybe as you suggested, we should set not pickable to everything else
+        this.scene.clearPickRegistration();
+
+
+        const pieceTop = new MyPatch(this.scene, "PieceTop", 1, 3, 20, 20, [
+            [1.0, 0, 0.0],
+            [1.0, 0.6666, 0.0],
+            [0.0, 0.6666, 0.0],
+            [0.0, 0.0, 0.0],
+            [1.0, 0, 0.0],
+            [1.0, -0.6666, 0.0],
+            [0.0, -0.6666, 0.0],
+            [0.0, 0.0, 0.0]
+
+        ])
+
+
+        for (let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                let color = this.logic.getBoard()[i][j];
+                this.scene.pushMatrix();
+
+                const appearance = this.getPieceAppearance(color, [i, j]);
+                if(appearance === null) continue;
+
+                this.scene.pushAppearance(appearance);
+                this.scene.applyAppearance();
+                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);
+                pieceTop.display();
+                this.scene.popMatrix();
+            }
+        }
+    }
+
+
+
 
 
     initMaterials(materials) {
@@ -55,149 +135,68 @@ export class MyBoardView {
     }
 
 
-    display() {
-        // let piece = new MyPieceView(this.scene, 0, 0, 1, 1);
-        // switch to patches for light improvement
-        const square = new MyRectangle(this.scene, "Square", 0, this.size[0] / 8, 0, this.size[1] / 8);
+    getBoardSquareAppearance(square) {
+        const [i, j] = square;
+        let appearance;
+        let texture;
 
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 8; j++) {
-                this.scene.pushMatrix();
-
-                let appearance;
-                if ((i + j) % 2 === 0) {
-                    const texture = this.textures["blackSquare"]["texture"];
-                    appearance = this.materials["blackSquare"];
-                    appearance.setTexture(texture);
-                }
-                else {
-                    const texture = this.textures["whiteSquare"]["texture"];
-                    appearance = this.materials["whiteSquare"];
-                    appearance.setTexture(texture);
-                }
-
-                appearance.setTextureWrap('REPEAT', 'REPEAT');
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
-                this.scene.translate(i * this.size[0] / 8, j * this.size[1] / 8, 0);
-                square.display();
-                this.scene.popMatrix();
-            }
+        if ((i + j) % 2 === 0) {
+            texture = this.textures["blackSquare"]["texture"];
+            appearance = this.materials["blackSquare"];
+            appearance.setTexture(texture);
         }
-
-        const pieceSide = new MyCylinder(this.scene, "PieceSide", this.size[0]/8/2, this.size[0]/8/2, 0.5, 20, 20);
-
-        for (let i = 0; i < 8; i++) {
-            for(let j = 0; j < 8; j++) {
-                let color = this.logic.getBoard()[i][j];
-                this.scene.pushMatrix();
-
-                let appearance;
-                let texture;
-
-                switch (color) {
-                    case 1:
-                        texture = this.textures["blackPiece"]["texture"];
-                        appearance = this.materials["blackPiece"];
-                        appearance.setTexture(texture);
-                        break;
-
-                    case 2:
-                        texture = this.textures["whitePiece"]["texture"];
-                        appearance = this.materials["whitePiece"];
-                        appearance.setTexture(texture);
-                        break;
-
-                    case 3:
-                        texture = this.textures["blackKing"]["texture"];
-                        appearance = this.materials["blackKing"];
-                        appearance.setTexture(texture);
-                        break; 
-
-                    case 4:
-                        texture = this.textures["whiteKing"]["texture"];
-                        appearance = this.materials["whiteKing"];
-                        appearance.setTexture(texture);
-                        break;
-
-                    case 0:
-                        continue;
-                
-                    default:
-                        console.log("Invalid piece on "+ [i, j])
-                        continue;
-                }
-                appearance.setTextureWrap('REPEAT', 'REPEAT');
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
-                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);
-                pieceSide.display();
-                //console.log("Registering for pick: " + (100 + i * 10 + j) + " at " + [i, j]);
-                this.scene.registerForPick(100 + i * 10 + j, pieceSide); //100 para o caso de i = 0 e j = 0
-                //this.scene.registerForPick([i, j], pieceSide); 
-                this.scene.popMatrix();
-            }
+        else {
+            texture = this.textures["whiteSquare"]["texture"];
+            appearance = this.materials["whiteSquare"];
         }
+        appearance.setTexture(texture);
+        appearance.setTextureWrap('REPEAT', 'REPEAT');
 
-        const pieceTop = new MyPatch(this.scene, "PieceTop", 1, 3, 20, 20, [
-            [1.0, 0, 0.0],
-            [1.0, 0.6666, 0.0],
-            [0.0, 0.6666, 0.0],
-            [0.0, 0.0, 0.0],
-            [1.0, 0, 0.0],
-            [1.0, -0.6666, 0.0],
-            [0.0, -0.6666, 0.0],
-            [0.0, 0.0, 0.0]
-
-        ])
-
-
-        for (let i = 0; i < 8; i++) {
-            for(let j = 0; j < 8; j++) {
-                let color = this.logic.getBoard()[i][j];
-                this.scene.pushMatrix();
-                let appearance;
-                let texture;
-
-                switch (color) {
-                    case 1:
-                        texture = this.textures["blackPiece"]["texture"];
-                        appearance = this.materials["blackPiece"];
-                        appearance.setTexture(texture);
-                        break;
-
-                    case 2:
-                        texture = this.textures["whitePiece"]["texture"];
-                        appearance = this.materials["whitePiece"];
-                        appearance.setTexture(texture);
-                        break;
-
-                    case 3:
-                        texture = this.textures["blackKing"]["texture"];
-                        appearance = this.materials["blackKing"];
-                        appearance.setTexture(texture);
-                        break; 
-
-                    case 4:
-                        texture = this.textures["whiteKing"]["texture"];
-                        appearance = this.materials["whiteKing"];
-                        appearance.setTexture(texture);
-                        break;
-
-                    case 0:
-                        continue;
-                
-                    default:
-                        console.log("Invalid piece on "+ [i, j])
-                        continue;
-                }
-                appearance.setTextureWrap('REPEAT', 'REPEAT');
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
-                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);  
-                pieceTop.display();
-                this.scene.popMatrix();
-            }
-        }
+        return appearance;
     }
+
+
+    getPieceAppearance(color, square) {
+        let appearance;
+        let texture;
+
+        switch (color) {
+            case 1:
+                texture = this.textures["blackPiece"]["texture"];
+                appearance = this.materials["blackPiece"];
+                appearance.setTexture(texture);
+                break;
+
+            case 2:
+                texture = this.textures["whitePiece"]["texture"];
+                appearance = this.materials["whitePiece"];
+                appearance.setTexture(texture);
+                break;
+
+            case 3:
+                texture = this.textures["blackKing"]["texture"];
+                appearance = this.materials["blackKing"];
+                appearance.setTexture(texture);
+                break;
+
+            case 4:
+                texture = this.textures["whiteKing"]["texture"];
+                appearance = this.materials["whiteKing"];
+                appearance.setTexture(texture);
+                break;
+
+            case 0:
+                return null;
+
+            default:
+                console.log("Invalid piece on "+ square)
+                return null;
+        }
+
+        appearance.setTextureWrap('REPEAT', 'REPEAT');
+        return appearance;
+    }
+
+
+
 }
