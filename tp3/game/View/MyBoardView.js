@@ -1,7 +1,5 @@
-import { MyCylinder } from "../../primitives/MyCylinder.js";
-import { MyPatch } from "../../primitives/MyPatch.js";
 import {MyRectangle} from "../../primitives/MyRectangle.js";
-import {GameLogic} from "./GameLogic.js";
+import {MyPieceView} from "./MyPieceView.js";
 
 /**
  * Board class, creating the objects
@@ -25,18 +23,17 @@ export class MyBoardView {
         this.initMaterials(materials);
         this.position = position;
         this.size = size;
-        this.logic = new GameLogic();
     }
 
 
-    display() {
-        this.displayBoardTable();
-        this.displayPieces();
+    display(gameLogic) {
+        this.displayBoardTable(gameLogic);
+        this.displayPieces(gameLogic);
     }
 
 
 
-    displayBoardTable() {
+    displayBoardTable(gameLogic) {
         const square = new MyRectangle(this.scene, "Square", 0, this.size[0] / 8, 0, this.size[1] / 8);
 
         for (let i = 0; i < 8; i++) {
@@ -49,9 +46,10 @@ export class MyBoardView {
                 this.scene.pushAppearance(appearance);
                 this.scene.applyAppearance();
                 this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-                this.scene.translate(i * this.size[0] / 8  + 15, j * this.size[1] / 8 - 15, 0+  1); //TODO: tirar o +15 -15 e o +1
-                this.scene.registerForPick((i + 1) * 10 + (j + 1), square); 
+                this.scene.translate(i * this.size[0] / 8  + 15, j * this.size[1] / 8 - 15, 1); //TODO: tirar o +15 -15 e o +1
+                this.scene.registerForPick( (i + 1) * 10 + (j + 1), square);
                 square.display();
+                this.scene.clearPickRegistration();
                 this.scene.popMatrix();
             }
         }
@@ -59,57 +57,21 @@ export class MyBoardView {
 
 
 
-    displayPieces() {
-        const pieceSide = new MyCylinder(this.scene, "PieceSide", this.size[0]/8/2, this.size[0]/8/2, 0.5, 20, 20);
+    displayPieces(gameLogic) {
+
+        const currentBoard = gameLogic.getBoard();
+        const newPiece = new MyPieceView(this.scene, this.size);
 
         for (let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
-                let color = this.logic.getBoard()[i][j];
-                this.scene.pushMatrix();
-                const appearance = this.getPieceAppearance(color, [i, j]);
-                if(appearance === null) continue;
-
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
-                this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-                this.scene.translate((i + 0.5) * this.size[1] / 8 + 15, (j + 0.5) * this.size[1]/8 - 15, 0+ 1); //TODO: tirar o +15 -15 e o +1
-                this.scene.registerForPick((i + 1) * 10 + (j + 1), pieceSide);
-                pieceSide.display();
-                this.scene.popMatrix();
-            }
-        }
-
-        // TODO: This should not be here, but it works
-        // Maybe as you suggested, we should set not pickable to everything else
-        this.scene.clearPickRegistration();
-
-
-        const pieceTop = new MyPatch(this.scene, "PieceTop", 1, 3, 20, 20, [
-            [1.0, 0, 0.0],
-            [1.0, 0.6666, 0.0],
-            [0.0, 0.6666, 0.0],
-            [0.0, 0.0, 0.0],
-            [1.0, 0, 0.0],
-            [1.0, -0.6666, 0.0],
-            [0.0, -0.6666, 0.0],
-            [0.0, 0.0, 0.0]
-
-        ])
-
-
-        for (let i = 0; i < 8; i++) {
-            for(let j = 0; j < 8; j++) {
-                let color = this.logic.getBoard()[i][j];
-                this.scene.pushMatrix();
+                let color = currentBoard[i][j];
 
                 const appearance = this.getPieceAppearance(color, [i, j]);
                 if(appearance === null) continue;
 
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
-                this.scene.translate((i + 0.5) * this.size[1] / 8, (j + 0.5) * this.size[1]/8, 0);
-                pieceTop.display();
-                this.scene.popMatrix();
+                this.scene.registerForPick((i + 1) * 10 + (j + 1), newPiece);
+                newPiece.display([i, j], appearance);
+                this.scene.clearPickRegistration();
             }
         }
     }

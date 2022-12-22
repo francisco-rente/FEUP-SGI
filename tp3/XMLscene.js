@@ -1,4 +1,8 @@
 import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis} from '../lib/CGF.js';
+import {GameLogic} from "./game/Model/GameLogic.js";
+import {MyCylinder} from "./primitives/MyCylinder.js";
+import {MyRectangle} from "./primitives/MyRectangle.js";
+import {MyPieceView} from "./game/View/MyPieceView.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180;
@@ -53,29 +57,15 @@ export class XMLscene extends CGFscene {
         this.highlightShader = new CGFshader(this.gl,
             "shaders/highlight.vert", "shaders/highlight.frag");
 
-        this.highlightShader.setUniformsValues({uSampler: 0}); // TODO: is this necessary?
+        this.highlightShader.setUniformsValues({uSampler: 0});
 
         this.setUpdatePeriod(20);
+
+        this.game = new GameLogic(); // TODO: this should be done as a user action (interact with object or interface)
     }
 
 
-    logPicking()
-	{
-		if (this.pickMode == false) {
-			// results can only be retrieved when picking mode is false
-			if (this.pickResults != null && this.pickResults.length > 0) {
-				for (var i=0; i< this.pickResults.length; i++) {
-					var obj = this.pickResults[i][0];
-					if (obj)
-					{
-						var customId = this.pickResults[i][1];				
-						console.log("Picked object: " + obj + ", with pick id " + customId);
-					}
-				}
-				this.pickResults.splice(0,this.pickResults.length);
-			}		
-		}
-	}
+
 
 
     /**
@@ -250,13 +240,49 @@ export class XMLscene extends CGFscene {
         this.startTime = null;
     }
 
+
+    managePicking()
+    {
+        if (this.pickMode === false) {
+            // results can only be retrieved when picking mode is false
+            if (this.pickResults != null && this.pickResults.length > 0) {
+                for (let i = 0; i< this.pickResults.length; i++) {
+                    const  obj = this.pickResults[i][0];
+                    if (obj)
+                    {
+                        const customId = this.pickResults[i][1];
+                        console.log("Picked object: " + obj + ", with pick id " + customId);
+
+                        // TODO: this can be abstracted to a function in a "game controller" class
+
+                        if(obj instanceof MyPieceView) {
+                            const i = Math.floor(customId / 10) - 1;
+                            const j = customId % 10 - 1;
+                            this.game.selectPiece(i, j);
+                            console.log(this.game.getSelected());
+                        }
+                        else if(obj instanceof MyRectangle) {
+                            const i = Math.floor(customId / 10) - 1;
+                            const j = customId % 10 - 1;
+                            this.game.movePiece(i, j); // TODO: if error is thrown, should we make something here
+                        }
+
+                    }
+                }
+                this.pickResults.splice(0,this.pickResults.length);
+            }
+        }
+    }
+
+
+
     /**
      * Displays the scene.
      */
     display() {
         // ---- BEGIN Background, camera and axis setup
 
-        this.logPicking();
+        this.managePicking();
         this.clearPickRegistration();
         
         // Clear image and depth buffer everytime we update the scene
@@ -285,7 +311,7 @@ export class XMLscene extends CGFscene {
             this.setDefaultAppearance();
 
             // Displays the scene (MySceneGraph function).
-            this.boardView.display();
+            this.boardView.display(this.game);
             this.graph.displayScene();
         }
 
