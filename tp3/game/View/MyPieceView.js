@@ -36,16 +36,12 @@ export class MyPieceView {
         const x = (i + 0.5) * this.boardSize[0] / 8  + 15;        //TODO: tirar o +15 -15 e o +1
         const y = (j + 0.5) * this.boardSize[1] / 8 - 15;
         const z = 1;
-
-        this.scene.pushMatrix();
         this.scene.translate(x, y, z);
         pieceSide.display();
-        this.scene.popMatrix();
 
         this.scene.pushMatrix();
-        this.scene.translate(x - this.boardSize[0] / 8 / 2, y , z + 0.5);
+        this.scene.translate(-this.boardSize[0] / 8 / 2, 0, 0.5);
         this.scene.scale(this.boardSize[0] / 8, this.boardSize[1] / 8 , 1);
-
         pieceTop.display();
         this.scene.popMatrix();
 
