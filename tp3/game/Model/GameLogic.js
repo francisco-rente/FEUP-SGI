@@ -50,9 +50,13 @@ export class GameLogic {
         console.log(this.gameBoard[x][y]);
 
         console.log(this.playerTurn);
-        console.log(this.gameBoard[x][y] )
+        console.log(this.gameBoard[x][y])
 
-        if(! (this.gameBoard[x][y] === this.playerTurn || this.gameBoard[x][y] === this.playerTurn + 2)) return State.ERROR;
+        if (!(this.gameBoard[x][y] === this.playerTurn || this.gameBoard[x][y] === this.playerTurn + 2)) {
+
+            console.log("Invalid piece, setting selected to " + this.selected);
+            return State.ERROR;
+        }
 
         this.currentState = State.SELECT_SQUARE;
         this.selected = [x, y];
@@ -66,9 +70,13 @@ export class GameLogic {
     //TODO: ver quando queremos comer várias peças
     //TODO: add scoreboard updates in case of capture
     movePiece(x, y) {
-        console.log("movePiece");
+        console.log("movePiece" + this.selected + " " + [x, y]);
+
+
+        if (this.selected[0] === -1 || this.selected[1] === -1) return State.ERROR;
+
         if (this.currentState !== State.SELECT_SQUARE) return State.ERROR;
-        if (!this.checkBounds(x, y) ||  this.gameBoard[x][y] !== 0) return State.ERROR;
+        if (!this.checkBounds(x, y) || this.gameBoard[x][y] !== 0) return State.ERROR;
 
         const isKing = this.gameBoard[this.selected[0]][this.selected[1]] === this.playerTurn + 2;
         if ((x - this.selected[0]) * (this.playerTurn === 1 ? 1 : -1) <= 0 && !isKing) return State.ERROR;
@@ -77,8 +85,12 @@ export class GameLogic {
         if (!(Math.abs(this.selected[1] - y) === 1 && Math.abs(this.selected[0] - x) === 1)) {
             let aux_board = this.gameBoard;
 
-            let x_dir = this.selected[0] - x > 0 ? -1 : 1;
-            let y_dir = this.selected[1] - y > 0 ? -1 : 1;
+            const dx = (this.selected[0] - x);
+            const dy = (this.selected[1] - y);
+            if (dx * dy === 0) return State.ERROR;
+
+            const x_dir = dx - x > 0 ? -1 : 1;
+            const y_dir = dy - y > 0 ? -1 : 1;
 
             console.log("x_dir: " + x_dir);
             console.log("y_dir: " + y_dir);
