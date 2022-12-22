@@ -260,14 +260,23 @@ export class XMLscene extends CGFscene {
                             const j = customId % 10 - 1;
                             this.game.selectPiece(i, j);
                             console.log(this.game.getSelected());
+
+
+
+                            console.log(this.game.getBoard());  
                         }
                         else if(obj instanceof MyRectangle) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
                             this.game.movePiece(i, j); // TODO: if error is thrown, should we make something here
+                        
+
+                            
+                            console.log(this.game.getBoard());  
                         }
 
                     }
+                    
                 }
                 this.pickResults.splice(0,this.pickResults.length);
             }

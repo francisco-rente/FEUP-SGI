@@ -71,10 +71,7 @@ export class GameLogic {
         if (!this.checkBounds(x, y) ||  this.gameBoard[x][y] !== 0) return State.ERROR;
 
         const isKing = this.gameBoard[this.selected[0]][this.selected[1]] === this.playerTurn + 2;
-
-        console.log("isKing: " + isKing);
-
-        // if ((this.selected[0] - x) * (this.playerTurn === 1 ? 1 : -1) <= 0 && !isKing) return State.ERROR;
+        if ((x - this.selected[0]) * (this.playerTurn === 1 ? 1 : -1) <= 0 && !isKing) return State.ERROR;
 
 
         if (!(Math.abs(this.selected[1] - y) === 1 && Math.abs(this.selected[0] - x) === 1)) {
@@ -104,7 +101,7 @@ export class GameLogic {
         } else {
             this.gameBoard[x][y] = this.playerTurn;
         }
-        this.gameBoard[this.selected[1]][this.selected[0]] = 0;
+        this.gameBoard[this.selected[0]][this.selected[1]] = 0;
         this.selected = [-1, -1];
         this.playerTurn = this.playerTurn === 1 ? 2 : 1;
         // TODO: a player turn should be associated with the move, a long with a before and after board state
