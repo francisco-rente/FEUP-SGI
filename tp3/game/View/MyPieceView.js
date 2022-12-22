@@ -25,6 +25,8 @@ export class MyPieceView {
             20, 20, MyPieceView.circleControlPoints);
         const pieceSide = new MyCylinder(this.scene, "PieceSide", this.boardSize[0] / 8 / 2, this.boardSize[0] / 8 / 2, 0.5, 20, 20);
         const [i, j] = position;
+        const squareSize = this.boardSize[0] / 8;
+
 
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
@@ -33,15 +35,15 @@ export class MyPieceView {
 
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
 
-        const x = (i + 0.5) * this.boardSize[0] / 8  + 15;        //TODO: tirar o +15 -15 e o +1
-        const y = (j + 0.5) * this.boardSize[1] / 8 - 15;
+        const x = (i + 0.5) * squareSize + 15;        //TODO: tirar o +15 -15 e o +1
+        const y = (j + 0.5) * squareSize - 15;
         const z = 1;
         this.scene.translate(x, y, z);
         pieceSide.display();
 
         this.scene.pushMatrix();
-        this.scene.translate(-this.boardSize[0] / 8 / 2, 0, 0.5);
-        this.scene.scale(this.boardSize[0] / 8, this.boardSize[1] / 8 , 1);
+        this.scene.translate(-squareSize / 2, 0, 0.5);
+        this.scene.scale(squareSize, squareSize, 1);
         pieceTop.display();
         this.scene.popMatrix();
 
