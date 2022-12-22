@@ -48,6 +48,10 @@ export class GameLogic {
 
         console.log([x, y]);
         console.log(this.gameBoard[x][y]);
+
+        console.log(this.playerTurn);
+        console.log(this.gameBoard[x][y] )
+
         if(! (this.gameBoard[x][y] === this.playerTurn || this.gameBoard[x][y] === this.playerTurn + 2)) return State.ERROR;
 
         this.currentState = State.SELECT_SQUARE;
@@ -62,14 +66,15 @@ export class GameLogic {
     //TODO: ver quando queremos comer várias peças
     //TODO: add scoreboard updates in case of capture
     movePiece(x, y) {
-
+        console.log("movePiece");
         if (this.currentState !== State.SELECT_SQUARE) return State.ERROR;
-        if (x < 0 || x > 7 || y < 0 || y > 7 || this.gameBoard[x][y] !== 0) return State.ERROR;
+        if (!this.checkBounds(x, y) ||  this.gameBoard[x][y] !== 0) return State.ERROR;
 
+        const isKing = this.gameBoard[this.selected[0]][this.selected[1]] === this.playerTurn + 2;
 
-        let isKing = this.gameBoard[this.selected[0]][this.selected[1]] === this.playerTurn + 2;
+        console.log("isKing: " + isKing);
 
-        if ((this.selected[0] - x) * (this.playerTurn === 1 ? 1 : -1) <= 0 && !isKing) return State.ERROR;
+        // if ((this.selected[0] - x) * (this.playerTurn === 1 ? 1 : -1) <= 0 && !isKing) return State.ERROR;
 
 
         if (!(Math.abs(this.selected[1] - y) === 1 && Math.abs(this.selected[0] - x) === 1)) {
@@ -77,9 +82,13 @@ export class GameLogic {
 
             let x_dir = this.selected[0] - x > 0 ? -1 : 1;
             let y_dir = this.selected[1] - y > 0 ? -1 : 1;
+
+            console.log("x_dir: " + x_dir);
+            console.log("y_dir: " + y_dir);
+
             for (let i = this.selected[0] + x_dir, j = this.selected[1] + y_dir; i !== x; i += x_dir, j += y_dir) {
                 if (aux_board[i][j] !== 0 && aux_board[i + x_dir][j + y_dir] === 0
-                    && i + x_dir >= 0 && i + x_dir <= 7 && j + y_dir >= 0 && j + y_dir <= 7) {
+                    && this.checkBounds(i + x_dir, j + y_dir)) {
                     aux_board[i][j] = 0;
                 } else {
                     console.log("Invalid move");
@@ -95,11 +104,18 @@ export class GameLogic {
         } else {
             this.gameBoard[x][y] = this.playerTurn;
         }
+        this.gameBoard[this.selected[1]][this.selected[0]] = 0;
         this.selected = [-1, -1];
-        this.gameBoard[this.selected[0]][this.selected[1]] = 0;
         this.playerTurn = this.playerTurn === 1 ? 2 : 1;
         // TODO: a player turn should be associated with the move, a long with a before and after board state
         this.previousMoves.push([x, y]);
         return this.gameBoard;
     }
+
+
+    checkBounds(x, y) {
+        return (0 <= x <= 7 && 0 <= y <= 7);
+    }
+
+
 }

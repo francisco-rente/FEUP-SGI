@@ -60,15 +60,13 @@ export class MyBoardView {
     displayPieces(gameLogic) {
 
         const currentBoard = gameLogic.getBoard();
-        const newPiece = new MyPieceView(this.scene, this.size);
 
         for (let i = 0; i < 8; i++) {
             for(let j = 0; j < 8; j++) {
                 let color = currentBoard[i][j];
-
                 const appearance = this.getPieceAppearance(color, [i, j]);
                 if(appearance === null) continue;
-
+                const newPiece = new MyPieceView(this.scene, this.size);
                 this.scene.registerForPick((i + 1) * 10 + (j + 1), newPiece);
                 newPiece.display([i, j], appearance);
                 this.scene.clearPickRegistration();
