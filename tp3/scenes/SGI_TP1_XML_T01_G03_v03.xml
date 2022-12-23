@@ -387,7 +387,7 @@
             <transformation>
                 <translation x="0" y="2" z="0"/>
             </transformation>
-            <animation id="kite" />
+            <!--<animation id="kite" />-->
             <materials>
                 <material id="kite"/>
             </materials>
@@ -471,7 +471,7 @@
                 <scale x="1" y="1" z="2"/>
                 <translation x="6" y="-12" z="0"/>
             </transformation>
-            <animation id="animation1" />
+            <!--<animation id="animation1" />-->
             <materials>
                 <material id="demoMaterial"/>
             </materials>
@@ -706,7 +706,7 @@
                 <componentref id="tentback1"/>
                 <componentref id="tentback2"/>
             </children>
-            <animation id="animation1" />
+            <!--<animation id="animation1" />-->
         </component>
 
         <component id="tentback1">
@@ -978,7 +978,7 @@
         <materials>
             <material id="demoMaterial"/> <!-- black squares -->
             <material id="fire"/><!-- white squares-->
-            <material id="fireStrong"/> <!-- black pieces-->
+            <material id="demoMaterial"/> <!-- black pieces-->
             <material id="fireStrong"/> <!-- white pieces-->
             <material id="fireStrong"/> <!-- black kings-->
             <material id="fireStrong"/> <!-- white kings-->
