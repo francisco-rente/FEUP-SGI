@@ -8,7 +8,7 @@ import {MyComponent} from "./MyComponent.js";
 import {MyPatch} from './primitives/MyPatch.js';
 import {MyKeyframeAnimation} from "./animations/MyKeyframeAnimation.js";
 import {MyKeyFrame} from "./animations/MyKeyFrame.js";
-import {MyBoardView} from "./game/View/MyBoardView.js";
+import {Board} from "./game/Model/Board.js";
 
 
 var DEGREE_TO_RAD = Math.PI / 180.0;
@@ -295,7 +295,7 @@ export class MySceneGraph {
         console.log("Textures: " + textures);
         console.log("Materials: " + materials);
 
-        this.scene.boardView = new MyBoardView(this.scene, textures, materials, position, size);
+        this.scene.graph.board = new Board(this.scene, textures, materials, position, size);
     }
 
 

@@ -1,9 +1,8 @@
 import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis} from '../lib/CGF.js';
-import {GameLogic} from "./game/Model/GameLogic.js";
+import {Board} from "./game/Model/Board.js";
 import {MyCylinder} from "./primitives/MyCylinder.js";
 import {MyRectangle} from "./primitives/MyRectangle.js";
-import {MyPieceView} from "./game/View/MyPieceView.js";
-
+import { MyPieceView} from './game/View/MyPieceView.js';
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -22,7 +21,6 @@ export class XMLscene extends CGFscene {
         this.appearence_index = 0;
         this.interface = myinterface;
         this.lights = [];
-
         this.highLightPhase = 1;
         this.highLightAmplitude = 1;
         this.highLightFrequency = 1;
@@ -60,8 +58,6 @@ export class XMLscene extends CGFscene {
         this.highlightShader.setUniformsValues({uSampler: 0});
 
         this.setUpdatePeriod(20);
-
-        this.game = new GameLogic(); // TODO: this should be done as a user action (interact with object or interface)
     }
 
 
@@ -258,25 +254,19 @@ export class XMLscene extends CGFscene {
                         if(obj instanceof MyPieceView) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
-                            this.game.selectPiece(i, j);
-                            console.log(this.game.getSelected());
+                            this.graph.board.gameLogic.selectPiece(i, j);
+                            console.log(this.graph.board.gameLogic.getSelected());
 
-
-
-                            console.log(this.game.getBoard());  
+                            console.log(this.graph.board.gameLogic.getBoard());  
                         }
                         else if(obj instanceof MyRectangle) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
-                            this.game.movePiece(i, j); // TODO: if error is thrown, should we make something here
-                        
-
+                            this.graph.board.gameLogic.movePiece(i, j); // TODO: if error is thrown, should we make something here
                             
-                            console.log(this.game.getBoard());  
+                            console.log(this.graph.board.gameLogic.getBoard());  
                         }
-
                     }
-                    
                 }
                 this.pickResults.splice(0,this.pickResults.length);
             }
@@ -320,7 +310,7 @@ export class XMLscene extends CGFscene {
             this.setDefaultAppearance();
 
             // Displays the scene (MySceneGraph function).
-            this.boardView.display(this.game);
+            this.graph.board.display();
             this.graph.displayScene();
         }
 

@@ -1,7 +1,3 @@
-// enum State
-import {MyPlayer} from "./MyPlayer.js";
-
-
 const State = {
     INIT: 0,
     SELECT_PIECE: 1,
@@ -13,7 +9,7 @@ const State = {
 
 
 export class GameLogic {
-    constructor() {
+    constructor(player1, player2) {
         this.currentState = State.SELECT_PIECE;
 
         this.gameBoard = [
@@ -27,8 +23,6 @@ export class GameLogic {
             [2, 2, 2, 2, 2, 2, 2, 2]
         ];
 
-        this.player1 = new MyPlayer("Player 1"); // black pieces
-        this.player2 = new MyPlayer("Player 2"); // white pieces
         this.playerTurn = 1;
 
 
