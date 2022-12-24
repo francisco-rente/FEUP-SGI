@@ -10,11 +10,10 @@ export class GameLogic {
         this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
 
         this.playerTurn = 1;
-
-
+        this.player1 = player1;
+        this.player2 = player2;
         this.selected = [-1, -1];
         this.possible_moves = []; // Highlighted squares
-
         this.gameMoves = [];
     }
 
@@ -54,29 +53,57 @@ export class GameLogic {
         let possibleMoves = []; // {begin [x, y], end [x, y], capture false/true}
         let cloneBoard = this.cloneGameBoard();
 
-        let i = 0;
-        while (i++ !== 10) {
-            let diagonalMoves = this.checkDiagonals(selectedX, selectedY, cloneBoard);
-            if (diagonalMoves.length !== 0) {
-                possibleMoves = possibleMoves.concat(diagonalMoves.map((move) => {
-                    return {"begin": [selectedX, selectedY], "end": move, "capture": false}
-                }));
-                break;
-            }
-
-            let captureMoves = this.checkCaptureMoves(selectedX, selectedY, cloneBoard);
-            if (captureMoves.length !== 0) {
-                possibleMoves = possibleMoves.concat(captureMoves.map((move) => {
-                    return this.getPossibleMovesFromSelection(move.end[0], move.end[1]);
-                }));
-            }
+        let diagonalMoves = this.checkDiagonals(selectedX, selectedY, cloneBoard);
+        if (diagonalMoves.length !== 0) {
+            possibleMoves = possibleMoves.concat(diagonalMoves.map((move) => {
+                return {"begin": [selectedX, selectedY], "end": move, "capture": false}
+            }));
         }
+
+        // TODO: if the recursive call is made, a normal diagonal move is not possible
+        // TODO: the board should be updated after the move call, for each instance of the move
+        let captureMoves = this.checkCaptureMoves(selectedX, selectedY, cloneBoard);
+        if (captureMoves.length !== 0) {
+            possibleMoves = [];
+            possibleMoves = possibleMoves.concat(captureMoves.map((move) => {
+                return {"begin": [selectedX, selectedY], "end": move, "capture": false}
+            }));
+        }
+
         return possibleMoves;
     }
 
     checkCaptureMoves(selectedX, selectedY, cloneBoard) {
         let captureMoves = []; //TODO : check if capture is possible
-        return captureMoves;
+
+        if (!this.isPieceKing(selectedX, selectedY)) {
+            console.log("NOT KING");
+            const direction = this.playerTurn === 1 ? 1 : -1;
+            for (let i = -1; i <= 1; i += 2) {
+
+                console.log("CHECKING CAPTURE");
+                console.log("X: " + selectedX + " Y: " + selectedY);
+                console.log("I: " + i);
+                console.log("DIRECTION: " + direction);
+                console.log("BOUNDS: " + this.checkBounds(selectedX + direction, selectedY + i));
+                console.log("BOUNDS: " + this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i));
+
+                if (this.checkBounds(selectedX + direction, selectedY + i)
+                    && this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i)
+                    && cloneBoard[selectedX + direction][selectedY + i] !== 0
+                    && cloneBoard[selectedX + direction][selectedY + i] !== this.playerTurn
+                    && cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] === 0) {
+                    captureMoves.push([selectedX + 2 * direction, selectedY + 2 * i]);
+
+                    cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn;
+                    cloneBoard[selectedX + direction][selectedY + i] = 0;
+                    cloneBoard[selectedX][selectedY] = 0;
+                    captureMoves = captureMoves.concat(this.checkCaptureMoves(selectedX + 2 * direction, selectedY + 2 * i, this.cloneBoard(cloneBoard)));
+                }
+            }
+
+            return captureMoves;
+        }
     }
 
     checkDiagonals(x, y, gameBoard) {
@@ -90,11 +117,10 @@ export class GameLogic {
                 }
             }
         } else {
-            for (let i = -1, j = -1; i < 2; i += 2, j += 2) {
-                if (this.checkBounds(x + i, y + j) && gameBoard[x + i][y + j] === 0) {
-                    possibleMoves.push([x + i, y + j]);
-                }
-            }
+            for (let i = -1; i <= 1; i += 2)
+                for (let j = -1; j <= 1; j += 2)
+                    if (this.checkBounds(x + i, y + j) && gameBoard[x + i][y + j] === 0)
+                        possibleMoves.push([x + i, y + j]);
         }
         return possibleMoves;
     }
@@ -144,7 +170,7 @@ export class GameLogic {
             if (ate !== 0) this.incrementScore(this.playerTurn, ate); else return State.ERROR; // no capture was made from a [2,2] move
         }
 
-        if(Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
+        if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
             this.moveSelectedPiece(selectedX, selectedY, x, y, this.gameBoard);
         else
             return State.ERROR;
@@ -208,14 +234,17 @@ export class GameLogic {
 
 
     checkBounds(x, y) {
-        return (0 <= x <= 7 && 0 <= y <= 7);
+        return (0 <= x && x <= 7 && 0 <= y && y <= 7);
     }
 
     cloneGameBoard() {
-        return this.gameBoard.map((arr) => {
+        return this.cloneBoard(this.gameBoard);
+    }
+
+    cloneBoard(board) {
+        return board.map((arr) => {
             return arr.slice();
         })
     }
-
 
 }
