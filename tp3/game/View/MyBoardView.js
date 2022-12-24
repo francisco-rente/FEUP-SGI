@@ -40,7 +40,7 @@ export class MyBoardView {
             for (let j = 0; j < 8; j++) {
                 this.scene.pushMatrix();
 
-                const appearance = this.getBoardSquareAppearance([i, j]);
+                const appearance = this.getBoardSquareAppearance(gameLogic, [i, j]);
                 if(appearance === null) continue;
 
                 this.scene.pushAppearance(appearance);
@@ -76,8 +76,6 @@ export class MyBoardView {
 
 
 
-
-
     initMaterials(materials) {
         this.materials["blackSquare"] = materials[0];
         this.materials["whiteSquare"] = materials[1];
@@ -85,6 +83,7 @@ export class MyBoardView {
         this.materials["whitePiece"] = materials[3];
         this.materials["blackKing"] = materials[4];
         this.materials["whiteKing"] = materials[5];
+        this.materials["highlighted"] = materials[6];
     }
 
     initTextures(textures) {
@@ -94,15 +93,22 @@ export class MyBoardView {
         this.textures["whitePiece"] = {"texture": textures[3][0], "length_s": textures[3][1], "length_t": textures[3][2]};
         this.textures["blackKing"] = {"texture": textures[4][0], "length_s": textures[4][1], "length_t": textures[4][2]};
         this.textures["whiteKing"] = {"texture": textures[5][0], "length_s": textures[5][1], "length_t": textures[5][2]};
+        this.textures["highlighted"] = {"texture": textures[6][0], "length_s": textures[6][1], "length_t": textures[6][2]};
     }
 
 
-    getBoardSquareAppearance(square) {
+    getBoardSquareAppearance(gameLogic, square) {
         const [i, j] = square;
         let appearance;
         let texture;
 
-        if ((i + j) % 2 === 0) {
+        if(gameLogic.isSquareHighlighted(square)) {
+            console.log("highlighted");
+            texture = this.textures["highlighted"]["texture"];
+            appearance = this.materials["highlighted"];
+            appearance.setTexture(texture);
+        }
+        else if ((i + j) % 2 === 0) {
             texture = this.textures["blackSquare"]["texture"];
             appearance = this.materials["blackSquare"];
             appearance.setTexture(texture);

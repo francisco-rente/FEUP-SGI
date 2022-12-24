@@ -1,10 +1,5 @@
 const State = {
-    INIT: 0,
-    SELECT_PIECE: 1,
-    SELECT_SQUARE: 2,
-    FORCE_CAPTURE: 3,
-    ANIMATING: 3,
-    ERROR: 1000,
+    INIT: 0, SELECT_PIECE: 1, SELECT_SQUARE: 2, FORCE_CAPTURE: 3, ANIMATING: 3, ERROR: 1000,
 }
 
 
@@ -12,21 +7,14 @@ export class GameLogic {
     constructor(player1, player2) {
         this.currentState = State.SELECT_PIECE;
 
-        this.gameBoard = [
-            [1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [2, 2, 2, 2, 2, 2, 2, 2],
-            [2, 2, 2, 2, 2, 2, 2, 2]
-        ];
+        this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
 
         this.playerTurn = 1;
 
 
         this.selected = [-1, -1];
+        this.possible_moves = []; // Highlighted squares
+
         this.gameMoves = [];
     }
 
@@ -45,57 +33,123 @@ export class GameLogic {
 
     selectPiece(x, y) {
 
-
-        // TODO: has to force the player to eat if possible and return it
-
         if (!(this.checkPiece(x, y))) {
-            console.log("not a piece");
-            return State.ERROR;
+            return {"next_state": State.ERROR, "reason": "Not your piece"};
         }
         this.currentState = State.SELECT_SQUARE;
         this.selected = [x, y];
 
-        // TODO: has to return possible moves (highlight squares)
+        this.possible_moves = this.getPossibleMovesFromSelection(x, y);
+        return {"next_state": this.currentState, "possible_moves": this.possible_moves.slice()};
+    }
 
-        return this.currentState;
+    isSquareHighlighted(square) {
+        const [x, y] = square;
+        return this.possible_moves.some((move) => {
+            return move["end"][0] === x && move["end"][1] === y;
+        });
+    }
+
+    getPossibleMovesFromSelection(selectedX, selectedY) {
+        let possibleMoves = []; // {begin [x, y], end [x, y], capture false/true}
+        let cloneBoard = this.cloneGameBoard();
+
+        let i = 0;
+        while (i++ !== 10) {
+            let diagonalMoves = this.checkDiagonals(selectedX, selectedY, cloneBoard);
+            if (diagonalMoves.length !== 0) {
+                possibleMoves = possibleMoves.concat(diagonalMoves.map((move) => {
+                    return {"begin": [selectedX, selectedY], "end": move, "capture": false}
+                }));
+                break;
+            }
+
+            let captureMoves = this.checkCaptureMoves(selectedX, selectedY, cloneBoard);
+            if (captureMoves.length !== 0) {
+                possibleMoves = possibleMoves.concat(captureMoves.map((move) => {
+                    return this.getPossibleMovesFromSelection(move.end[0], move.end[1]);
+                }));
+            }
+        }
+        return possibleMoves;
+    }
+
+    checkCaptureMoves(selectedX, selectedY, cloneBoard) {
+        let captureMoves = []; //TODO : check if capture is possible
+        return captureMoves;
+    }
+
+    checkDiagonals(x, y, gameBoard) {
+        // is not king
+        let possibleMoves = [];
+        if (!this.isPieceKing(x, y)) {
+            const direction = this.playerTurn === 1 ? 1 : -1;
+            for (let i = -1; i <= 1; i += 2) {
+                if (this.checkBounds(x + direction, y + i) && gameBoard[x + direction][y + i] === 0) {
+                    possibleMoves.push([x + direction, y + i]);
+                }
+            }
+        } else {
+            for (let i = -1, j = -1; i < 2; i += 2, j += 2) {
+                if (this.checkBounds(x + i, y + j) && gameBoard[x + i][y + j] === 0) {
+                    possibleMoves.push([x + i, y + j]);
+                }
+            }
+        }
+        return possibleMoves;
     }
 
 
-    //TODO: ver quando queremos comer várias peças
-    //TODO: add scoreboard updates in case of capture
-    movePiece(x, y) {
-        console.log("movePiece", x, y);
+    movePieceFromInput(x, y) {
         const [selectedX, selectedY] = this.selected;
-        if (!this.checkMovePieceConditions(selectedX, selectedY, x, y)) {
-            console.log("invalid move");
-            return State.ERROR;
-        }
+        this.possible_moves = [];
 
-        const dx = (this.selected[0] - x);
-        const dy = (this.selected[1] - y);
-        console.log("dx, dy", dx, dy);
-        if (dx * dy === 0) return State.ERROR;
+        const move_result = this.movePiece(selectedX, selectedY, x, y);
+        if (move_result === State.ERROR) return State.ERROR;
 
-        let ate = 0;
-        if (Math.abs(dx) > 1 && Math.abs(dy) > 1) {
-            ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
-            if (ate === State.ERROR) return State.ERROR;
-            if (ate !== 0) this.incrementScore(this.playerTurn, ate);
-            else return State.ERROR; // no capture was made from a [2,2] move
-        }
+        console.log("DID MOVE PIECE");
 
-        this.moveSelectedPiece(selectedX, selectedY, x, y);
         this.changeTurn();
         this.gameMoves.push({
             "old_pos": [selectedX, selectedY],
             "new_pos": [x, y],
             "player": this.playerTurn,
-            "score_increased": ate, // TODO: for now, only one piece can be eaten
+            "score_increased": move_result["ate"], // TODO: for now, only one piece can be eaten
             "board": this.cloneGameBoard()
         });
 
+    }
 
-        return this.gameBoard;
+
+// TODO: ver quando queremos comer várias peças
+// TODO: add scoreboard updates in case of capture
+// TODO: something has to pass to boardView to force the player to eat
+    movePiece(selectedX, selectedY, x, y) {
+        console.log("Turn: " + this.playerTurn);
+
+        if (!this.checkMovePieceConditions(selectedX, selectedY, x, y)) {
+            console.log("invalid move");
+            return State.ERROR;
+        }
+
+        const dx = (selectedX - x);
+        const dy = (selectedY - y);
+        if (dx * dy === 0) return State.ERROR;
+
+        let ate = 0;
+        if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
+            ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
+            console.log("ate", ate);
+            if (ate === State.ERROR) return State.ERROR;
+            if (ate !== 0) this.incrementScore(this.playerTurn, ate); else return State.ERROR; // no capture was made from a [2,2] move
+        }
+
+        if(Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
+            this.moveSelectedPiece(selectedX, selectedY, x, y, this.gameBoard);
+        else
+            return State.ERROR;
+
+        return {"gameBoard": this.gameBoard, "ate": ate};
     }
 
 
@@ -137,18 +191,18 @@ export class GameLogic {
         this.playerTurn = this.playerTurn === 1 ? 2 : 1;
     }
 
-    moveSelectedPiece(selected_x, selected_y, x, y) {
-        this.fillSquare(x, y);
-        this.gameBoard[selected_x][selected_y] = 0;
+    moveSelectedPiece(selected_x, selected_y, x, y, gameBoard) {
+        this.fillSquare(x, y, gameBoard);
+        gameBoard[selected_x][selected_y] = 0;
         this.selected = [-1, -1];
     }
 
 
-    fillSquare(x, y) {
+    fillSquare(x, y, gameBoard) {
         if ((this.playerTurn === 1 && x === 7) || (this.playerTurn === 2 && x === 0)) {
-            this.gameBoard[x][y] = this.playerTurn + 2; // turn to king
+            gameBoard[x][y] = this.playerTurn + 2; // turn to king
         } else {
-            this.gameBoard[x][y] = this.playerTurn;
+            gameBoard[x][y] = this.playerTurn;
         }
     }
 

@@ -21,6 +21,7 @@ export class XMLscene extends CGFscene {
         this.appearence_index = 0;
         this.interface = myinterface;
         this.lights = [];
+
         this.highLightPhase = 1;
         this.highLightAmplitude = 1;
         this.highLightFrequency = 1;
@@ -257,14 +258,14 @@ export class XMLscene extends CGFscene {
                             this.graph.board.gameLogic.selectPiece(i, j);
                             console.log(this.graph.board.gameLogic.getSelected());
 
-                            console.log(this.graph.board.gameLogic.getBoard());  
+                            console.log(this.graph.board.gameLogic.getBoard());
                         }
                         else if(obj instanceof MyRectangle) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
-                            this.graph.board.gameLogic.movePiece(i, j); // TODO: if error is thrown, should we make something here
-                            
-                            console.log(this.graph.board.gameLogic.getBoard());  
+                            this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
+
+                            console.log(this.graph.board.gameLogic.getBoard());
                         }
                     }
                 }
