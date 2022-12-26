@@ -70,6 +70,7 @@
         <texture id="sky" file="scenes/images/skybox/nightsky.jpg"/>
         <texture id="painting" file="scenes/images/starry_night.jpg"/>
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
+        <texture id="font" file="scenes/images/oolite-font.trans.png"/>
     </textures>
 
     <materials>
@@ -985,6 +986,7 @@
             <material id="fireStrong"/> <!-- white kings-->
             <material id="fireStrong"/> <!-- board -->
             <material id="fireStrong"/> <!-- highlighted square -->
+            <material id="fireStrong"/> <!-- timer -->
         </materials>
         <textures>
             <texture id="wood" length_s="1.0" length_t = "1.0"/> <!-- black squares -->
@@ -994,7 +996,8 @@
             <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black kings-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white kings-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- board-->
-            <texture id="highligh" length_s="1.0" length_t = "1.0"/><!-- highlighted square-->
+            <texture id="highlight" length_s="1.0" length_t = "1.0"/><!-- highlighted square-->
+            <texture id="font" length_s="1.0" length_t = "1.0"/><!-- timer-->
         </textures>
     </board>
 

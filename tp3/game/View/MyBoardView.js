@@ -29,9 +29,24 @@ export class MyBoardView {
     display(gameLogic) {
         this.displayBoardTable(gameLogic);
         this.displayPieces(gameLogic);
+        this.displayTimer(gameLogic);
     }
 
 
+    displayTimer(gameLogic) {
+        //time = gameLogic.getTime();
+        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0], 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(0 + 15, 0 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
+        timer.display();
+        this.scene.popMatrix();
+
+    }
 
     displayBoardTable(gameLogic) {
         const square = new MyRectangle(this.scene, "Square", 0, this.size[0] / 8, 0, this.size[1] / 8);
@@ -84,6 +99,7 @@ export class MyBoardView {
         this.materials["blackKing"] = materials[4];
         this.materials["whiteKing"] = materials[5];
         this.materials["highlighted"] = materials[6];
+        this.materials["timer"] = materials[6];
     }
 
     initTextures(textures) {
@@ -94,6 +110,7 @@ export class MyBoardView {
         this.textures["blackKing"] = {"texture": textures[4][0], "length_s": textures[4][1], "length_t": textures[4][2]};
         this.textures["whiteKing"] = {"texture": textures[5][0], "length_s": textures[5][1], "length_t": textures[5][2]};
         this.textures["highlighted"] = {"texture": textures[6][0], "length_s": textures[6][1], "length_t": textures[6][2]};
+        this.textures["timer"] = {"texture": textures[7][0], "length_s": textures[7][1], "length_t": textures[7][2]};
     }
 
 
