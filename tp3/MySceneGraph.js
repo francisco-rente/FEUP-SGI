@@ -275,6 +275,7 @@ export class MySceneGraph {
             if (child.nodeName === "position") position = this.parseCoordinates3D(child, "position");
             else if (child.nodeName === "size") size = this.parseCoordinates3D(child, "size");
             else if (child.nodeName === "textures") {
+                console.log("TEXTURES IN GRAPH PARSE")
                 for (let textureNode of child.children)
                     if (textureNode.nodeName === "texture") textures.push(this.parseBoardTexture(textureNode))
                     else this.onXMLMinorError("unknown tag <" + textureNode.nodeName + "> inside <textures>");
@@ -293,7 +294,12 @@ export class MySceneGraph {
         console.log("Position: " + position);
         console.log("Size: " + size);
         console.log("Textures: " + textures);
-        console.log("Materials: " + materials);
+        console.log("Materials: " + materials); 
+        
+        for (let texture of textures) {
+            console.log(texture);
+        }
+
 
         this.scene.graph.board = new Board(this.scene, textures, materials, position, size);
     }
@@ -307,6 +313,7 @@ export class MySceneGraph {
         textureInfo["texture"] = this.textures[id];
         textureInfo["length_s"] = this.reader.getFloat(textureNode, 'length_s');
         textureInfo["length_t"] = this.reader.getFloat(textureNode, 'length_t');
+        console.log(textureInfo)
         return textureInfo;
     }
 

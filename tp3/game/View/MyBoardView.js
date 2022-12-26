@@ -19,6 +19,7 @@ export class MyBoardView {
 
     constructor(scene, textures, materials, position, size) {
         this.scene = scene;
+        console.log("MyBoardView constructor");
         this.initTextures(textures);
         this.initMaterials(materials);
         this.position = position;
@@ -71,6 +72,7 @@ export class MyBoardView {
     }
 
 
+ 
 
     displayPieces(gameLogic) {
 
@@ -90,6 +92,12 @@ export class MyBoardView {
     }
 
 
+    // gameLOgic 
+       // animation: 
+
+    //for loop -> if *pos inicial == i j do loop: i, j do display passa a ser posição atual+ (final-inicial/qualquer merda)
+//no animation ter as peças (posição inicial e final no board e posição atual) 
+
 
     initMaterials(materials) {
         this.materials["blackSquare"] = materials[0];
@@ -98,19 +106,31 @@ export class MyBoardView {
         this.materials["whitePiece"] = materials[3];
         this.materials["blackKing"] = materials[4];
         this.materials["whiteKing"] = materials[5];
-        this.materials["highlighted"] = materials[6];
-        this.materials["timer"] = materials[6];
+        this.materials["board"] = materials[6];
+        this.materials["highlighted"] = materials[7];
+        this.materials["timer"] = materials[8];
     }
 
     initTextures(textures) {
-        this.textures["blackSquare"] = {"texture": textures[0][0], "length_s": textures[0][1], "length_t": textures[0][2]};
-        this.textures["whiteSquare"] = {"texture": textures[1][0], "length_s": textures[1][1], "length_t": textures[1][2]};
-        this.textures["blackPiece"] = {"texture": textures[2][0], "length_s": textures[2][1], "length_t": textures[2][2]};
-        this.textures["whitePiece"] = {"texture": textures[3][0], "length_s": textures[3][1], "length_t": textures[3][2]};
-        this.textures["blackKing"] = {"texture": textures[4][0], "length_s": textures[4][1], "length_t": textures[4][2]};
-        this.textures["whiteKing"] = {"texture": textures[5][0], "length_s": textures[5][1], "length_t": textures[5][2]};
-        this.textures["highlighted"] = {"texture": textures[6][0], "length_s": textures[6][1], "length_t": textures[6][2]};
-        this.textures["timer"] = {"texture": textures[7][0], "length_s": textures[7][1], "length_t": textures[7][2]};
+
+        console.log("MyBoardView initTextures");
+        for (let texture of textures) {
+            console.log(texture);
+        }
+
+        this.textures["blackSquare"] = textures[0]
+        this.textures["whiteSquare"] = textures[1]
+        this.textures["blackPiece"] = textures[2]
+        this.textures["whitePiece"] = textures[3]
+        this.textures["blackKing"] = textures[4]
+        this.textures["whiteKing"] =  textures[5]
+        this.textures["board"] =  textures[6]
+        this.textures["highlighted"] =textures[7]
+        this.textures["timer"] = textures[8]
+        console.log("TEXTTURES", this.textures);
+        for (let key in this.textures) {
+            console.log("key", key);
+        }
     }
 
 
