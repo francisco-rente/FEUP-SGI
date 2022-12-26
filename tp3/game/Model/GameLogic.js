@@ -15,6 +15,10 @@ export class GameLogic {
         this.selected = [-1, -1];
         this.possible_moves = []; // Highlighted squares
         this.gameMoves = [];
+
+
+
+        this.animations = [];
     }
 
 
@@ -175,6 +179,22 @@ export class GameLogic {
         else
             return State.ERROR;
 
+
+        console.log("ADDING ANIMATION")
+        console.log({
+            "initial_pos": [selectedX, selectedY],
+            "final_pos": [x, y],
+            "current_offset": 1,
+        })
+
+
+        this.animations.push({
+            "initial_pos": [selectedX, selectedY],
+            "final_pos": [x, y],
+            "current_offset": 1,
+        }); 
+
+        
         return {"gameBoard": this.gameBoard, "ate": ate};
     }
 
