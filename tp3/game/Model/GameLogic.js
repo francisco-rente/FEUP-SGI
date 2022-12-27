@@ -15,10 +15,8 @@ export class GameLogic {
         this.selected = [-1, -1];
         this.possible_moves = []; // Highlighted squares
         this.gameMoves = [];
-
-
-
         this.animations = [];
+        this.startTime = new Date();
     }
 
 
@@ -140,6 +138,22 @@ export class GameLogic {
 
     }
 
+    getElapsedTime() {
+        let time = new Date();
+
+        let elapsed_minutes = time.getMinutes() - this.startTime.getMinutes();
+        let elapsed_seconds = time.getSeconds() - this.startTime.getSeconds();
+
+        if (elapsed_seconds < 0) {
+            elapsed_minutes--;
+            elapsed_seconds += 60;
+        }
+
+        if (elapsed_minutes < 10) elapsed_minutes = "0" + elapsed_minutes;
+        if (elapsed_seconds < 10) elapsed_seconds = "0" + elapsed_seconds;
+        
+        return elapsed_minutes + ":" + elapsed_seconds;
+    }
 
 // TODO: ver quando queremos comer várias peças
 // TODO: add scoreboard updates in case of capture

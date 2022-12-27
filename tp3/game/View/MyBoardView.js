@@ -33,15 +33,7 @@ export class MyBoardView {
 
 
     displayTimer(gameLogic) {
-        //time = gameLogic.getTime();
-        /*
-        const timer1 = new MyRectangle(this.scene, "Timer1", 0, this.size[0]/2, 0, this.size[1] / 4);
-        const timer2 = new MyRectangle(this.scene, "Timer2", 0, this.size[0]/2, 0, this.size[1] / 4);
-        const colon = new MyRectangle(this.scene, "Colon", 0, this.size[0]/2, 0, this.size[1] / 4);
-        const timer3 = new MyRectangle(this.scene, "Timer3", 0, this.size[0]/2, 0, this.size[1] / 4);
-        const timer4 = new MyRectangle(this.scene, "Timer4", 0, this.size[0]/2, 0, this.size[1] / 4);
-*/
-        let time = "01:23";
+        let time = gameLogic.getElapsedTime();
         for(let i = 0; i < 5; i++) {
             const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0]/2, 0, this.size[1] / 4);
             if(i == 2) {
@@ -61,19 +53,6 @@ export class MyBoardView {
             this.scene.popMatrix();
             this.scene.resetShader();
         }
-/*
-        this.scene.setFontShaderNumber(4);
-        this.scene.pushMatrix();
-        let texture = this.textures["timer"]["texture"];
-        let appearance = this.materials["timer"];
-        appearance.setTexture(texture);
-        this.scene.pushAppearance(appearance);
-        this.scene.applyAppearance();
-        this.scene.translate(0 + 15, 0 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
-        timer1.display();
-        this.scene.popMatrix();
-        this.scene.resetShader();*/
-
     }
 
     displayBoardTable(gameLogic) {
