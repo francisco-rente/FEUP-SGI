@@ -166,8 +166,15 @@ export class GameLogic {
         const dy = (selectedY - y);
         if (dx * dy === 0) return State.ERROR;
 
+    
+
         let ate = 0;
+        let isEatingKing = false;
         if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
+
+            const [middleX, middleY, _, __] = this.getMiddlePiece(selectedX, selectedY, x, y);
+            isEatingKing = this.isPieceKing( middleX ,middleY, this.playerTurn === 1 ? 2 : 1);
+
             ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
             console.log("ate", ate);
             if (ate === State.ERROR) return State.ERROR;
@@ -192,6 +199,7 @@ export class GameLogic {
             "initial_pos": [selectedX, selectedY],
             "final_pos": [x, y],
             "current_offset": 1,
+            "ateKing": isEatingKing
         }); 
 
         
@@ -203,14 +211,20 @@ export class GameLogic {
         if (player === 1) this.player1.score += score; else this.player2.score += score;
     }
 
-    eatPiece(selectedX, selectedY, dx, dy, gameBoard) {
-        // TODO: maybe should be placed inside moveSelectedPiece
+    getMiddlePiece(selectedX, selectedY, dx, dy) {
         const x_dir = dx > 0 ? -1 : 1;
         const y_dir = dy > 0 ? -1 : 1;
         const middle_x = selectedX + x_dir;
         const middle_y = selectedY + y_dir;
+        return [middle_x, middle_y, x_dir, y_dir];
+    }
 
-        if (!this.checkBounds(middle_x + x_dir, middle_y + y_dir)) return State.ERROR;
+
+    eatPiece(selectedX, selectedY, dx, dy, gameBoard) {
+        const [middle_x, middle_y, x_dir, y_dir] = this.getMiddlePiece(selectedX, selectedY, dx, dy);
+
+        if (!this.checkBounds(middle_x, middle_y) &&
+            !this.checkBounds(middle_x + x_dir, middle_y + y_dir)) return State.ERROR;
 
         if (gameBoard[middle_x][middle_y] !== 0 && gameBoard[middle_x + x_dir][middle_y + y_dir] === 0) {
             // Will eat piece
@@ -221,8 +235,8 @@ export class GameLogic {
         return 0;
     }
 
-    isPieceKing(x, y) {
-        return this.gameBoard[x][y] === this.playerTurn + 2;
+    isPieceKing(x, y, player=this.playerTurn) {
+        return this.gameBoard[x][y] === player + 2;
     }
 
     checkMovePieceConditions(selectedX, selectedY, x, y) {
