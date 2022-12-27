@@ -30,7 +30,8 @@ export class GameLogic {
         return this.selected;
     }
 
-    getScore() {
+
+    getScore(string=true) {
         let score = [16, 16];
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
@@ -41,6 +42,9 @@ export class GameLogic {
                 }
             }
         }
+
+        if(!string) return score;
+
         score = ("0" + score[0]).slice(-2) + "-" + ("0" + score[1]).slice(-2);
         return score;
     }
@@ -178,11 +182,11 @@ export class GameLogic {
         let elapsed_minutes = time.getMinutes();
         let elapsed_seconds = time.getSeconds();
         if (player === 1) {
-            elapsed_minutes =- this.player1.time.getMinutes();
-            elapsed_seconds =- this.player1.time.getSeconds();
+            elapsed_minutes = -this.player1.time.getMinutes();
+            elapsed_seconds = -this.player1.time.getSeconds();
         } else {
-            elapsed_minutes =- this.player2.time.getMinutes();
-            elapsed_seconds =- this.player2.time.getSeconds();
+            elapsed_minutes = -this.player2.time.getMinutes();
+            elapsed_seconds = -this.player2.time.getSeconds();
         }
 
         if (elapsed_seconds < 0) {
@@ -212,7 +216,6 @@ export class GameLogic {
         const dy = (selectedY - y);
         if (dx * dy === 0) return State.ERROR;
 
-    
 
         let ate = 0;
         let isEatingKing = false;
@@ -252,9 +255,9 @@ export class GameLogic {
             "final_pos": [x, y],
             "current_offset": 1,
             "ateKing": isEatingKing
-        }); 
+        });
 
-        
+
         return {"gameBoard": this.gameBoard, "ate": ate};
     }
 
@@ -303,8 +306,7 @@ export class GameLogic {
         if (this.playerTurn === 1) {
             this.player2.time = new Date();
             this.playerTurn = 2;
-        }
-        else {
+        } else {
             this.player1.time = new Date();
             this.playerTurn = 1;
         }
