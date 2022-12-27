@@ -81,16 +81,8 @@ export class GameLogic {
         let captureMoves = []; //TODO : check if capture is possible
 
         if (!this.isPieceKing(selectedX, selectedY)) {
-            console.log("NOT KING");
             const direction = this.playerTurn === 1 ? 1 : -1;
             for (let i = -1; i <= 1; i += 2) {
-
-                console.log("CHECKING CAPTURE");
-                console.log("X: " + selectedX + " Y: " + selectedY);
-                console.log("I: " + i);
-                console.log("DIRECTION: " + direction);
-                console.log("BOUNDS: " + this.checkBounds(selectedX + direction, selectedY + i));
-                console.log("BOUNDS: " + this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i));
 
                 if (this.checkBounds(selectedX + direction, selectedY + i)
                     && this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i)
@@ -137,8 +129,6 @@ export class GameLogic {
         const move_result = this.movePiece(selectedX, selectedY, x, y);
         if (move_result === State.ERROR) return State.ERROR;
 
-        console.log("DID MOVE PIECE");
-
         this.changeTurn();
         this.gameMoves.push({
             "old_pos": [selectedX, selectedY],
@@ -169,7 +159,6 @@ export class GameLogic {
         let ate = 0;
         if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
             ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
-            console.log("ate", ate);
             if (ate === State.ERROR) return State.ERROR;
             if (ate !== 0) this.incrementScore(this.playerTurn, ate); else return State.ERROR; // no capture was made from a [2,2] move
         }
@@ -178,15 +167,6 @@ export class GameLogic {
             this.moveSelectedPiece(selectedX, selectedY, x, y, this.gameBoard);
         else
             return State.ERROR;
-
-
-        console.log("ADDING ANIMATION")
-        console.log({
-            "initial_pos": [selectedX, selectedY],
-            "final_pos": [x, y],
-            "current_offset": 1,
-        })
-
 
         this.animations.push({
             "initial_pos": [selectedX, selectedY],

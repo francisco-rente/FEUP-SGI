@@ -6,13 +6,6 @@ import {MyPlayer} from "./MyPlayer.js"
 
 export class Board{
     constructor(scene, textures, materials, position, size) {
-        console.log("Board constructor");
-        console.log("textures: " + textures);
-        console.log("TEXTURE IN BOARD CONSTU")
-        for (let texture of textures) {
-            console.log(texture);
-        }
-
         this.boardView = new MyBoardView(scene, textures, materials, position, size);
 
         this.player1 = new MyPlayer("Player 1"); // black pieces

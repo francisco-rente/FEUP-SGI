@@ -1,6 +1,5 @@
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
-
 /**
  * Board class, creating the objects
  * @constructor
@@ -19,7 +18,6 @@ export class MyBoardView {
 
     constructor(scene, textures, materials, position, size) {
         this.scene = scene;
-        console.log("MyBoardView constructor");
         this.initTextures(textures);
         this.initMaterials(materials);
         this.position = position;
@@ -37,6 +35,8 @@ export class MyBoardView {
     displayTimer(gameLogic) {
         //time = gameLogic.getTime();
         const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0], 0, this.size[1] / 4);
+        
+        this.scene.setFontShader([9,4]);
         this.scene.pushMatrix();
         let texture = this.textures["timer"]["texture"];
         let appearance = this.materials["timer"];
@@ -46,6 +46,7 @@ export class MyBoardView {
         this.scene.translate(0 + 15, 0 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
         timer.display();
         this.scene.popMatrix();
+        this.scene.resetShader();
 
     }
 
@@ -95,16 +96,13 @@ export class MyBoardView {
                 this.scene.registerForPick((i + 1) * 10 + (j + 1), newPiece);
 
                 let offsetX = 0, offsetY = 0; 
-                console.log(gameLogic.animations);
                 let animation = gameLogic.animations.find(animation => animation["final_pos"][0] == i && animation["final_pos"][1] == j);
                 if(animation !== undefined) {
-                    console.log("animation with initial pos: " + animation["initial_pos"] + " and final pos: " + animation["final_pos"] + " found!");
                     const initial_pos = animation["initial_pos"]; 
                     const final_pos = animation["final_pos"];
                     let current_offset = animation["current_offset"];
 
                     if(current_offset < 0) {
-                        console.log("animation finished!");
                         gameLogic.animations.splice(gameLogic.animations.indexOf(animation), 1);
                     } else{
                         offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
@@ -149,11 +147,6 @@ export class MyBoardView {
 
     initTextures(textures) {
 
-        console.log("MyBoardView initTextures");
-        for (let texture of textures) {
-            console.log(texture);
-        }
-
         this.textures["blackSquare"] = textures[0]
         this.textures["whiteSquare"] = textures[1]
         this.textures["blackPiece"] = textures[2]
@@ -163,10 +156,6 @@ export class MyBoardView {
         this.textures["board"] =  textures[6]
         this.textures["highlighted"] =textures[7]
         this.textures["timer"] = textures[8]
-        console.log("TEXTTURES", this.textures);
-        for (let key in this.textures) {
-            console.log("key", key);
-        }
     }
 
 
@@ -176,7 +165,6 @@ export class MyBoardView {
         let texture;
 
         if(gameLogic.isSquareHighlighted(square)) {
-            console.log("highlighted");
             texture = this.textures["highlighted"]["texture"];
             appearance = this.materials["highlighted"];
             appearance.setTexture(texture);
