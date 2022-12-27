@@ -38,7 +38,7 @@ export class MyBoardView {
         this.displayBoardTable(gameLogic);
         this.displayPieces(gameLogic);
         this.displayTimer(gameLogic);
-        this.displayAnimatingPieces();
+        this.displayAnimatingPieces(gameLogic);
     }
 
 
@@ -98,7 +98,6 @@ export class MyBoardView {
             for(let j = 0; j < 8; j++) {
                 let color = currentBoard[i][j];
 
-        
                 const appearance = this.getPieceAppearance(color, [i, j]);
                 if(appearance === null) continue;
                 const newPiece = new MyPieceView(this.scene, this.size);
@@ -106,41 +105,8 @@ export class MyBoardView {
 
                 let offsetX = 0, offsetY = 0; 
                 let animation = gameLogic.animations.find(animation => animation["final_pos"][0] === i && animation["final_pos"][1] === j);
-                if(animation !== undefined) {
-                    const initial_pos = animation["initial_pos"]; 
-                    const final_pos = animation["final_pos"];
-                    let current_offset = animation["current_offset"];
+                if(animation !== undefined) [offsetX, offsetY] = this.displayMovingPiece(animation, gameLogic);
 
-                    if(current_offset < 0) {
-                        console.log("animation finished!");
-                        gameLogic.animations.splice(gameLogic.animations.indexOf(animation), 1);
-                    } else{
-                        offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
-                        offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
-                        current_offset -= 0.1;
-
-                        if(final_pos[0] - initial_pos[0] === 2) {
-                            console.log("PUSHING ANIMATING PIECE");
-                            this.animatingPieces.push(
-                                {
-                                    "initial_pos" : [initial_pos[0] + (final_pos[0] - initial_pos[0] - 1), initial_pos[1] + (final_pos[1] - initial_pos[1] - 1), 0],
-                                    "current_offset" : 0,
-                                    "color": (gameLogic.playerTurn === 1 ? "black" : "white"),
-                                    "ateKing": animation["ateKing"]
-                                }
-                            )
-                        }
-
-                        for (let i = 0; i < gameLogic.animations.length; i++) {
-                            if(gameLogic.animations[i] === animation) {
-                                gameLogic.animations[i]["current_offset"] = current_offset;
-                                break;
-                            }
-                        }
-                    }
-
-                    
-                }
 
                 newPiece.displayInBoard([i - offsetX, j - offsetY], appearance);
                 this.scene.clearPickRegistration();
@@ -150,9 +116,35 @@ export class MyBoardView {
 
 
 
-    displayAnimatingPieces() {
+    displayMovingPiece(animation, gameLogic) {
+        let offsetX, offsetY = 0;
+        const initial_pos = animation["initial_pos"];
+        const final_pos = animation["final_pos"];
+        let current_offset = animation["current_offset"];
 
-        for (let piece of this.animatingPieces) {
+        if(current_offset < 0) {
+            console.log("animation finished!");
+            gameLogic.animations.splice(gameLogic.animations.indexOf(animation), 1);
+        } else {
+            offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
+            offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
+            current_offset -= 0.1;
+
+            for (let i = 0; i < gameLogic.animations.length; i++) {
+                if (gameLogic.animations[i] === animation) {
+                    gameLogic.animations[i]["current_offset"] = current_offset;
+                    break;
+                }
+            }
+        }
+        return [offsetX, offsetY];
+    }
+
+
+
+    displayAnimatingPieces(gamelogic) {
+
+        for (let piece of gamelogic.capturedPieces) {
             const current_offset = piece["current_offset"];
 
             const color = piece["color"];
@@ -170,25 +162,39 @@ export class MyBoardView {
 
             if(current_offset < 1) {
                 let vector = vec3.fromValues(0, 0, 0);
-                //TODO: change to parabolic movement
                 vec3.lerp(vector, exact_initial_pos, stackingPos, current_offset);
+                vector[2] = (1 + 0.5 * Math.sin(Math.PI * current_offset)) * 4;
+
                 newPiece.display(vector, appearance);
-                piece["current_offset"] += 0.001;
+                piece["current_offset"] += 0.01;
             }
             else {
-                // TODO: stack piece
+                //
             }
         }
+
+        this.stackCapturedPieces(gamelogic);
     }
 
 
 
-    // gameLOgic 
-       // animation: 
+    stackCapturedPieces(gamelogic) {
+        const stackXY = [this.size[0] / 8  + 15, this.size[1] / 8 - 15, 1];
 
-    //for loop -> if *pos inicial == i j do loop: i, j do display passa a ser posição atual+ (final-inicial/qualquer merda)
-//no animation ter as peças (posição inicial e final no board e posição atual) 
+        for(let i = 0; i < stackCountBlack; i++) {
+            const newPiece = new MyPieceView(this.scene, this.size);
+            const appearance = this.getPieceAppearance(1, null);
+            stackXY[2] = i * 0.5;
+            newPiece.display(stackXY, appearance);
+        }
 
+        for(let i = 0; i < stackCountWhite; i++) {
+            const newPiece = new MyPieceView(this.scene, this.size);
+            const appearance = this.getPieceAppearance(2, null);
+            stackXY[2] = i * 0.5;
+            newPiece.display(stackXY, appearance);
+        }
+    }
 
     initMaterials(materials) {
         this.materials["blackSquare"] = materials[0];

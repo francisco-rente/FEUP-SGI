@@ -17,6 +17,7 @@ export class GameLogic {
         this.gameMoves = [];
         this.animations = [];
         this.startTime = new Date();
+        this.capturedPieces = [];
     }
 
 
@@ -151,13 +152,10 @@ export class GameLogic {
 
         if (elapsed_minutes < 10) elapsed_minutes = "0" + elapsed_minutes;
         if (elapsed_seconds < 10) elapsed_seconds = "0" + elapsed_seconds;
-        
+
         return elapsed_minutes + ":" + elapsed_seconds;
     }
 
-// TODO: ver quando queremos comer várias peças
-// TODO: add scoreboard updates in case of capture
-// TODO: something has to pass to boardView to force the player to eat
     movePiece(selectedX, selectedY, x, y) {
         console.log("Turn: " + this.playerTurn);
 
@@ -170,14 +168,13 @@ export class GameLogic {
         const dy = (selectedY - y);
         if (dx * dy === 0) return State.ERROR;
 
-    
 
         let ate = 0;
         let isEatingKing = false;
         if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
 
             const [middleX, middleY, _, __] = this.getMiddlePiece(selectedX, selectedY, x, y);
-            isEatingKing = this.isPieceKing( middleX ,middleY, this.playerTurn === 1 ? 2 : 1);
+            isEatingKing = this.isPieceKing(middleX, middleY, this.playerTurn === 1 ? 2 : 1);
 
             ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
             if (ate === State.ERROR) return State.ERROR;
@@ -189,14 +186,30 @@ export class GameLogic {
         else
             return State.ERROR;
 
+
+        if (ate !== 0) {
+            // Just eats 1 for now
+            this.capturedPieces.push(
+                {
+                    "initial_pos": [selectedX + (x - selectedX - 1),
+                        selectedY + (y - selectedY - 1), 1],
+                    "current_offset": 0,
+                    "color": (this.playerTurn === 1 ? "white" : "black"),
+                    "ateKing": isEatingKing
+                }
+            )
+
+        }
+
+
         this.animations.push({
             "initial_pos": [selectedX, selectedY],
             "final_pos": [x, y],
             "current_offset": 1,
             "ateKing": isEatingKing
-        }); 
+        });
 
-        
+
         return {"gameBoard": this.gameBoard, "ate": ate};
     }
 
@@ -229,7 +242,7 @@ export class GameLogic {
         return 0;
     }
 
-    isPieceKing(x, y, player=this.playerTurn) {
+    isPieceKing(x, y, player = this.playerTurn) {
         return this.gameBoard[x][y] === player + 2;
     }
 
