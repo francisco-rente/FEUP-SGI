@@ -37,10 +37,24 @@ export class MyBoardView {
     display(gameLogic) {
         this.displayBoardTable(gameLogic);
         this.displayPieces(gameLogic);
+        this.displayScoreboard(gameLogic);
         this.displayTimer(gameLogic);
         this.displayAnimatingPieces();
     }
 
+    displayScoreboard(gameLogic) {
+        const scoreboard = new MyRectangle(this.scene, "Scoreboard", 0, this.size[0], 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(15, this.size[0]/4 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
+        scoreboard.display();
+        this.scene.popMatrix();
+        this.scene.resetShader();
+    }
 
     displayTimer(gameLogic) {
         let time = gameLogic.getElapsedTime();
