@@ -182,21 +182,18 @@ export class GameLogic {
         let elapsed_minutes = time.getMinutes();
         let elapsed_seconds = time.getSeconds();
         if (player === 1) {
-            elapsed_minutes = -this.player1.time.getMinutes();
-            elapsed_seconds = -this.player1.time.getSeconds();
+            elapsed_minutes -= this.player1.time.getMinutes();
+            elapsed_seconds -= this.player1.time.getSeconds();
         } else {
-            elapsed_minutes = -this.player2.time.getMinutes();
-            elapsed_seconds = -this.player2.time.getSeconds();
+            elapsed_minutes -= this.player2.time.getMinutes();
+            elapsed_seconds -= this.player2.time.getSeconds();
         }
-
         if (elapsed_seconds < 0) {
             elapsed_minutes--;
             elapsed_seconds += 60;
         }
-
         if (elapsed_minutes < 10) elapsed_minutes = "0" + elapsed_minutes;
         if (elapsed_seconds < 10) elapsed_seconds = "0" + elapsed_seconds;
-
         return elapsed_minutes + ":" + elapsed_seconds;
     }
 

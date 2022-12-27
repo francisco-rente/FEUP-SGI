@@ -50,7 +50,6 @@ export class MyBoardView {
         for (let i = 1; i <= 2; i++) {
             if (gameLogic.playerTurn == i) {
                 time = gameLogic.getPlayerTime(i);
-                console.log(time)
             } else {
                 time = "00:00";
             }
@@ -69,11 +68,9 @@ export class MyBoardView {
                 this.scene.pushAppearance(appearance);
                 this.scene.applyAppearance();
                 if (i == 1) {
-                    //this.scene.translate((-j-0.5)*this.size[0]/4 + boardOffset, 0 + 1, -(1 + 1/8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
-                    this.scene.translate((-j - 3) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+                    this.scene.translate((j - 6) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
                 } else {
-                    this.scene.translate((j - 0.5 + 6) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
-                    //this.scene.translate((i-0.5)*this.size[0]/4 + boardOffset, 0 + 1, -(1 + 1/8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+                    this.scene.translate((j + 5) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
                 }
 
                 timer.display();
