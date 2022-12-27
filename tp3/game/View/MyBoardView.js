@@ -34,9 +34,35 @@ export class MyBoardView {
 
     displayTimer(gameLogic) {
         //time = gameLogic.getTime();
-        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0], 0, this.size[1] / 4);
-        
-        this.scene.setFontShader([9,4]);
+        /*
+        const timer1 = new MyRectangle(this.scene, "Timer1", 0, this.size[0]/2, 0, this.size[1] / 4);
+        const timer2 = new MyRectangle(this.scene, "Timer2", 0, this.size[0]/2, 0, this.size[1] / 4);
+        const colon = new MyRectangle(this.scene, "Colon", 0, this.size[0]/2, 0, this.size[1] / 4);
+        const timer3 = new MyRectangle(this.scene, "Timer3", 0, this.size[0]/2, 0, this.size[1] / 4);
+        const timer4 = new MyRectangle(this.scene, "Timer4", 0, this.size[0]/2, 0, this.size[1] / 4);
+*/
+        let time = "01:23";
+        for(let i = 0; i < 5; i++) {
+            const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0]/2, 0, this.size[1] / 4);
+            if(i == 2) {
+                this.scene.setFontShader([10,3]);
+            }
+            else{
+                this.scene.setFontShaderNumber(time[i]);
+            }
+            this.scene.pushMatrix();
+            let texture = this.textures["timer"]["texture"];
+            let appearance = this.materials["timer"];
+            appearance.setTexture(texture);
+            this.scene.pushAppearance(appearance);
+            this.scene.applyAppearance();
+            this.scene.translate((i-0.5)*this.size[0]/4 + 15, 0 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
+            timer.display();
+            this.scene.popMatrix();
+            this.scene.resetShader();
+        }
+/*
+        this.scene.setFontShaderNumber(4);
         this.scene.pushMatrix();
         let texture = this.textures["timer"]["texture"];
         let appearance = this.materials["timer"];
@@ -44,9 +70,9 @@ export class MyBoardView {
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
         this.scene.translate(0 + 15, 0 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
-        timer.display();
+        timer1.display();
         this.scene.popMatrix();
-        this.scene.resetShader();
+        this.scene.resetShader();*/
 
     }
 

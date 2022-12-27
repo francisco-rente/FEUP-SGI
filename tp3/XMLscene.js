@@ -216,6 +216,11 @@ export class XMLscene extends CGFscene {
         this.setActiveShader(this.fontShader);
     }
 
+    setFontShaderNumber(number) {
+        this.fontShader.setUniformsValues({'charCoords': [number, 3]}); 
+        this.setActiveShader(this.fontShader);
+    }
+
     resetShader() {
         this.setActiveShader(this.defaultShader);
     }
