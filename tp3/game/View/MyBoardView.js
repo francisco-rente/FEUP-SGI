@@ -202,6 +202,9 @@ export class MyBoardView {
 
     displayAnimatingPieces(gamelogic) {
 
+        let animatingBlack = 0;
+        let animatingWhite = 0;
+
         for (let piece of gamelogic.capturedPieces) {
             const current_offset = piece["current_offset"];
 
@@ -226,24 +229,33 @@ export class MyBoardView {
 
                 newPiece.display(vector, appearance);
                 piece["current_offset"] += 0.01;
+                animatingBlack += piece["color"] === "black" ? 1 : 0;
+                animatingWhite += piece["color"] === "white" ? 1 : 0;
             }
         }
 
-        this.stackCapturedPieces(gamelogic);
+        this.stackCapturedPieces(gamelogic, {
+            "black": animatingBlack,
+            "white": animatingWhite
+        });
     }
 
 
-    stackCapturedPieces(gamelogic) {
+    stackCapturedPieces(gamelogic, animating) {
+
+        const whiteStillAnimating = animating["white"];
+        const blackStillAnimating = animating["black"];
+
         const [stackCountWhite, stackCountBlack] = gamelogic.getScore(false);
 
-        for (let i = 0; i < stackCountBlack; i++) {
+        for (let i = 0; i < stackCountBlack - blackStillAnimating; i++) {
             const newPiece = new MyPieceView(this.scene, this.size);
             const appearance = this.getPieceAppearance(1, null);
             this.stackXYBlack[2] = i * 0.5;
             newPiece.display(this.stackXYBlack, appearance);
         }
 
-        for (let i = 0; i < stackCountWhite; i++) {
+        for (let i = 0; i < stackCountWhite - whiteStillAnimating; i++) {
             const newPiece = new MyPieceView(this.scene, this.size);
             const appearance = this.getPieceAppearance(2, null);
             this.stackXYWhite[2] = i * 0.5;
