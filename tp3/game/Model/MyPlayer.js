@@ -4,5 +4,6 @@ export class MyPlayer {
         this.pieces = [];
         this.capturedPieces = [];
         this.score = 0;
+        this.time = new Date();
     }
 }

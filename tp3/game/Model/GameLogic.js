@@ -11,6 +11,7 @@ export class GameLogic {
 
         this.playerTurn = 1;
         this.player1 = player1;
+        this.player1.time = new Date();
         this.player2 = player2;
         this.selected = [-1, -1];
         this.possible_moves = []; // Highlighted squares
@@ -26,6 +27,21 @@ export class GameLogic {
 
     getSelected() {
         return this.selected;
+    }
+
+    getScore() {
+        let score = [16, 16];
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (this.gameBoard[i][j] === 1 || this.gameBoard[i][j] === 3) {
+                    score[1]--;
+                } else if (this.gameBoard[i][j] === 2 || this.gameBoard[i][j] === 4) {
+                    score[0]--;
+                }
+            }
+        }
+        score = ("0" + score[0]).slice(-2) + "-" + ("0" + score[1]).slice(-2);
+        return score;
     }
 
     checkPiece(x, y) {
@@ -151,9 +167,25 @@ export class GameLogic {
 
         if (elapsed_minutes < 10) elapsed_minutes = "0" + elapsed_minutes;
         if (elapsed_seconds < 10) elapsed_seconds = "0" + elapsed_seconds;
-        
+
         return elapsed_minutes + ":" + elapsed_seconds;
     }
+
+
+    getPlayerTime(player) {
+        let time = new Date();
+        let elapsed_minutes = time.getMinutes;
+        let elapsed_seconds = time.getSeconds;
+        if (player === 1) {
+            elapsed_minutes =- this.player1.time.getMinutes;
+            elapsed_seconds =- this.player1.time.getSeconds;
+        } else {
+            elapsed_minutes =- this.player2.time.getMinutes;
+            elapsed_seconds =- this.player2.time.getSeconds;
+        }
+        return elapsed_minutes + ":" + elapsed_seconds;
+    }
+
 
 // TODO: ver quando queremos comer várias peças
 // TODO: add scoreboard updates in case of capture
@@ -242,7 +274,14 @@ export class GameLogic {
     }
 
     changeTurn() {
-        this.playerTurn = this.playerTurn === 1 ? 2 : 1;
+        if (this.playerTurn === 1) {
+            this.player2.time = new Date();
+            this.playerTurn = 2;
+        }
+        else {
+            this.player1.time = new Date();
+            this.playerTurn = 1;
+        }        
     }
 
     moveSelectedPiece(selected_x, selected_y, x, y, gameBoard) {
