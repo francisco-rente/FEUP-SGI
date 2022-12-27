@@ -53,10 +53,12 @@ export class XMLscene extends CGFscene {
         this.visibleLights = true;
         this.activeNormals = false;
 
-        this.highlightShader = new CGFshader(this.gl,
-            "shaders/highlight.vert", "shaders/highlight.frag");
-
+        this.highlightShader = new CGFshader(this.gl, "shaders/highlight.vert", "shaders/highlight.frag");
+        
         this.highlightShader.setUniformsValues({uSampler: 0});
+
+        this.fontShader = new CGFshader(this.gl, "shaders/font.vert", "shaders/font.frag");
+        this.fontShader.setUniformsValues({'dims': [16, 16]});
 
         this.setUpdatePeriod(20);
     }
@@ -207,6 +209,16 @@ export class XMLscene extends CGFscene {
     setHighlightShader(color, scaleFactor) {
         this.highlightShader.setUniformsValues({color: color, scaleFactor: scaleFactor});
         this.setActiveShader(this.highlightShader);
+    }
+
+    setFontShader(coords) {
+        this.fontShader.setUniformsValues({'charCoords': coords}); 
+        this.setActiveShader(this.fontShader);
+    }
+
+    setFontShaderNumber(number) {
+        this.fontShader.setUniformsValues({'charCoords': [number, 3]}); 
+        this.setActiveShader(this.fontShader);
     }
 
     resetShader() {

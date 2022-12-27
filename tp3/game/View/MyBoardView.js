@@ -30,7 +30,7 @@ export class MyBoardView {
         this.size = size;
 
 
-        this.animatingPieces = []; 
+        this.animatingPieces = [];
     }
 
 
@@ -43,18 +43,26 @@ export class MyBoardView {
 
 
     displayTimer(gameLogic) {
-        //time = gameLogic.getTime();
-        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0], 0, this.size[1] / 4);
-        this.scene.pushMatrix();
-        let texture = this.textures["timer"]["texture"];
-        let appearance = this.materials["timer"];
-        appearance.setTexture(texture);
-        this.scene.pushAppearance(appearance);
-        this.scene.applyAppearance();
-        this.scene.translate(15, 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
-        timer.display();
-        this.scene.popMatrix();
-
+        let time = gameLogic.getElapsedTime();
+        for(let i = 0; i < 5; i++) {
+            const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0]/2, 0, this.size[1] / 4);
+            if(i == 2) {
+                this.scene.setFontShader([10,3]);
+            }
+            else{
+                this.scene.setFontShaderNumber(time[i]);
+            }
+            this.scene.pushMatrix();
+            let texture = this.textures["timer"]["texture"];
+            let appearance = this.materials["timer"];
+            appearance.setTexture(texture);
+            this.scene.pushAppearance(appearance);
+            this.scene.applyAppearance();
+            this.scene.translate((i-0.5)*this.size[0]/4 + 15, 0 + 1, -(1 + 1/8) * this.size[0] + 15); //TODO: tirar o +15 -1 e o +15
+            timer.display();
+            this.scene.popMatrix();
+            this.scene.resetShader();
+        }
     }
 
     displayBoardTable(gameLogic) {
@@ -99,12 +107,12 @@ export class MyBoardView {
                 let offsetX = 0, offsetY = 0; 
                 let animation = gameLogic.animations.find(animation => animation["final_pos"][0] === i && animation["final_pos"][1] === j);
                 if(animation !== undefined) {
-                    console.log("animation with initial pos: " + animation["initial_pos"] + " and final pos: " + animation["final_pos"] + " found!");
                     const initial_pos = animation["initial_pos"]; 
                     const final_pos = animation["final_pos"];
                     let current_offset = animation["current_offset"];
 
                     if(current_offset < 0) {
+                        console.log("animation finished!");
                         gameLogic.animations.splice(gameLogic.animations.indexOf(animation), 1);
                     } else{
                         offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
@@ -116,7 +124,7 @@ export class MyBoardView {
                             this.animatingPieces.push(
                                 {
                                     "initial_pos" : [initial_pos[0] + (final_pos[0] - initial_pos[0] - 1), initial_pos[1] + (final_pos[1] - initial_pos[1] - 1), 0],
-                                    "current_offset" : 0, 
+                                    "current_offset" : 0,
                                     "color": (gameLogic.playerTurn === 1 ? "black" : "white"),
                                     "ateKing": animation["ateKing"]
                                 }
@@ -138,7 +146,6 @@ export class MyBoardView {
                 this.scene.clearPickRegistration();
             }
         }
-
     }
 
 
