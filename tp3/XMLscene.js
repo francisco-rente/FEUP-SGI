@@ -258,6 +258,7 @@ export class XMLscene extends CGFscene {
                 console.log(this.pickResults);
                 for (let i = 0; i< this.pickResults.length; i++) {
                     console.log(this.pickResults[i]);
+                    console.log(this.pickResults[i][0]);
                     
                     const  obj = this.pickResults[i][0];
                     if (obj)

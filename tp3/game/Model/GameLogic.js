@@ -345,4 +345,22 @@ export class GameLogic {
         })
     }
 
+    endGame() {
+        //TODO: Test this
+        
+        this.currentState = State.SELECT_PIECE;
+
+        this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
+
+        this.playerTurn = 1;
+        //this.player1 = player1;
+        this.player1.time = new Date();
+        //this.player2 = player2;
+        this.selected = [-1, -1];
+        this.possible_moves = []; // Highlighted squares
+        this.gameMoves = [];
+        this.animations = [];
+        this.startTime = new Date();
+        this.capturedPieces = [];
+        this.previousBoard = [];}
 }

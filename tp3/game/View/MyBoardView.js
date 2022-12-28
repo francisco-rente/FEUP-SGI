@@ -58,6 +58,9 @@ export class MyBoardView {
         this.scene.applyAppearance();
         this.scene.translate(-this.size[0]/8 + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
         this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        //console.log(-2);
+        //console.log("about to log undoButton")
+        //console.log(undoButton);
         this.scene.registerForPick(-2, undoButton);
         undoButton.display();
         this.scene.clearPickRegistration();
@@ -117,7 +120,13 @@ export class MyBoardView {
                 this.scene.resetShader();
                 
             }
+
+            if(time[1] == "1"){
+                gameLogic.playerTurn == 1 ? gameLogic.playerTurn = 2 : gameLogic.playerTurn = 1;
+                gameLogic.changeTurn();
+            }
         }
+        
         
     }
 
@@ -175,8 +184,11 @@ export class MyBoardView {
             this.scene.popMatrix();
             this.scene.resetShader();
         }
-            
-            
+        
+        if(time[0] == "5" && time[1] == "9" && time[3] == "5" && time[4] == "9"){
+            gameLogic.endGame();
+        }
+
     }
 
     displayBoardTable(gameLogic) {
