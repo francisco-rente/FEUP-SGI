@@ -275,7 +275,6 @@ export class MySceneGraph {
             if (child.nodeName === "position") position = this.parseCoordinates3D(child, "position");
             else if (child.nodeName === "size") size = this.parseCoordinates3D(child, "size");
             else if (child.nodeName === "textures") {
-                console.log("TEXTURES IN GRAPH PARSE")
                 for (let textureNode of child.children)
                     if (textureNode.nodeName === "texture") textures.push(this.parseBoardTexture(textureNode))
                     else this.onXMLMinorError("unknown tag <" + textureNode.nodeName + "> inside <textures>");

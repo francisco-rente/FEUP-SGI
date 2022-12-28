@@ -19,6 +19,7 @@ export class GameLogic {
         this.animations = [];
         this.startTime = new Date();
         this.capturedPieces = [];
+        this.previousBoard = [];
     }
 
 
@@ -51,6 +52,10 @@ export class GameLogic {
 
     checkPiece(x, y) {
         return (this.gameBoard[x][y] === this.playerTurn || this.gameBoard[x][y] === this.playerTurn + 2);
+    }
+
+    undo() {
+        this.gameBoard = this.previousBoard;
     }
 
     selectPiece(x, y) {
@@ -144,10 +149,11 @@ export class GameLogic {
     movePieceFromInput(x, y) {
         const [selectedX, selectedY] = this.selected;
         this.possible_moves = [];
+        auxBoard = this.cloneGameBoard();
 
         const move_result = this.movePiece(selectedX, selectedY, x, y);
         if (move_result === State.ERROR) return State.ERROR;
-
+        this.previousBoard = auxBoard;
         this.changeTurn();
         this.gameMoves.push({
             "old_pos": [selectedX, selectedY],

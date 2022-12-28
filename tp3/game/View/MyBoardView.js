@@ -43,10 +43,53 @@ export class MyBoardView {
         this.displayPlayerTimers(gameLogic);
         this.displayAnimatingPieces(gameLogic);
         this.displayAnimatingPieces(gameLogic);
+        this.displayUndoButton(gameLogic);
+        this.displayChangeCameraButton(gameLogic);
     }
 
+
+    displayUndoButton(gameLogic) {
+        const undoButton = new MyRectangle(this.scene, "UndoButton", 0, this.size[0] / 2, 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["undo"]["texture"];
+        let appearance = this.materials["undo"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(-this.size[0]/8 + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.registerForPick(-2, undoButton);
+        undoButton.display();
+        this.scene.clearPickRegistration();
+        this.scene.popMatrix();
+    }
+
+
+    displayChangeCameraButton(gameLogic) {
+        const changeCameraButton = new MyRectangle(this.scene, "ChangeCameraButton", 0, this.size[0] / 2, 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["changeCamera"]["texture"];
+        let appearance = this.materials["changeCamera"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(this.size[0] * (1/2 + 1/8) + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.registerForPick(-1, changeCameraButton);
+        changeCameraButton.display();
+        this.scene.clearPickRegistration();
+        this.scene.popMatrix();
+    }
     displayPlayerTimers(gameLogic) {
         let time = "";
+        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+
         for (let i = 1; i <= 2; i++) {
             if (gameLogic.playerTurn == i) {
                 time = gameLogic.getPlayerTime(i);
@@ -55,18 +98,14 @@ export class MyBoardView {
             }
 
             for (let j = 0; j < 5; j++) {
-                const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
+                
                 if (j == 2) {
                     this.scene.setFontShader([10, 3]);
                 } else {
                     this.scene.setFontShaderNumber(time[j]);
                 }
                 this.scene.pushMatrix();
-                let texture = this.textures["timer"]["texture"];
-                let appearance = this.materials["timer"];
-                appearance.setTexture(texture);
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
+
                 if (i == 1) {
                     this.scene.translate((j - 6) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
                 } else {
@@ -76,13 +115,24 @@ export class MyBoardView {
                 timer.display();
                 this.scene.popMatrix();
                 this.scene.resetShader();
+                
             }
         }
+        
     }
 
     displayScoreboard(gameLogic) {
         let score = gameLogic.getScore();
         const scoreboard = new MyRectangle(this.scene, "Scoreboard", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+
+
+        
         for (let i = 0; i < 5; i++) {
             if (i == 2) {
                 this.scene.setFontShader([13, 2]);
@@ -90,38 +140,43 @@ export class MyBoardView {
                 this.scene.setFontShaderNumber(score[i]);
             }
             this.scene.pushMatrix();
-            let texture = this.textures["timer"]["texture"];
-            let appearance = this.materials["timer"];
-            appearance.setTexture(texture);
-            this.scene.pushAppearance(appearance);
-            this.scene.applyAppearance();
+
             this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, this.size[0] / 4 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
             scoreboard.display();
             this.scene.popMatrix();
-            this.scene.resetShader();
+            this.scene.resetShader();    
         }
+
+        
     }
 
     displayTimer(gameLogic) {
         let time = gameLogic.getElapsedTime();
+        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
+
+        
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+
+
         for (let i = 0; i < 5; i++) {
-            const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
             if (i == 2) {
                 this.scene.setFontShader([10, 3]);
             } else {
                 this.scene.setFontShaderNumber(time[i]);
             }
             this.scene.pushMatrix();
-            let texture = this.textures["timer"]["texture"];
-            let appearance = this.materials["timer"];
-            appearance.setTexture(texture);
-            this.scene.pushAppearance(appearance);
-            this.scene.applyAppearance();
             this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
             timer.display();
             this.scene.popMatrix();
             this.scene.resetShader();
         }
+            
+            
     }
 
     displayBoardTable(gameLogic) {
@@ -270,20 +325,24 @@ export class MyBoardView {
         this.materials["board"] = materials[6];
         this.materials["highlighted"] = materials[7];
         this.materials["timer"] = materials[8];
+        this.materials["undo"] = materials[9];
+        this.materials["changeCamera"] = materials[10];
     }
 
     initTextures(textures) {
 
 
-        this.textures["blackSquare"] = textures[0]
-        this.textures["whiteSquare"] = textures[1]
-        this.textures["blackPiece"] = textures[2]
-        this.textures["whitePiece"] = textures[3]
-        this.textures["blackKing"] = textures[4]
-        this.textures["whiteKing"] = textures[5]
-        this.textures["board"] = textures[6]
-        this.textures["highlighted"] = textures[7]
-        this.textures["timer"] = textures[8]
+        this.textures["blackSquare"] = textures[0];
+        this.textures["whiteSquare"] = textures[1];
+        this.textures["blackPiece"] = textures[2];
+        this.textures["whitePiece"] = textures[3];
+        this.textures["blackKing"] = textures[4];
+        this.textures["whiteKing"] = textures[5];
+        this.textures["board"] = textures[6];
+        this.textures["highlighted"] = textures[7];
+        this.textures["timer"] = textures[8];
+        this.textures["undo"] = textures[9];
+        this.textures["changeCamera"] = textures[10];
 
     }
 

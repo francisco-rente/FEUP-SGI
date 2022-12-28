@@ -987,6 +987,9 @@
             <material id="fireStrong"/> <!-- board -->
             <material id="fireStrong"/> <!-- highlighted square -->
             <material id="fireStrong"/> <!-- timer -->
+            <material id="fireStrong"/> <!-- undo -->
+            <material id="fireStrong"/> <!-- change camera -->
+            
         </materials>
         <textures>
             <texture id="wood" length_s="1.0" length_t = "1.0"/> <!-- black squares -->
@@ -998,6 +1001,8 @@
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- board-->
             <texture id="highlight" length_s="1.0" length_t = "1.0"/><!-- highlighted square-->
             <texture id="font" length_s="1.0" length_t = "1.0"/><!-- timer-->
+            <texture id="undo" length_s="1.0" length_t = "1.0"/><!-- undo -->
+            <texture id="camera" length_s="1.0" length_t = "1.0"/><!-- change camera -->
         </textures>
     </board>
 

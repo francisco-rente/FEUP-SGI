@@ -255,7 +255,10 @@ export class XMLscene extends CGFscene {
         if (this.pickMode === false) {
             // results can only be retrieved when picking mode is false
             if (this.pickResults != null && this.pickResults.length > 0) {
+                console.log(this.pickResults);
                 for (let i = 0; i< this.pickResults.length; i++) {
+                    console.log(this.pickResults[i]);
+                    
                     const  obj = this.pickResults[i][0];
                     if (obj)
                     {
@@ -268,16 +271,17 @@ export class XMLscene extends CGFscene {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
                             this.graph.board.gameLogic.selectPiece(i, j);
-                            console.log(this.graph.board.gameLogic.getSelected());
-
-                            console.log(this.graph.board.gameLogic.getBoard());
                         }
                         else if(obj instanceof MyRectangle) {
+                            /*if(this.pickResults[i][1] === -1) {
+                                console.log("found change camera");
+                            }
+                            else if(this.pickResults[i][1] === -2) {
+                                console.log("found undo");
+                            }*/
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
                             this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
-
-                            console.log(this.graph.board.gameLogic.getBoard());
                         }
                     }
                 }
