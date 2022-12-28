@@ -60,11 +60,12 @@ export class MyBoardView {
 
     redirectSpotLight(target) {
         const [x, y, z] = this.spotLight["position"];
-        console.log("Redirecting spot light",  this.spotLight["position"], target, [target[0] - x, target[1] - y, target[2] - z]);
         this.spotLight["target"] = target;
-        let dir = vec3.fromValues(target[0] - x, target[1] - y, target[2] - z);
-        vec3.normalize(dir, dir);
-        this.scene.pieceSpotLight.setSpotDirection(dir[0], dir[1], dir[2]);
+
+        this.scene.pieceSpotLight.setPosition(target[0], target[1], target[2]);
+        /*let dir = vec3.fromValues(target[0] - x, target[1] - y, target[2] - z);
+        vec3.normalize(dir, dir);*/
+        this.scene.pieceSpotLight.setSpotDirection(0, 1, 0);
         this.scene.pieceSpotLight.enable();
     }
 
@@ -152,7 +153,7 @@ export class MyBoardView {
             appearance.setTexture(texture);
             this.scene.pushAppearance(appearance);
             this.scene.applyAppearance();
-            this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+            this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
             timer.display();
             this.scene.popMatrix();
             this.scene.resetShader();
@@ -223,9 +224,9 @@ export class MyBoardView {
             current_offset -= 0.1;
 
             this.redirectSpotLight([
-                (initial_pos[0] + offsetX) * this.size[0] / 8 + boardOffset,
-                1,
-                (initial_pos[1] + offsetY) * this.size[1] / 8 + boardOffset,
+                (final_pos[0] - offsetX) * this.size[0] / 8 + boardOffset,
+                2,
+                (final_pos[1] + offsetY) * this.size[1] / 8,
             ])
 
             for (let i = 0; i < gameLogic.animations.length; i++) {

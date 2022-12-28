@@ -316,7 +316,7 @@ export class XMLscene extends CGFscene {
             this.lights[i].setVisible(this.visibleLights);
             this.lights[i].update();
         }
-        if(this.pieceSpotLight !== null) this.pieceSpotLight.enable();
+        if(this.pieceSpotLight) this.pieceSpotLight.enable();
 
         if (this.sceneInited) {
             // Draw axis
