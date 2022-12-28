@@ -71,6 +71,8 @@
         <texture id="painting" file="scenes/images/starry_night.jpg"/>
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
+        <texture id="undo" file="scenes/images/undo.png"/>
+        <texture id="camera" file="scenes/images/camera.png"/>
     </textures>
 
     <materials>
@@ -106,6 +108,13 @@
             <ambient r="0.82" g="0.73" b="0.05" a="1.0"/>
             <diffuse r="0.82" g="0.73" b="0.05" a="1.0"/>
             <specular r="0.82" g="0.73" b="0.05" a="1.0"/>
+        </material>
+
+        <material id="button" shininess="10">
+            <emission r="0.8" g="0.8" b="0.8" a="1.0"/>
+            <ambient r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
         </material>
 
     </materials>
@@ -987,8 +996,9 @@
             <material id="fireStrong"/> <!-- board -->
             <material id="fireStrong"/> <!-- highlighted square -->
             <material id="fireStrong"/> <!-- timer -->
-            <material id="fireStrong"/> <!-- undo -->
-            <material id="fireStrong"/> <!-- change camera -->
+            <material id="button"/> <!-- undo -->
+            <material id="button"/> <!-- change camera -->
+            
             
         </materials>
         <textures>

@@ -149,7 +149,7 @@ export class GameLogic {
     movePieceFromInput(x, y) {
         const [selectedX, selectedY] = this.selected;
         this.possible_moves = [];
-        auxBoard = this.cloneGameBoard();
+        let auxBoard = this.cloneGameBoard();
 
         const move_result = this.movePiece(selectedX, selectedY, x, y);
         if (move_result === State.ERROR) return State.ERROR;
