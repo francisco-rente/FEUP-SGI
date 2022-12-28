@@ -1,4 +1,4 @@
-import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis} from '../lib/CGF.js';
+import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis, CGFlight} from '../lib/CGF.js';
 import {Board} from "./game/Model/Board.js";
 import {MyCylinder} from "./primitives/MyCylinder.js";
 import {MyRectangle} from "./primitives/MyRectangle.js";
@@ -111,8 +111,7 @@ export class XMLscene extends CGFscene {
 
         // Reads the lights from the scene graph.
         for (let key in this.graph.lights) {
-            if (i >= 8)
-                break;              // Only eight lights allowed by WebGL.
+            if (i >= 7) break;              // Only eight lights allowed by WebGL. 7 is pieceLight
 
             if (this.graph.lights.hasOwnProperty(key)) {
                 const light = this.graph.lights[key];
@@ -317,6 +316,7 @@ export class XMLscene extends CGFscene {
             this.lights[i].setVisible(this.visibleLights);
             this.lights[i].update();
         }
+        if(this.pieceSpotLight !== null) this.pieceSpotLight.enable();
 
         if (this.sceneInited) {
             // Draw axis

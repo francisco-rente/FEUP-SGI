@@ -1,8 +1,8 @@
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
+import {CGFlight} from "../../../lib/CGF.js";
 
 
-const stackingPos = [0, 0, 0];
 const boardOffset = 15;
 
 /**
@@ -30,9 +30,44 @@ export class MyBoardView {
 
         this.stackXYWhite = [this.size[0] / 8 + boardOffset - 2.5 * (this.size[0] / 8), this.size[1] / 8 - boardOffset - 2, 1];
         this.stackXYBlack = [this.size[0] / 8 + boardOffset + this.size[0], this.size[1] / 8 - boardOffset - 2, 1];
-
-        this.animatingPieces = [];
+        this.createSpotLight();
     }
+
+    createSpotLight() {
+        console.log("Creating spot light in " + [this.size[0] / 2 + boardOffset, this.size[1] / 2 - boardOffset, 1]);
+        this.scene.pieceSpotLight = this.scene.lights[7];
+
+
+        this.spotLight = {
+            "position": [this.size[0] / 2 + boardOffset, 5, this.size[1]],
+            "target": [0, 0, 0]
+        }
+
+
+        this.scene.pieceSpotLight.setPosition(this.spotLight["position"][0],
+            this.spotLight["position"][1], this.spotLight["position"][2]);
+        this.scene.pieceSpotLight.setAmbient(0.1, 0.1, 0.1, 1);
+        this.scene.pieceSpotLight.setDiffuse(1.0, 0.0, 0.0, 1);
+        this.scene.pieceSpotLight.setSpecular(1.0, 0.0, 0.0, 1);
+        this.scene.pieceSpotLight.setSpotCutOff(60);
+        this.scene.pieceSpotLight.setSpotExponent(40);
+        this.scene.pieceSpotLight.setConstantAttenuation(10);
+        this.scene.pieceSpotLight.setSpotDirection(this.spotLight["target"][0],
+            this.spotLight["target"][1], this.spotLight["target"][2]);
+        this.scene.pieceSpotLight.setQuadraticAttenuation(0);
+        this.scene.pieceSpotLight.setVisible(true);
+    }
+
+    redirectSpotLight(target) {
+        const [x, y, z] = this.spotLight["position"];
+        console.log("Redirecting spot light",  this.spotLight["position"], target, [target[0] - x, target[1] - y, target[2] - z]);
+        this.spotLight["target"] = target;
+        let dir = vec3.fromValues(target[0] - x, target[1] - y, target[2] - z);
+        vec3.normalize(dir, dir);
+        this.scene.pieceSpotLight.setSpotDirection(dir[0], dir[1], dir[2]);
+        this.scene.pieceSpotLight.enable();
+    }
+
 
 
     display(gameLogic) {
@@ -164,11 +199,12 @@ export class MyBoardView {
                 let animation = gameLogic.animations.find(animation => animation["final_pos"][0] === i && animation["final_pos"][1] === j);
                 if (animation !== undefined) [offsetX, offsetY] = this.displayMovingPiece(animation, gameLogic);
 
-
                 newPiece.displayInBoard([i - offsetX, j - offsetY], appearance);
                 this.scene.clearPickRegistration();
             }
         }
+
+        this.scene.pieceSpotLight.disable();
     }
 
 
@@ -185,6 +221,12 @@ export class MyBoardView {
             offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
             offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
             current_offset -= 0.1;
+
+            this.redirectSpotLight([
+                (initial_pos[0] + offsetX) * this.size[0] / 8 + boardOffset,
+                1,
+                (initial_pos[1] + offsetY) * this.size[1] / 8 + boardOffset,
+            ])
 
             for (let i = 0; i < gameLogic.animations.length; i++) {
                 if (gameLogic.animations[i] === animation) {
