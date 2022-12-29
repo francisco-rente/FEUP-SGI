@@ -1,6 +1,7 @@
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
-import {CGFlight} from "../../../lib/CGF.js";
+import {MyPatch} from "../../primitives/MyPatch.js";
+import {LightingControl} from "./LightingControl.js";
 
 
 const boardOffset = 15;
@@ -30,52 +31,11 @@ export class MyBoardView {
 
         this.stackXYWhite = [this.size[0] / 8 + boardOffset - 2.5 * (this.size[0] / 8), this.size[1] / 8 - boardOffset - 2, 1];
         this.stackXYBlack = [this.size[0] / 8 + boardOffset + this.size[0], this.size[1] / 8 - boardOffset - 2, 1];
-        this.createSpotLight();
+
+        this.lightControl = new LightingControl(this.scene, this.size);
+        this.lightControl.createSpotLight(boardOffset);
     }
 
-
-
-    setLightParams(){
-        this.scene.pieceSpotLight.setAmbient(0.1, 0.0, 0.0, 1);
-        this.scene.pieceSpotLight.setDiffuse(1.0, 1.0, 1.0, 1);
-        this.scene.pieceSpotLight.setSpecular(1.0, 1.0, 1.0, 1);
-
-        this.scene.pieceSpotLight.setConstantAttenuation(0);
-        this.scene.pieceSpotLight.setLinearAttenuation(0);
-        this.scene.pieceSpotLight.setQuadraticAttenuation(0);
-
-        this.scene.pieceSpotLight.setSpotCutOff(50);
-        this.scene.pieceSpotLight.setSpotExponent(1);
-        //this.scene.pieceSpotLight.setSpotDirection(0, -1, 0);
-        this.scene.pieceSpotLight.setVisible(true);
-    }
-
-    createSpotLight() {
-        console.log("Creating spot light in " + [this.size[0] / 2 + boardOffset, this.size[1] / 2 - boardOffset, 1]);
-        this.scene.pieceSpotLight = this.scene.lights[7];
-
-
-        this.spotLight = {
-            "position": [this.size[0] / 2 + boardOffset, 5, this.size[1]],
-            "target": [0, 0, 0]
-        }
-
-        this.scene.pieceSpotLight.setPosition(this.spotLight["position"][0],
-            this.spotLight["position"][1], this.spotLight["position"][2], 60);
-        this.setLightParams();
-        this.scene.pieceSpotLight.update();
-        this.scene.pieceSpotLight.enable();
-    }
-
-    redirectSpotLight(target) {
-        this.spotLight["target"] = target;
-        console.log("Redirecting spot light to " + target);
-        this.scene.pieceSpotLight.setPosition(target[0], target[1], target[2]);
-        this.scene.pieceSpotLight.setSpotDirection(1, 1, 0);
-        this.setLightParams();
-        this.scene.pieceSpotLight.update();
-        this.scene.pieceSpotLight.enable();
-    }
 
 
 
@@ -168,7 +128,19 @@ export class MyBoardView {
     }
 
     displayBoardTable(gameLogic) {
-        const square = new MyRectangle(this.scene, "Square", 0, this.size[0] / 8, 0, this.size[1] / 8);
+
+        let square;
+        square = new MyPatch(
+            this.scene, "Square", 1, 1, 20, 20,
+            [
+                [0, 0, 0, 1],
+                [0, this.size[0] / 8, 0, 1],
+                [this.size[0] / 8, 0, 0, 1],
+                [this.size[0] / 8, this.size[0] / 8, 0, 1],
+            ]
+        )
+
+        // square = new MyRectangle(this.scene, "Square", 0, this.size[0] / 8, 0, this.size[1] / 8);
 
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
@@ -221,22 +193,16 @@ export class MyBoardView {
         let current_offset = animation["current_offset"];
 
         if (current_offset < 0) {
-            console.log("animation finished!");
             gameLogic.animations.splice(gameLogic.animations.indexOf(animation), 1);
-            this.scene.pieceSpotLight.setPosition(this.spotLight["position"][0],
-                this.spotLight["position"][1], this.spotLight["position"][2], 60);
-            this.scene.pieceSpotLight.update();
-            console.log("DISABLING SPOTLIGHT");
-            // this.scene.pieceSpotLight.disable();
+            this.lightControl.reset(true);
         } else {
             offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
             offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
             current_offset -= 0.1;
 
-            this.redirectSpotLight([
-                (final_pos[0] - offsetX) * this.size[0] / 8 + boardOffset,
-                2,
-                (final_pos[1] + offsetY) * this.size[1] / 8 - 1 ,
+            this.lightControl.redirectSpotLight([
+                (final_pos[0] - offsetX + 0.5) * this.size[0] / 8 + boardOffset,
+               -((final_pos[1] - offsetY + 0.5) * this.size[1] / 8) + boardOffset,
             ])
 
             for (let i = 0; i < gameLogic.animations.length; i++) {

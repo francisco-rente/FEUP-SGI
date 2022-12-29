@@ -51,6 +51,7 @@ export class MyPieceView {
         this.pieceTop.display();
         this.scene.popMatrix();
         this.scene.popMatrix();
+        this.scene.popMatrix();
     }
 
     displayInBoard(position, appearance) {

@@ -1,8 +1,7 @@
 import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis, CGFlight} from '../lib/CGF.js';
-import {Board} from "./game/Model/Board.js";
-import {MyCylinder} from "./primitives/MyCylinder.js";
 import {MyRectangle} from "./primitives/MyRectangle.js";
 import { MyPieceView} from './game/View/MyPieceView.js';
+import {MyPatch} from "./primitives/MyPatch.js";
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -132,7 +131,6 @@ export class XMLscene extends CGFscene {
             }
         }
 
-        this.pieceSpotLight = this.lights[7];
     }
 
     setDefaultAppearance() {
@@ -273,7 +271,7 @@ export class XMLscene extends CGFscene {
 
                             console.log(this.graph.board.gameLogic.getBoard());
                         }
-                        else if(obj instanceof MyRectangle) {
+                        else if(obj instanceof MyPatch || obj instanceof MyRectangle) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
                             this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
@@ -337,15 +335,7 @@ export class XMLscene extends CGFscene {
             ? 0 : this.appearence_index + 1;
     }
 
-    checkKeys() {
-        if (this.gui.isKeyPressed("KeyM")) {
-            console.log("Key M pressed");
-            // prevent overflow of the index
-        }
-    }
-
-
-    // called periodically (as per setUpdatePeriod() in init())
+// called periodically (as per setUpdatePeriod() in init())
     update(t) {
 
         if (this.startTime === null) this.startTime = t;
