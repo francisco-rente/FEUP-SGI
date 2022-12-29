@@ -276,6 +276,9 @@ export class XMLscene extends CGFscene {
                             else if(customId === 101) {
                                 console.log("found change camera");
                             }
+                            else if(customId === 102) {
+                                this.graph.board.gameLogic.gameMovie();
+                            }
                             else{
                                 const i = Math.floor(customId / 10) - 1;
                                 const j = customId % 10 - 1;

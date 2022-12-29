@@ -45,6 +45,7 @@ export class MyBoardView {
         this.displayAnimatingPieces(gameLogic);
         this.displayUndoButton(gameLogic);
         this.displayChangeCameraButton(gameLogic);
+        this.displayGameMovieButton(gameLogic);
     }
 
 
@@ -56,13 +57,29 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(-this.size[0]/8 + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.translate(boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
         this.scene.rotate(-Math.PI/2, 1, 0, 0);
         //console.log(-2);
         //console.log("about to log undoButton")
         //console.log(undoButton);
         this.scene.registerForPick(100, undoButton);
         undoButton.display();
+        this.scene.clearPickRegistration();
+        this.scene.popMatrix();
+    }
+
+    displayGameMovieButton(gameLogic) {
+        const gameMovieButton = new MyRectangle(this.scene, "GameMovieButton", 0, this.size[0], 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["gameMovie"]["texture"];
+        let appearance = this.materials["gameMovie"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(boardOffset, 1, (7/8)*this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.registerForPick(102, gameMovieButton);
+        gameMovieButton.display();
         this.scene.clearPickRegistration();
         this.scene.popMatrix();
     }
@@ -76,7 +93,7 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(this.size[0] * (1/2 + 1/8) + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.translate(this.size[0] * (1/2) + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
         this.scene.rotate(-Math.PI/2, 1, 0, 0);
         this.scene.registerForPick(101, changeCameraButton);
         changeCameraButton.display();
@@ -339,6 +356,7 @@ export class MyBoardView {
         this.materials["timer"] = materials[8];
         this.materials["undo"] = materials[9];
         this.materials["changeCamera"] = materials[10];
+        this.materials["gameMovie"] = materials[11];
     }
 
     initTextures(textures) {
@@ -355,6 +373,7 @@ export class MyBoardView {
         this.textures["timer"] = textures[8];
         this.textures["undo"] = textures[9];
         this.textures["changeCamera"] = textures[10];
+        this.textures["gameMovie"] = textures[11];
 
     }
 

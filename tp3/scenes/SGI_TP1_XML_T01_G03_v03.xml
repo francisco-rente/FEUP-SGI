@@ -73,6 +73,7 @@
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
         <texture id="undo" file="scenes/images/undo.png"/>
         <texture id="camera" file="scenes/images/camera.png"/>
+        <texture id="gameMovie" file="scenes/images/gameMovie.png"/>
     </textures>
 
     <materials>
@@ -998,6 +999,7 @@
             <material id="fireStrong"/> <!-- timer -->
             <material id="button"/> <!-- undo -->
             <material id="button"/> <!-- change camera -->
+            <material id="button"/> <!-- game movie -->
             
             
         </materials>
@@ -1013,6 +1015,7 @@
             <texture id="font" length_s="1.0" length_t = "1.0"/><!-- timer-->
             <texture id="undo" length_s="1.0" length_t = "1.0"/><!-- undo -->
             <texture id="camera" length_s="1.0" length_t = "1.0"/><!-- change camera -->
+            <texture id="gameMovie" length_s="1.0" length_t = "1.0"/><!-- game movie -->
         </textures>
     </board>
 

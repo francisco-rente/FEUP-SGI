@@ -59,6 +59,17 @@ export class GameLogic {
         this.playerTurn = this.playerTurn === 1 ? 2 : 1;
     }
 
+    gameMovie() {
+        let aux = this.gameMoves;
+        this.resetGame();
+
+        for(let move of aux){
+            this.selectPiece(move[0], move[1]);
+            this.movePieceFromInput(move[2], move[3]);
+        }
+        this.gameMoves = aux;
+    }
+
     selectPiece(x, y) {
 
         if (!(this.checkPiece(x, y))) {
@@ -346,9 +357,7 @@ export class GameLogic {
         })
     }
 
-    endGame() {
-        //TODO: Test this
-        
+    resetGame(){
         this.currentState = State.SELECT_PIECE;
 
         this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
@@ -363,5 +372,13 @@ export class GameLogic {
         this.animations = [];
         this.startTime = new Date();
         this.capturedPieces = [];
-        this.previousBoard = [];}
+        this.previousBoard = [];
+    }
+
+
+    endGame() {
+        //TODO: Test this
+        
+        this.resetGame()
+    }
 }
