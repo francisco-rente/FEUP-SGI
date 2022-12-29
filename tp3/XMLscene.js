@@ -1,4 +1,6 @@
-import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis, CGFlight} from '../lib/CGF.js';
+import {CGFappearance, CGFscene, CGFshader, CGFcamera, CGFaxis} from '../lib/CGF.js';
+import {Board} from "./game/Model/Board.js";
+import {MyCylinder} from "./primitives/MyCylinder.js";
 import {MyRectangle} from "./primitives/MyRectangle.js";
 import { MyPieceView} from './game/View/MyPieceView.js';
 import {MyPatch} from "./primitives/MyPatch.js";
@@ -110,7 +112,8 @@ export class XMLscene extends CGFscene {
 
         // Reads the lights from the scene graph.
         for (let key in this.graph.lights) {
-            if (i >= 8) break;              // Only eight lights allowed by WebGL. 7 is pieceLight
+            if (i >= 8)
+                break;              // Only eight lights allowed by WebGL.
 
             if (this.graph.lights.hasOwnProperty(key)) {
                 const light = this.graph.lights[key];
@@ -241,6 +244,7 @@ export class XMLscene extends CGFscene {
             this.components.set(component.id, component);
         });
 
+        this.currentCamera = 0;
         this.initLights();
         this.updateViews();
         this.interface.updateInterface()
@@ -255,28 +259,49 @@ export class XMLscene extends CGFscene {
             // results can only be retrieved when picking mode is false
             if (this.pickResults != null && this.pickResults.length > 0) {
                 for (let i = 0; i< this.pickResults.length; i++) {
+
                     const  obj = this.pickResults[i][0];
                     if (obj)
                     {
                         const customId = this.pickResults[i][1];
-                        console.log("Picked object: " + obj + ", with pick id " + customId);
-
                         // TODO: this can be abstracted to a function in a "game controller" class
 
                         if(obj instanceof MyPieceView) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
                             this.graph.board.gameLogic.selectPiece(i, j);
-                            console.log(this.graph.board.gameLogic.getSelected());
-
-                            console.log(this.graph.board.gameLogic.getBoard());
                         }
-                        else if(obj instanceof MyPatch || obj instanceof MyRectangle) {
-                            const i = Math.floor(customId / 10) - 1;
-                            const j = customId % 10 - 1;
-                            this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
+                        else if(obj instanceof MyRectangle || obj instanceof MyPatch) {
+                            if(customId === 100) {
+                                this.graph.board.gameLogic.undo();
 
-                            console.log(this.graph.board.gameLogic.getBoard());
+                            }
+                            else if(customId === 101) {
+                                /*
+                                let cameras = [
+                                new CGFcamera(0.8, 0.1, 500, vec3.fromValues(-5, 30, 15), vec3.fromValues(18, 0, 15)),
+                                new CGFcamera(0.8, 0.1, 500, vec3.fromValues(45, 30, 15), vec3.fromValues(18, 0, 15)),
+                                new CGFcamera(0.8, 0.1, 500, vec3.fromValues(20, 30, 15), vec3.fromValues(18, 0, 15)),
+                                ]
+                                */
+
+                                let cameras = [
+                                    [-5, 30, 15],
+                                    [45, 30, 15],
+                                    [20, 30, 15]
+                                ]
+                                let prevCamera = this.currentCamera;
+                                this.currentCamera == 2 ? this.currentCamera = 0 : this.currentCamera++;
+                                this.graph.board.boardView.updateCamera(cameras[prevCamera], cameras[this.currentCamera]);
+                            }
+                            else if(customId === 102) {
+                                this.graph.board.gameLogic.gameMovie();
+                            }
+                            else{
+                                const i = Math.floor(customId / 10) - 1;
+                                const j = customId % 10 - 1;
+                                this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
+                            }
                         }
                     }
                 }
@@ -316,7 +341,6 @@ export class XMLscene extends CGFscene {
             this.lights[i].setVisible(this.visibleLights);
             this.lights[i].update();
         }
-
 
         if (this.sceneInited) {
             // Draw axis

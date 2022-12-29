@@ -1,3 +1,4 @@
+import { CGFcamera } from "../../../lib/CGF.js";
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
 import {MyPatch} from "../../primitives/MyPatch.js";
@@ -34,6 +35,9 @@ export class MyBoardView {
 
         this.lightControl = new LightingControl(this.scene, this.size);
         this.lightControl.createSpotLight(boardOffset);
+        this.animatingPieces = [];
+
+        this.cameraAnimationProgress = 1;
     }
 
 
@@ -45,11 +49,95 @@ export class MyBoardView {
         this.displayScoreboard(gameLogic);
         this.displayTimer(gameLogic);
         this.displayPlayerTimers(gameLogic);
+        this.displayUndoButton(gameLogic);
+        this.displayChangeCameraButton(gameLogic);
+        this.displayGameMovieButton(gameLogic);
         this.displayAnimatingPieces(gameLogic);
+        this.updateCameraAnimation();
     }
 
+    updateCameraAnimation() {
+        if (this.cameraAnimationProgress < 1) {
+            this.cameraAnimationProgress += 0.1;
+            let pos = vec3.fromValues(0, 0, 0);
+            console.log("about to set pos, params are:")
+            console.log("pos:"+pos);
+            console.log("vec3.fromValues(this.oldCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]));
+            console.log("vec3.fromValues(this.newCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]))
+            console.log("this.cameraAnimationProgress is " + this.cameraAnimationProgress)
+
+            vec3.lerp(pos, vec3.fromValues(this.oldCameraPosition[0], this.oldCameraPosition[1], this.oldCameraPosition[2]), vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]), this.cameraAnimationProgress);
+            console.log("pos is " + pos)
+            //new CGFcamera(0.8, 0.1, 500, vec3.fromValues(20, 30, 15), vec3.fromValues(18, 0, 15)),
+            this.scene.camera = new CGFcamera(0.8, 0.1, 500, pos, vec3.fromValues(18, 0, 15));
+        }
+    }
+
+    updateCamera(oldCamera, newCamera) {
+        this.oldCameraPosition = oldCamera;
+        this.newCameraPosition = newCamera;
+        this.cameraAnimationProgress = 0;
+    }
+
+
+    displayUndoButton(gameLogic) {
+        const undoButton = new MyRectangle(this.scene, "UndoButton", 0, this.size[0] / 2, 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["undo"]["texture"];
+        let appearance = this.materials["undo"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.registerForPick(100, undoButton);
+        undoButton.display();
+        this.scene.clearPickRegistration();
+        this.scene.popMatrix();
+    }
+
+    displayGameMovieButton(gameLogic) {
+        const gameMovieButton = new MyRectangle(this.scene, "GameMovieButton", 0, this.size[0], 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["gameMovie"]["texture"];
+        let appearance = this.materials["gameMovie"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(boardOffset, 1, (7/8)*this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.registerForPick(102, gameMovieButton);
+        gameMovieButton.display();
+        this.scene.clearPickRegistration();
+        this.scene.popMatrix();
+    }
+
+
+    displayChangeCameraButton(gameLogic) {
+        const changeCameraButton = new MyRectangle(this.scene, "ChangeCameraButton", 0, this.size[0] / 2, 0, this.size[1] / 4);
+        this.scene.pushMatrix();
+        let texture = this.textures["changeCamera"]["texture"];
+        let appearance = this.materials["changeCamera"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+        this.scene.translate(this.size[0] * (1/2) + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.registerForPick(101, changeCameraButton);
+        changeCameraButton.display();
+        this.scene.clearPickRegistration();
+        this.scene.popMatrix();
+    }
     displayPlayerTimers(gameLogic) {
         let time = "";
+        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+
         for (let i = 1; i <= 2; i++) {
             if (gameLogic.playerTurn == i) {
                 time = gameLogic.getPlayerTime(i);
@@ -58,18 +146,14 @@ export class MyBoardView {
             }
 
             for (let j = 0; j < 5; j++) {
-                const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
                 if (j == 2) {
                     this.scene.setFontShader([10, 3]);
                 } else {
                     this.scene.setFontShaderNumber(time[j]);
                 }
                 this.scene.pushMatrix();
-                let texture = this.textures["timer"]["texture"];
-                let appearance = this.materials["timer"];
-                appearance.setTexture(texture);
-                this.scene.pushAppearance(appearance);
-                this.scene.applyAppearance();
+
                 if (i == 1) {
                     this.scene.translate((j - 6) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
                 } else {
@@ -79,13 +163,30 @@ export class MyBoardView {
                 timer.display();
                 this.scene.popMatrix();
                 this.scene.resetShader();
+
+            }
+
+            if(time[1] == "1"){
+                gameLogic.playerTurn == 1 ? gameLogic.playerTurn = 2 : gameLogic.playerTurn = 1;
+                gameLogic.changeTurn();
             }
         }
+
+
     }
 
     displayScoreboard(gameLogic) {
         let score = gameLogic.getScore();
         const scoreboard = new MyRectangle(this.scene, "Scoreboard", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+
+
+
         for (let i = 0; i < 5; i++) {
             if (i == 2) {
                 this.scene.setFontShader([13, 2]);
@@ -93,38 +194,46 @@ export class MyBoardView {
                 this.scene.setFontShaderNumber(score[i]);
             }
             this.scene.pushMatrix();
-            let texture = this.textures["timer"]["texture"];
-            let appearance = this.materials["timer"];
-            appearance.setTexture(texture);
-            this.scene.pushAppearance(appearance);
-            this.scene.applyAppearance();
+
             this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, this.size[0] / 4 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
             scoreboard.display();
             this.scene.popMatrix();
             this.scene.resetShader();
         }
+
+
     }
 
     displayTimer(gameLogic) {
         let time = gameLogic.getElapsedTime();
+        const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
+
+
+
+        let texture = this.textures["timer"]["texture"];
+        let appearance = this.materials["timer"];
+        appearance.setTexture(texture);
+        this.scene.pushAppearance(appearance);
+        this.scene.applyAppearance();
+
+
         for (let i = 0; i < 5; i++) {
-            const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
             if (i == 2) {
                 this.scene.setFontShader([10, 3]);
             } else {
                 this.scene.setFontShaderNumber(time[i]);
             }
             this.scene.pushMatrix();
-            let texture = this.textures["timer"]["texture"];
-            let appearance = this.materials["timer"];
-            appearance.setTexture(texture);
-            this.scene.pushAppearance(appearance);
-            this.scene.applyAppearance();
-            this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+            this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
             timer.display();
             this.scene.popMatrix();
             this.scene.resetShader();
         }
+
+        if(time[0] == "5" && time[1] == "9" && time[3] == "5" && time[4] == "9"){
+            gameLogic.endGame();
+        }
+
     }
 
     displayBoardTable(gameLogic) {
@@ -205,7 +314,7 @@ export class MyBoardView {
         } else {
             offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
             offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
-            current_offset -= 0.1;
+            current_offset -= 0.2;
 
             this.lightControl.redirectSpotLight([
                 (final_pos[0] - offsetX + 0.5) * this.size[0] / 8 + boardOffset,
@@ -251,7 +360,7 @@ export class MyBoardView {
                 vector[2] = (1 + 0.5 * Math.sin(Math.PI * current_offset)) * 4;
 
                 newPiece.display(vector, appearance);
-                piece["current_offset"] += 0.01;
+                piece["current_offset"] += 0.1;
                 animatingBlack += piece["color"] === "black" ? 1 : 0;
                 animatingWhite += piece["color"] === "white" ? 1 : 0;
             }
@@ -296,20 +405,26 @@ export class MyBoardView {
         this.materials["board"] = materials[6];
         this.materials["highlighted"] = materials[7];
         this.materials["timer"] = materials[8];
+        this.materials["undo"] = materials[9];
+        this.materials["changeCamera"] = materials[10];
+        this.materials["gameMovie"] = materials[11];
     }
 
     initTextures(textures) {
 
 
-        this.textures["blackSquare"] = textures[0]
-        this.textures["whiteSquare"] = textures[1]
-        this.textures["blackPiece"] = textures[2]
-        this.textures["whitePiece"] = textures[3]
-        this.textures["blackKing"] = textures[4]
-        this.textures["whiteKing"] = textures[5]
-        this.textures["board"] = textures[6]
-        this.textures["highlighted"] = textures[7]
-        this.textures["timer"] = textures[8]
+        this.textures["blackSquare"] = textures[0];
+        this.textures["whiteSquare"] = textures[1];
+        this.textures["blackPiece"] = textures[2];
+        this.textures["whitePiece"] = textures[3];
+        this.textures["blackKing"] = textures[4];
+        this.textures["whiteKing"] = textures[5];
+        this.textures["board"] = textures[6];
+        this.textures["highlighted"] = textures[7];
+        this.textures["timer"] = textures[8];
+        this.textures["undo"] = textures[9];
+        this.textures["changeCamera"] = textures[10];
+        this.textures["gameMovie"] = textures[11];
 
     }
 

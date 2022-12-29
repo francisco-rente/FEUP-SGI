@@ -19,6 +19,7 @@ export class GameLogic {
         this.animations = [];
         this.startTime = new Date();
         this.capturedPieces = [];
+        this.previousBoard = [];
     }
 
 
@@ -51,6 +52,25 @@ export class GameLogic {
 
     checkPiece(x, y) {
         return (this.gameBoard[x][y] === this.playerTurn || this.gameBoard[x][y] === this.playerTurn + 2);
+    }
+
+    undo() {
+        this.gameBoard = this.previousBoard;
+        this.playerTurn = this.playerTurn === 1 ? 2 : 1;
+    }
+
+    gameMovie() {
+        let aux = this.gameMoves;
+        this.resetGame();
+        for(let i = 0; i < aux.length; i++){
+            //como é que faço esperar pelas animações?
+            setTimeout(() => {
+                this.selectPiece(aux[i].old_pos[0], aux[i].old_pos[1]);
+                this.movePieceFromInput(aux[i].new_pos[0], aux[i].new_pos[1]);
+            }, 3000*i);
+                
+        }
+        this.gameMoves = aux;
     }
 
     selectPiece(x, y) {
@@ -144,10 +164,11 @@ export class GameLogic {
     movePieceFromInput(x, y) {
         const [selectedX, selectedY] = this.selected;
         this.possible_moves = [];
+        let auxBoard = this.cloneGameBoard();
 
         const move_result = this.movePiece(selectedX, selectedY, x, y);
         if (move_result === State.ERROR) return State.ERROR;
-
+        this.previousBoard = auxBoard;
         this.changeTurn();
         this.gameMoves.push({
             "old_pos": [selectedX, selectedY],
@@ -339,4 +360,28 @@ export class GameLogic {
         })
     }
 
+    resetGame(){
+        this.currentState = State.SELECT_PIECE;
+
+        this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
+
+        this.playerTurn = 1;
+        //this.player1 = player1;
+        this.player1.time = new Date();
+        //this.player2 = player2;
+        this.selected = [-1, -1];
+        this.possible_moves = []; // Highlighted squares
+        this.gameMoves = [];
+        this.animations = [];
+        this.startTime = new Date();
+        this.capturedPieces = [];
+        this.previousBoard = [];
+    }
+
+
+    endGame() {
+        //TODO: Test this
+        
+        this.resetGame()
+    }
 }
