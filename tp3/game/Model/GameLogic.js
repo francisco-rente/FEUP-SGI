@@ -62,10 +62,13 @@ export class GameLogic {
     gameMovie() {
         let aux = this.gameMoves;
         this.resetGame();
-
-        for(let move of aux){
-            this.selectPiece(move.old_pos[0], move.old_pos[1]);
-            this.movePieceFromInput(move.new_pos[0], move.new_pos[1]);
+        for(let i = 0; i < aux.length; i++){
+            //como é que faço esperar pelas animações?
+            setTimeout(() => {
+                this.selectPiece(aux[i].old_pos[0], aux[i].old_pos[1]);
+                this.movePieceFromInput(aux[i].new_pos[0], aux[i].new_pos[1]);
+            }, 3000*i);
+                
         }
         this.gameMoves = aux;
     }
