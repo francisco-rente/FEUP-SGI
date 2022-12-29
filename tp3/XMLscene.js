@@ -111,7 +111,7 @@ export class XMLscene extends CGFscene {
 
         // Reads the lights from the scene graph.
         for (let key in this.graph.lights) {
-            if (i >= 7) break;              // Only eight lights allowed by WebGL. 7 is pieceLight
+            if (i >= 8) break;              // Only eight lights allowed by WebGL. 7 is pieceLight
 
             if (this.graph.lights.hasOwnProperty(key)) {
                 const light = this.graph.lights[key];
@@ -323,10 +323,6 @@ export class XMLscene extends CGFscene {
         if (this.sceneInited) {
             // Draw axis
             this.setDefaultAppearance();
-            if(this.pieceSpotLight) {
-                console.log("pieceSpotLight");
-                this.pieceSpotLight.enable();
-            }
             // Displays the scene (MySceneGraph function).
             this.graph.board.display();
             this.graph.displayScene();

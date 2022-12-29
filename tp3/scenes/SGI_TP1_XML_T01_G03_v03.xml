@@ -31,25 +31,24 @@
     </ambient>
 
     <lights>
-        <omni id="demoLight" enabled="1">
+        <omni id="demoLight" enabled="0">
             <location x="9.8" y="11.9" z="10" w="2.0"/>
             <ambient r="0" g="0" b="0" a="1.0"/>
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0"/>
             <specular r="1.0" g="1.0" b="1.0" a="1.0"/>
             <attenuation constant="1.0" linear="0.0" quadratic="0.0"/>
         </omni>
-
-        <omni id="fireplace" enabled="1">
+        <omni id="fireplace" enabled="0">
             <location x="0.0" y="0" z="0" w="1.0"/>
             <ambient r="0" g="0" b="0" a="1.0"/>
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0"/>
             <specular r="1.0" g="1.0" b="1.0" a="1.0"/>
             <attenuation constant="1.0" linear="0.0" quadratic="0.0"/>
         </omni>
-        <spot id="spotlight" enabled="1" angle="60" exponent="2">
-            <location x="0" y="15" z="0" w="60"/>
+        <spot id="spotlight" enabled="0" angle="60" exponent="2">
+            <location x="0" y="2" z="-10" w="60"/>
             <target x="0" y="0" z="0"/>
-            <ambient r="0.2" g="0.2" b="0.2" a="0"/>
+            <ambient r="0.0" g="0.0" b="0.0" a="0"/>
             <diffuse r="1.0" g="1.0" b="1.0" a="1.0"/>
             <specular r="1.0" g="1.0" b="1.0" a="1.0"/>
             <attenuation constant="1.0" linear="0.0" quadratic="0.0"/>
@@ -75,10 +74,10 @@
 
     <materials>
         <material id="demoMaterial" shininess="10">
-            <emission r="0.1" g="0.1" b="0.1" a="1.0"/>
-            <ambient r="0.5" g="0.3" b="0.3" a="1.0"/>
-            <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
-            <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <emission r="0.1" g="0.0" b="0.1" a="1.0"/>
+            <ambient r="1.0" g="0.3" b="0.3" a="1.0"/>
+            <diffuse r="1.0" g="1.0" b="1.0" a="1.0"/>
+            <specular r="1.0" g="1.0" b="1.0" a="1.0"/>
         </material>
         <material id="fire" shininess="5">
             <emission r="1.0" g="0.64" b="0.0" a="0.45"/>
@@ -86,27 +85,32 @@
             <diffuse r="1.0" g="0.64" b="0.3" a="0.0"/>
             <specular r="0.7" g="0.7" b="0.7" a="0.3"/>
         </material>
-
         <material id="fireStrong" shininess="10">
             <emission r="1.0" g="0.30" b="0.0" a="1.0"/>
             <ambient r="1.0" g="0.64" b="0.9" a="0.0"/>
             <diffuse r="1.0" g="0.30" b="0.0" a="0.0"/>
             <specular r="1.0" g="0.30" b="0.0" a="0.0"/>
         </material>
-
         <material id="aurora" shininess="10">
             <emission r="0.0" g="0.30" b="1.0" a="1.0"/>
             <ambient r="0.0" g="0.64" b="0.9" a="0.0"/>
             <diffuse r="0.0" g="0.30" b="1.0" a="0.0"/>
             <specular r="0.0" g="0.30" b="1.0" a="0.5"/>
         </material>
-
         <material id="kite" shininess="10">
             <emission r="0.82" g="0.73" b="0.05" a="1.0"/>
             <ambient r="0.82" g="0.73" b="0.05" a="1.0"/>
             <diffuse r="0.82" g="0.73" b="0.05" a="1.0"/>
             <specular r="0.82" g="0.73" b="0.05" a="1.0"/>
         </material>
+
+        <material id="whiteSquares" shininess="10">
+            <emission r="0.0" g="0.0" b="0.0" a="1.0"/>
+            <ambient r="0.7" g="0.7" b="0.7" a="1.0"/>
+            <diffuse r="0.7" g="0.7" b="0.7" a="1.0"/>
+            <specular r="0.4" g="0.4" b="0.4" a="1.0"/>
+        </material>
+
 
     </materials>
 
@@ -978,8 +982,8 @@
         <size x="10" y="10" z="2"/>
         <position x="0" y="2" z="0"/>
         <materials>
-            <material id="demoMaterial"/> <!-- black squares -->
-            <material id="fire"/><!-- white squares-->
+            <material id="whiteSquares"/> <!-- black squares -->
+            <material id="whiteSquares"/><!-- white squares-->
             <material id="demoMaterial"/> <!-- black pieces-->
             <material id="fireStrong"/> <!-- white pieces-->
             <material id="fireStrong"/> <!-- black kings-->

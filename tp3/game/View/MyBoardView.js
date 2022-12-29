@@ -33,6 +33,23 @@ export class MyBoardView {
         this.createSpotLight();
     }
 
+
+
+    setLightParams(){
+        this.scene.pieceSpotLight.setAmbient(0.1, 0.0, 0.0, 1);
+        this.scene.pieceSpotLight.setDiffuse(1.0, 1.0, 1.0, 1);
+        this.scene.pieceSpotLight.setSpecular(1.0, 1.0, 1.0, 1);
+
+        this.scene.pieceSpotLight.setConstantAttenuation(0);
+        this.scene.pieceSpotLight.setLinearAttenuation(0);
+        this.scene.pieceSpotLight.setQuadraticAttenuation(0);
+
+        this.scene.pieceSpotLight.setSpotCutOff(50);
+        this.scene.pieceSpotLight.setSpotExponent(1);
+        //this.scene.pieceSpotLight.setSpotDirection(0, -1, 0);
+        this.scene.pieceSpotLight.setVisible(true);
+    }
+
     createSpotLight() {
         console.log("Creating spot light in " + [this.size[0] / 2 + boardOffset, this.size[1] / 2 - boardOffset, 1]);
         this.scene.pieceSpotLight = this.scene.lights[7];
@@ -44,16 +61,9 @@ export class MyBoardView {
         }
 
         this.scene.pieceSpotLight.setPosition(this.spotLight["position"][0],
-            this.spotLight["position"][1], this.spotLight["position"][2], 2.0);
-        this.scene.pieceSpotLight.setAmbient(1.0, 1.0, 1.0, 1);
-        this.scene.pieceSpotLight.setDiffuse(1.0, 1.0, 0.0, 1);
-        this.scene.pieceSpotLight.setSpecular(1.0, 1.0, 0.0, 1);
-        this.scene.pieceSpotLight.setSpotCutOff(20);
-        this.scene.pieceSpotLight.setSpotExponent(10);
-        this.scene.pieceSpotLight.setConstantAttenuation(1);
-        this.scene.pieceSpotLight.setSpotDirection(this.spotLight["target"][0],
-            this.spotLight["target"][1], this.spotLight["target"][2]);
-        this.scene.pieceSpotLight.setVisible(true);
+            this.spotLight["position"][1], this.spotLight["position"][2], 60);
+        this.setLightParams();
+        this.scene.pieceSpotLight.update();
         this.scene.pieceSpotLight.enable();
     }
 
@@ -61,7 +71,8 @@ export class MyBoardView {
         this.spotLight["target"] = target;
         console.log("Redirecting spot light to " + target);
         this.scene.pieceSpotLight.setPosition(target[0], target[1], target[2]);
-        this.scene.pieceSpotLight.setSpotDirection(0, -1, 0);
+        this.scene.pieceSpotLight.setSpotDirection(1, 1, 0);
+        this.setLightParams();
         this.scene.pieceSpotLight.update();
         this.scene.pieceSpotLight.enable();
     }
@@ -200,8 +211,6 @@ export class MyBoardView {
                 this.scene.clearPickRegistration();
             }
         }
-
-        this.scene.pieceSpotLight.disable();
     }
 
 
@@ -214,6 +223,11 @@ export class MyBoardView {
         if (current_offset < 0) {
             console.log("animation finished!");
             gameLogic.animations.splice(gameLogic.animations.indexOf(animation), 1);
+            this.scene.pieceSpotLight.setPosition(this.spotLight["position"][0],
+                this.spotLight["position"][1], this.spotLight["position"][2], 60);
+            this.scene.pieceSpotLight.update();
+            console.log("DISABLING SPOTLIGHT");
+            // this.scene.pieceSpotLight.disable();
         } else {
             offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
             offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
