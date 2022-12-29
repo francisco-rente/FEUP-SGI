@@ -255,17 +255,12 @@ export class XMLscene extends CGFscene {
         if (this.pickMode === false) {
             // results can only be retrieved when picking mode is false
             if (this.pickResults != null && this.pickResults.length > 0) {
-                console.log(this.pickResults);
                 for (let i = 0; i< this.pickResults.length; i++) {
-                    console.log(this.pickResults[i]);
-                    console.log(this.pickResults[i][0]);
-                    
+
                     const  obj = this.pickResults[i][0];
                     if (obj)
                     {
                         const customId = this.pickResults[i][1];
-                        console.log("Picked object: " + obj + ", with pick id " + customId);
-
                         // TODO: this can be abstracted to a function in a "game controller" class
 
                         if(obj instanceof MyPieceView) {
@@ -274,15 +269,18 @@ export class XMLscene extends CGFscene {
                             this.graph.board.gameLogic.selectPiece(i, j);
                         }
                         else if(obj instanceof MyRectangle) {
-                            /*if(this.pickResults[i][1] === -1) {
+                            if(customId === 100) {
+                                this.graph.board.gameLogic.undo();
+
+                            }
+                            else if(customId === 101) {
                                 console.log("found change camera");
                             }
-                            else if(this.pickResults[i][1] === -2) {
-                                console.log("found undo");
-                            }*/
-                            const i = Math.floor(customId / 10) - 1;
-                            const j = customId % 10 - 1;
-                            this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
+                            else{
+                                const i = Math.floor(customId / 10) - 1;
+                                const j = customId % 10 - 1;
+                                this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
+                            }
                         }
                     }
                 }

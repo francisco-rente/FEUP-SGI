@@ -56,6 +56,7 @@ export class GameLogic {
 
     undo() {
         this.gameBoard = this.previousBoard;
+        this.playerTurn = this.playerTurn === 1 ? 2 : 1;
     }
 
     selectPiece(x, y) {
