@@ -43,29 +43,26 @@ export class MyBoardView {
             "target": [0, 0, 0]
         }
 
-
         this.scene.pieceSpotLight.setPosition(this.spotLight["position"][0],
-            this.spotLight["position"][1], this.spotLight["position"][2]);
-        this.scene.pieceSpotLight.setAmbient(0.1, 0.1, 0.1, 1);
-        this.scene.pieceSpotLight.setDiffuse(1.0, 0.0, 0.0, 1);
-        this.scene.pieceSpotLight.setSpecular(1.0, 0.0, 0.0, 1);
-        this.scene.pieceSpotLight.setSpotCutOff(60);
-        this.scene.pieceSpotLight.setSpotExponent(40);
-        this.scene.pieceSpotLight.setConstantAttenuation(10);
+            this.spotLight["position"][1], this.spotLight["position"][2], 2.0);
+        this.scene.pieceSpotLight.setAmbient(1.0, 1.0, 1.0, 1);
+        this.scene.pieceSpotLight.setDiffuse(1.0, 1.0, 0.0, 1);
+        this.scene.pieceSpotLight.setSpecular(1.0, 1.0, 0.0, 1);
+        this.scene.pieceSpotLight.setSpotCutOff(20);
+        this.scene.pieceSpotLight.setSpotExponent(10);
+        this.scene.pieceSpotLight.setConstantAttenuation(1);
         this.scene.pieceSpotLight.setSpotDirection(this.spotLight["target"][0],
             this.spotLight["target"][1], this.spotLight["target"][2]);
-        this.scene.pieceSpotLight.setQuadraticAttenuation(0);
         this.scene.pieceSpotLight.setVisible(true);
+        this.scene.pieceSpotLight.enable();
     }
 
     redirectSpotLight(target) {
-        const [x, y, z] = this.spotLight["position"];
         this.spotLight["target"] = target;
-
+        console.log("Redirecting spot light to " + target);
         this.scene.pieceSpotLight.setPosition(target[0], target[1], target[2]);
-        /*let dir = vec3.fromValues(target[0] - x, target[1] - y, target[2] - z);
-        vec3.normalize(dir, dir);*/
-        this.scene.pieceSpotLight.setSpotDirection(0, 1, 0);
+        this.scene.pieceSpotLight.setSpotDirection(0, -1, 0);
+        this.scene.pieceSpotLight.update();
         this.scene.pieceSpotLight.enable();
     }
 
@@ -77,7 +74,6 @@ export class MyBoardView {
         this.displayScoreboard(gameLogic);
         this.displayTimer(gameLogic);
         this.displayPlayerTimers(gameLogic);
-        this.displayAnimatingPieces(gameLogic);
         this.displayAnimatingPieces(gameLogic);
     }
 
@@ -226,7 +222,7 @@ export class MyBoardView {
             this.redirectSpotLight([
                 (final_pos[0] - offsetX) * this.size[0] / 8 + boardOffset,
                 2,
-                (final_pos[1] + offsetY) * this.size[1] / 8,
+                (final_pos[1] + offsetY) * this.size[1] / 8 - 1 ,
             ])
 
             for (let i = 0; i < gameLogic.animations.length; i++) {

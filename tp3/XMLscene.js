@@ -131,6 +131,8 @@ export class XMLscene extends CGFscene {
                 i++;
             }
         }
+
+        this.pieceSpotLight = this.lights[7];
     }
 
     setDefaultAppearance() {
@@ -316,12 +318,15 @@ export class XMLscene extends CGFscene {
             this.lights[i].setVisible(this.visibleLights);
             this.lights[i].update();
         }
-        if(this.pieceSpotLight) this.pieceSpotLight.enable();
+
 
         if (this.sceneInited) {
             // Draw axis
             this.setDefaultAppearance();
-
+            if(this.pieceSpotLight) {
+                console.log("pieceSpotLight");
+                this.pieceSpotLight.enable();
+            }
             // Displays the scene (MySceneGraph function).
             this.graph.board.display();
             this.graph.displayScene();
