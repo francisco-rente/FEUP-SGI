@@ -64,8 +64,8 @@ export class GameLogic {
         this.resetGame();
 
         for(let move of aux){
-            this.selectPiece(move[0], move[1]);
-            this.movePieceFromInput(move[2], move[3]);
+            this.selectPiece(move.old_pos[0], move.old_pos[1]);
+            this.movePieceFromInput(move.new_pos[0], move.new_pos[1]);
         }
         this.gameMoves = aux;
     }

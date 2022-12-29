@@ -45,6 +45,7 @@ export class MyPieceView {
         this.pieceTop.display();
         this.scene.popMatrix();
         this.scene.popMatrix();
+        //this.scene.popMatrix();
     }
 
     displayInBoard(position, appearance) {
@@ -70,7 +71,6 @@ export class MyPieceView {
         this.scene.scale(squareSize, squareSize, 1);
         this.pieceTop.display();
         this.scene.popMatrix();
-
         this.scene.popMatrix();
     }
 

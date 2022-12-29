@@ -41,11 +41,10 @@ export class MyBoardView {
         this.displayScoreboard(gameLogic);
         this.displayTimer(gameLogic);
         this.displayPlayerTimers(gameLogic);
-        this.displayAnimatingPieces(gameLogic);
-        this.displayAnimatingPieces(gameLogic);
         this.displayUndoButton(gameLogic);
         this.displayChangeCameraButton(gameLogic);
         this.displayGameMovieButton(gameLogic);
+        this.displayAnimatingPieces(gameLogic);   
     }
 
 
@@ -59,9 +58,6 @@ export class MyBoardView {
         this.scene.applyAppearance();
         this.scene.translate(boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
         this.scene.rotate(-Math.PI/2, 1, 0, 0);
-        //console.log(-2);
-        //console.log("about to log undoButton")
-        //console.log(undoButton);
         this.scene.registerForPick(100, undoButton);
         undoButton.display();
         this.scene.clearPickRegistration();
@@ -268,7 +264,7 @@ export class MyBoardView {
         } else {
             offsetX = (final_pos[0] - initial_pos[0]) * current_offset;
             offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
-            current_offset -= 0.1;
+            current_offset -= 0.2;
 
             for (let i = 0; i < gameLogic.animations.length; i++) {
                 if (gameLogic.animations[i] === animation) {
