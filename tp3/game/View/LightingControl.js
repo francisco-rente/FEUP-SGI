@@ -9,8 +9,8 @@ export class LightingControl {
 
     setLightParams() {
         this.spotLight.setAmbient(0.0, 0.0, 0.0, 1);
-        this.spotLight.setDiffuse(0.5, 0.5, 0.5, 0.5);
-        this.spotLight.setSpecular(0.8, 0.8, 0.8, 0.5);
+        this.spotLight.setDiffuse(1.0, 1.0, 0.5, 0.2);
+        this.spotLight.setSpecular(1.0, 1.0, 0.2, 0.7);
 
         this.spotLight.setConstantAttenuation(1);
         this.spotLight.setLinearAttenuation(0);
@@ -18,7 +18,7 @@ export class LightingControl {
 
         this.spotLight.setSpotDirection(0, -1, 0);
         this.spotLight.setSpotCutOff(10);
-        this.spotLight.setSpotExponent(10);
+        this.spotLight.setSpotExponent(5);
         this.spotLight.setVisible(true);
         this.spotLight.update();
     }
