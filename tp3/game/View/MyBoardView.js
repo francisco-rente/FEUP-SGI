@@ -175,6 +175,13 @@ export class MyBoardView {
                 const newPiece = new MyPieceView(this.scene, this.size);
                 this.scene.registerForPick((i + 1) * 10 + (j + 1), newPiece);
 
+                if(gameLogic.selected && gameLogic.selected[0] === i && gameLogic.selected[1] === j){
+                    this.lightControl.redirectSpotLight([
+                        (i + 0.5) * this.size[0] / 8 + boardOffset,
+                        -((j+ 0.5) * this.size[1] / 8) + boardOffset,
+                    ])
+                }
+
                 let offsetX = 0, offsetY = 0;
                 let animation = gameLogic.animations.find(animation => animation["final_pos"][0] === i && animation["final_pos"][1] === j);
                 if (animation !== undefined) [offsetX, offsetY] = this.displayMovingPiece(animation, gameLogic);
