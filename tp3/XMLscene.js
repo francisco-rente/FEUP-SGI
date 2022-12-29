@@ -242,6 +242,7 @@ export class XMLscene extends CGFscene {
             this.components.set(component.id, component);
         });
 
+        this.currentCamera = 0;
         this.initLights();
         this.updateViews();
         this.interface.updateInterface()
@@ -259,7 +260,7 @@ export class XMLscene extends CGFscene {
 
                     const  obj = this.pickResults[i][0];
                     if (obj)
-                    {
+                    {   
                         const customId = this.pickResults[i][1];
                         // TODO: this can be abstracted to a function in a "game controller" class
 
@@ -274,7 +275,22 @@ export class XMLscene extends CGFscene {
 
                             }
                             else if(customId === 101) {
-                                console.log("found change camera");
+                                /*
+                                let cameras = [
+                                new CGFcamera(0.8, 0.1, 500, vec3.fromValues(-5, 30, 15), vec3.fromValues(18, 0, 15)),
+                                new CGFcamera(0.8, 0.1, 500, vec3.fromValues(45, 30, 15), vec3.fromValues(18, 0, 15)),
+                                new CGFcamera(0.8, 0.1, 500, vec3.fromValues(20, 30, 15), vec3.fromValues(18, 0, 15)),
+                                ]
+                                */
+
+                                let cameras = [
+                                    [-5, 30, 15],
+                                    [45, 30, 15],
+                                    [20, 30, 15]
+                                ]
+                                let prevCamera = this.currentCamera;
+                                this.currentCamera == 2 ? this.currentCamera = 0 : this.currentCamera++;
+                                this.graph.board.boardView.updateCamera(cameras[prevCamera], cameras[this.currentCamera]);
                             }
                             else if(customId === 102) {
                                 this.graph.board.gameLogic.gameMovie();

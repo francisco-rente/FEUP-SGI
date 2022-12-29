@@ -1,3 +1,4 @@
+import { CGFcamera } from "../../../lib/CGF.js";
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
 
@@ -32,6 +33,8 @@ export class MyBoardView {
         this.stackXYBlack = [this.size[0] / 8 + boardOffset + this.size[0], this.size[1] / 8 - boardOffset - 2, 1];
 
         this.animatingPieces = [];
+
+        this.cameraAnimationProgress = 1;
     }
 
 
@@ -44,7 +47,31 @@ export class MyBoardView {
         this.displayUndoButton(gameLogic);
         this.displayChangeCameraButton(gameLogic);
         this.displayGameMovieButton(gameLogic);
-        this.displayAnimatingPieces(gameLogic);   
+        this.displayAnimatingPieces(gameLogic);
+        this.updateCameraAnimation();
+    }
+
+    updateCameraAnimation() {
+        if (this.cameraAnimationProgress < 1) {
+            this.cameraAnimationProgress += 0.1;
+            let pos = vec3.fromValues(0, 0, 0);
+            console.log("about to set pos, params are:")
+            console.log("pos:"+pos);
+            console.log("vec3.fromValues(this.oldCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]));
+            console.log("vec3.fromValues(this.newCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]))
+            console.log("this.cameraAnimationProgress is " + this.cameraAnimationProgress)
+
+            vec3.lerp(pos, vec3.fromValues(this.oldCameraPosition[0], this.oldCameraPosition[1], this.oldCameraPosition[2]), vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]), this.cameraAnimationProgress);
+            console.log("pos is " + pos)
+            //new CGFcamera(0.8, 0.1, 500, vec3.fromValues(20, 30, 15), vec3.fromValues(18, 0, 15)),
+            this.scene.camera = new CGFcamera(0.8, 0.1, 500, pos, vec3.fromValues(18, 0, 15));
+        }
+    }
+
+    updateCamera(oldCamera, newCamera) {
+        this.oldCameraPosition = oldCamera;
+        this.newCameraPosition = newCamera;
+        this.cameraAnimationProgress = 0;
     }
 
 
@@ -305,7 +332,7 @@ export class MyBoardView {
                 vector[2] = (1 + 0.5 * Math.sin(Math.PI * current_offset)) * 4;
 
                 newPiece.display(vector, appearance);
-                piece["current_offset"] += 0.01;
+                piece["current_offset"] += 0.1;
                 animatingBlack += piece["color"] === "black" ? 1 : 0;
                 animatingWhite += piece["color"] === "white" ? 1 : 0;
             }
