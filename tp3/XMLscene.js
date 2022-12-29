@@ -3,6 +3,7 @@ import {Board} from "./game/Model/Board.js";
 import {MyCylinder} from "./primitives/MyCylinder.js";
 import {MyRectangle} from "./primitives/MyRectangle.js";
 import { MyPieceView} from './game/View/MyPieceView.js';
+import {MyPatch} from "./primitives/MyPatch.js";
 
 var DEGREE_TO_RAD = Math.PI / 180;
 
@@ -132,6 +133,7 @@ export class XMLscene extends CGFscene {
                 i++;
             }
         }
+
     }
 
     setDefaultAppearance() {
@@ -260,7 +262,7 @@ export class XMLscene extends CGFscene {
 
                     const  obj = this.pickResults[i][0];
                     if (obj)
-                    {   
+                    {
                         const customId = this.pickResults[i][1];
                         // TODO: this can be abstracted to a function in a "game controller" class
 
@@ -269,7 +271,7 @@ export class XMLscene extends CGFscene {
                             const j = customId % 10 - 1;
                             this.graph.board.gameLogic.selectPiece(i, j);
                         }
-                        else if(obj instanceof MyRectangle) {
+                        else if(obj instanceof MyRectangle || obj instanceof MyPatch) {
                             if(customId === 100) {
                                 this.graph.board.gameLogic.undo();
 
@@ -343,7 +345,6 @@ export class XMLscene extends CGFscene {
         if (this.sceneInited) {
             // Draw axis
             this.setDefaultAppearance();
-
             // Displays the scene (MySceneGraph function).
             this.graph.board.display();
             this.graph.displayScene();
@@ -358,15 +359,7 @@ export class XMLscene extends CGFscene {
             ? 0 : this.appearence_index + 1;
     }
 
-    checkKeys() {
-        if (this.gui.isKeyPressed("KeyM")) {
-            console.log("Key M pressed");
-            // prevent overflow of the index
-        }
-    }
-
-
-    // called periodically (as per setUpdatePeriod() in init())
+// called periodically (as per setUpdatePeriod() in init())
     update(t) {
 
         if (this.startTime === null) this.startTime = t;

@@ -43,6 +43,13 @@ export class MyPieceView {
         this.scene.translate(-squareSize / 2, 0, 0.5);
         this.scene.scale(squareSize, squareSize, 1);
         this.pieceTop.display();
+
+        // display bottom
+        this.scene.pushMatrix();
+        this.scene.rotate(Math.PI, 0, 1, 0);
+        this.scene.translate(0, 0, 0.5);
+        this.pieceTop.display();
+        this.scene.popMatrix();
         this.scene.popMatrix();
         this.scene.popMatrix();
         //this.scene.popMatrix();

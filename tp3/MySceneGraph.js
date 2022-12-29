@@ -294,10 +294,6 @@ export class MySceneGraph {
         console.log("Size: " + size);
         console.log("Textures: " + textures);
         console.log("Materials: " + materials); 
-        
-        for (let texture of textures) {
-            console.log(texture);
-        }
 
 
         this.scene.graph.board = new Board(this.scene, textures, materials, position, size);
@@ -312,7 +308,6 @@ export class MySceneGraph {
         textureInfo["texture"] = this.textures[id];
         textureInfo["length_s"] = this.reader.getFloat(textureNode, 'length_s');
         textureInfo["length_t"] = this.reader.getFloat(textureNode, 'length_t');
-        console.log(textureInfo)
         return textureInfo;
     }
 
