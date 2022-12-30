@@ -4,10 +4,36 @@ export class LightingControl {
         this.scene = scene;
         this.size = size;
         this.spotLight = this.scene.lights[7];
+        this.errorLight = this.scene.lights[6];
+        this.createErrorLightParams();
     }
 
 
-    setLightParams() {
+    toggleErrorLight() {
+        this.errorLight.enabled ? this.errorLight.disable() : this.errorLight.enable();
+    }
+
+    disableErrorLight() {
+        this.errorLight.disable();
+    }
+
+    enableErrorLight() {
+        this.errorLight.enable();
+    }
+
+    createErrorLightParams() {
+        this.errorLight.setPosition(0, 0, 0, 1);
+        this.errorLight.setAmbient(1.0, 0.0, 0.0, 1);
+        this.errorLight.setDiffuse(1.0, 0.0, 0.0, 1);
+        this.errorLight.setSpecular(1.0, 0.0, 0.0, 1);
+        this.spotLight.setConstantAttenuation(1);
+        this.spotLight.setVisible(true);
+        this.spotLight.update();
+        this.errorLight.disable();
+    }
+
+
+    setSpotLightParams() {
         this.spotLight.setAmbient(0.0, 0.0, 0.0, 1);
         this.spotLight.setDiffuse(1.0, 1.0, 0.5, 0.2);
         this.spotLight.setSpecular(1.0, 1.0, 0.2, 0.7);
@@ -30,7 +56,7 @@ export class LightingControl {
         }
         const [x, y, z] = this.spotLightInfo["initial_position"];
         this.spotLight.setPosition(x, y, z, 1);
-        this.setLightParams();
+        this.setSpotLightParams();
         this.spotLight.enable();
     }
 
@@ -39,14 +65,14 @@ export class LightingControl {
         this.spotLight = this.scene.lights[7];
         this.spotLightInfo["position"] = newLightPosition;
         this.spotLight.setPosition(x, this.spotLightInfo["initial_position"][1], z, 1);
-        this.setLightParams();
+        this.setSpotLightParams();
         this.spotLight.enable();
     }
 
     reset(disable = false) {
         const [x, y, z] = this.spotLightInfo["initial_position"];
         this.spotLight.setPosition(x, y, z, 1);
-        this.setLightParams();
+        this.setSpotLightParams();
         this.spotLight.update();
         if (disable) this.spotLight.disable();
         else this.spotLight.enable();

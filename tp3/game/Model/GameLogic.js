@@ -1,11 +1,12 @@
-const State = {
-    INIT: 0, SELECT_PIECE: 1, SELECT_SQUARE: 2, FORCE_CAPTURE: 3, ANIMATING: 4, ERROR: 1000,
+export const State = {
+    INIT: 0, SELECT_PIECE: 1, SELECT_SQUARE: 2, FORCE_CAPTURE: 3, ERROR: 1000
 }
 
 
 export class GameLogic {
     constructor(player1, player2) {
         this.currentState = State.SELECT_PIECE;
+        this.stashedState = State.SELECT_PIECE;
 
         this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
 
@@ -20,6 +21,7 @@ export class GameLogic {
         this.startTime = new Date();
         this.capturedPieces = [];
         this.previousBoard = [];
+
     }
 
 
@@ -27,12 +29,7 @@ export class GameLogic {
         return this.gameBoard;
     }
 
-    getSelected() {
-        return this.selected;
-    }
-
-
-    getScore(string=true) {
+    getScore(string = true) {
         let score = [16, 16];
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
@@ -44,7 +41,7 @@ export class GameLogic {
             }
         }
 
-        if(!string) return score;
+        if (!string) return score;
 
         score = ("0" + score[0]).slice(-2) + "-" + ("0" + score[1]).slice(-2);
         return score;
@@ -62,21 +59,42 @@ export class GameLogic {
     gameMovie() {
         let aux = this.gameMoves;
         this.resetGame();
-        for(let i = 0; i < aux.length; i++){
+        for (let i = 0; i < aux.length; i++) {
             //como é que faço esperar pelas animações?
             setTimeout(() => {
                 this.selectPiece(aux[i].old_pos[0], aux[i].old_pos[1]);
                 this.movePieceFromInput(aux[i].new_pos[0], aux[i].new_pos[1]);
-            }, 3000*i);
-                
+            }, 3000 * i);
+
         }
         this.gameMoves = aux;
+    }
+
+
+    nextState(state) {
+        switch (state) {
+            case State.SELECT_PIECE:
+                this.currentState = State.SELECT_SQUARE;
+                break;
+            case State.SELECT_SQUARE:
+                this.currentState = State.SELECT_SQUARE;
+                break;
+            case State.FORCE_CAPTURE:
+                this.currentState = State.FORCE_CAPTURE;
+                break;
+            case State.ERROR:
+                this.currentState = this.stashedState;
+                break;
+            default:
+                this.currentState = State.ERROR;
+        }
     }
 
     selectPiece(x, y) {
 
         if (!(this.checkPiece(x, y))) {
-            return {"next_state": State.ERROR, "reason": "Not your piece"};
+            this.errorOccurred();
+            return State.ERROR;
         }
         this.currentState = State.SELECT_SQUARE;
         this.selected = [x, y];
@@ -167,7 +185,10 @@ export class GameLogic {
         let auxBoard = this.cloneGameBoard();
 
         const move_result = this.movePiece(selectedX, selectedY, x, y);
-        if (move_result === State.ERROR) return State.ERROR;
+        if (move_result === State.ERROR) {
+            this.errorOccurred();
+            return State.ERROR;
+        }
         this.previousBoard = auxBoard;
         this.changeTurn();
         this.gameMoves.push({
@@ -227,12 +248,16 @@ export class GameLogic {
 
         if (!this.checkMovePieceConditions(selectedX, selectedY, x, y)) {
             console.log("invalid move");
+            this.errorOccurred();
             return State.ERROR;
         }
 
         const dx = (selectedX - x);
         const dy = (selectedY - y);
-        if (dx * dy === 0) return State.ERROR;
+        if (dx * dy === 0) {
+            this.errorOccurred();
+            return State.ERROR;
+        }
 
 
         let ate = 0;
@@ -243,14 +268,20 @@ export class GameLogic {
             isEatingKing = this.isPieceKing(middleX, middleY, this.playerTurn === 1 ? 2 : 1);
 
             ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
-            if (ate === State.ERROR) return State.ERROR;
-            if (ate !== 0) this.incrementScore(this.playerTurn, ate); else return State.ERROR; // no capture was made from a [2,2] move
+            if (ate === State.ERROR || ate === 0) {// no capture was made from a [2,2] move
+                this.errorOccurred();
+                return State.ERROR;
+            }
+            this.incrementScore(this.playerTurn, ate);
         }
 
         if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
             this.moveSelectedPiece(selectedX, selectedY, x, y, this.gameBoard);
-        else
+        else{
+            this.errorOccurred();
             return State.ERROR;
+        }
+
 
 
         if (ate !== 0) {
@@ -297,7 +328,10 @@ export class GameLogic {
         const [middle_x, middle_y, x_dir, y_dir] = this.getMiddlePiece(selectedX, selectedY, dx, dy);
 
         if (!this.checkBounds(middle_x, middle_y) &&
-            !this.checkBounds(middle_x + x_dir, middle_y + y_dir)) return State.ERROR;
+            !this.checkBounds(middle_x + x_dir, middle_y + y_dir)) {
+            this.errorOccurred();
+            return State.ERROR;
+        }
 
         if (gameBoard[middle_x][middle_y] !== 0 && gameBoard[middle_x + x_dir][middle_y + y_dir] === 0) {
             // Will eat piece
@@ -306,6 +340,12 @@ export class GameLogic {
         }
 
         return 0;
+    }
+
+    errorOccurred() {
+        if(this.currentState === State.ERROR) return;
+        this.stashedState = this.currentState;
+        this.currentState = State.ERROR;
     }
 
     isPieceKing(x, y, player = this.playerTurn) {
@@ -360,10 +400,18 @@ export class GameLogic {
         })
     }
 
-    resetGame(){
+    resetGame() {
         this.currentState = State.SELECT_PIECE;
 
-        this.gameBoard = [[1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [2, 2, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2]];
+        this.gameBoard = [
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [2, 2, 2, 2, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2, 2, 2, 2]];
 
         this.playerTurn = 1;
         //this.player1 = player1;
@@ -378,19 +426,19 @@ export class GameLogic {
         this.previousBoard = [];
     }
 
-    isPieceSelected(piecePos){
+    isPieceSelected(piecePos) {
         return this.selected[0] === piecePos[0] && this.selected[1] === piecePos[1];
     }
 
-    anyPieceSelected(){
+    anyPieceSelected() {
         return this.selected !== null
-         && this.selected[0] !== -1 && this.selected[1] !== -1;
+            && this.selected[0] !== -1 && this.selected[1] !== -1;
     }
 
 
     endGame() {
         //TODO: Test this
-        
+
         this.resetGame()
     }
 }

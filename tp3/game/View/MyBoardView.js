@@ -3,6 +3,7 @@ import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
 import {MyPatch} from "../../primitives/MyPatch.js";
 import {LightingControl} from "./LightingControl.js";
+import {State} from "../Model/GameLogic.js";
 
 
 const boardOffset = 15;
@@ -42,6 +43,13 @@ export class MyBoardView {
 
 
     display(gameLogic) {
+
+        if (gameLogic.currentState === State.ERROR) {
+            gameLogic.nextState(State.ERROR);
+            this.lightControl.enableErrorLight();
+        } else this.lightControl.disableErrorLight();
+
+
         this.displayBoardTable(gameLogic);
         this.displayPieces(gameLogic);
         this.displayScoreboard(gameLogic);
@@ -284,8 +292,8 @@ export class MyBoardView {
                 const hasSelectedPiece = gameLogic.anyPieceSelected();
                 if (hasSelectedPiece && gameLogic.isPieceSelected([i, j]))
                     this.lightControl.redirectSpotLight(
-                    [(i + 0.5) * this.size[0] / 8 + boardOffset,
-                        -((j + 0.5) * this.size[1] / 8) + boardOffset])
+                        [(i + 0.5) * this.size[0] / 8 + boardOffset,
+                            -((j + 0.5) * this.size[1] / 8) + boardOffset])
 
 
                 let offsetX = 0, offsetY = 0;
