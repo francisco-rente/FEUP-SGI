@@ -1,4 +1,4 @@
-import { CGFcamera } from "../../../lib/CGF.js";
+import {CGFcamera} from "../../../lib/CGF.js";
 import {MyRectangle} from "../../primitives/MyRectangle.js";
 import {MyPieceView} from "./MyPieceView.js";
 import {MyPatch} from "../../primitives/MyPatch.js";
@@ -41,8 +41,6 @@ export class MyBoardView {
     }
 
 
-
-
     display(gameLogic) {
         this.displayBoardTable(gameLogic);
         this.displayPieces(gameLogic);
@@ -61,7 +59,7 @@ export class MyBoardView {
             this.cameraAnimationProgress += 0.1;
             let pos = vec3.fromValues(0, 0, 0);
             console.log("about to set pos, params are:")
-            console.log("pos:"+pos);
+            console.log("pos:" + pos);
             console.log("vec3.fromValues(this.oldCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]));
             console.log("vec3.fromValues(this.newCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]))
             console.log("this.cameraAnimationProgress is " + this.cameraAnimationProgress)
@@ -88,8 +86,8 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
-        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.translate(boardOffset, 1, this.size[0] / 2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.registerForPick(100, undoButton);
         undoButton.display();
         this.scene.clearPickRegistration();
@@ -104,8 +102,8 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(boardOffset, 1, (7/8)*this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
-        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.translate(boardOffset, 1, (7 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.registerForPick(102, gameMovieButton);
         gameMovieButton.display();
         this.scene.clearPickRegistration();
@@ -121,13 +119,14 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(this.size[0] * (1/2) + boardOffset, 1, this.size[0]/2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
-        this.scene.rotate(-Math.PI/2, 1, 0, 0);
+        this.scene.translate(this.size[0] * (1 / 2) + boardOffset, 1, this.size[0] / 2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.registerForPick(101, changeCameraButton);
         changeCameraButton.display();
         this.scene.clearPickRegistration();
         this.scene.popMatrix();
     }
+
     displayPlayerTimers(gameLogic) {
         let time = "";
         const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
@@ -166,7 +165,7 @@ export class MyBoardView {
 
             }
 
-            if(time[1] == "1"){
+            if (time[1] == "1") {
                 gameLogic.playerTurn == 1 ? gameLogic.playerTurn = 2 : gameLogic.playerTurn = 1;
                 gameLogic.changeTurn();
             }
@@ -184,7 +183,6 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-
 
 
         for (let i = 0; i < 5; i++) {
@@ -209,7 +207,6 @@ export class MyBoardView {
         const timer = new MyRectangle(this.scene, "Timer", 0, this.size[0] / 2, 0, this.size[1] / 4);
 
 
-
         let texture = this.textures["timer"]["texture"];
         let appearance = this.materials["timer"];
         appearance.setTexture(texture);
@@ -230,7 +227,7 @@ export class MyBoardView {
             this.scene.resetShader();
         }
 
-        if(time[0] == "5" && time[1] == "9" && time[3] == "5" && time[4] == "9"){
+        if (time[0] == "5" && time[1] == "9" && time[3] == "5" && time[4] == "9") {
             gameLogic.endGame();
         }
 
@@ -284,16 +281,22 @@ export class MyBoardView {
                 const newPiece = new MyPieceView(this.scene, this.size);
                 this.scene.registerForPick((i + 1) * 10 + (j + 1), newPiece);
 
-                if(gameLogic.selected && gameLogic.selected[0] === i && gameLogic.selected[1] === j){
-                    this.lightControl.redirectSpotLight([
-                        (i + 0.5) * this.size[0] / 8 + boardOffset,
-                        -((j+ 0.5) * this.size[1] / 8) + boardOffset,
-                    ])
-                }
+                const hasSelectedPiece = gameLogic.anyPieceSelected();
+                if (hasSelectedPiece && gameLogic.isPieceSelected([i, j]))
+                    this.lightControl.redirectSpotLight(
+                    [(i + 0.5) * this.size[0] / 8 + boardOffset,
+                        -((j + 0.5) * this.size[1] / 8) + boardOffset])
+
 
                 let offsetX = 0, offsetY = 0;
-                let animation = gameLogic.animations.find(animation => animation["final_pos"][0] === i && animation["final_pos"][1] === j);
-                if (animation !== undefined) [offsetX, offsetY] = this.displayMovingPiece(animation, gameLogic);
+                const animationIndex = gameLogic.animations.findIndex(animation =>
+                    animation["final_pos"][0] === i && animation["final_pos"][1] === j);
+                if (animationIndex !== -1) {
+                    const animation = gameLogic.animations[animationIndex];
+                    [offsetX, offsetY] = this.displayMovingPiece(animation, gameLogic,
+                        animationIndex === gameLogic.animations.length - 1
+                        && !hasSelectedPiece);
+                }
 
                 newPiece.displayInBoard([i - offsetX, j - offsetY], appearance);
                 this.scene.clearPickRegistration();
@@ -302,7 +305,7 @@ export class MyBoardView {
     }
 
 
-    displayMovingPiece(animation, gameLogic) {
+    displayMovingPiece(animation, gameLogic, spotLight = true) {
         let offsetX, offsetY = 0;
         const initial_pos = animation["initial_pos"];
         const final_pos = animation["final_pos"];
@@ -316,10 +319,13 @@ export class MyBoardView {
             offsetY = (final_pos[1] - initial_pos[1]) * current_offset;
             current_offset -= 0.2;
 
-            this.lightControl.redirectSpotLight([
-                (final_pos[0] - offsetX + 0.5) * this.size[0] / 8 + boardOffset,
-               -((final_pos[1] - offsetY + 0.5) * this.size[1] / 8) + boardOffset,
-            ])
+            if (spotLight) {
+                this.lightControl.redirectSpotLight([
+                    (final_pos[0] - offsetX + 0.5) * this.size[0] / 8 + boardOffset,
+                    -((final_pos[1] - offsetY + 0.5) * this.size[1] / 8) + boardOffset,
+                ])
+            }
+
 
             for (let i = 0; i < gameLogic.animations.length; i++) {
                 if (gameLogic.animations[i] === animation) {

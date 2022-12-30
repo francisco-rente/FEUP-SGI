@@ -378,6 +378,15 @@ export class GameLogic {
         this.previousBoard = [];
     }
 
+    isPieceSelected(piecePos){
+        return this.selected[0] === piecePos[0] && this.selected[1] === piecePos[1];
+    }
+
+    anyPieceSelected(){
+        return this.selected !== null
+         && this.selected[0] !== -1 && this.selected[1] !== -1;
+    }
+
 
     endGame() {
         //TODO: Test this
