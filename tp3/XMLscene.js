@@ -23,8 +23,9 @@ export class XMLscene extends CGFscene {
         this.interface = myinterface;
         this.lights = [];
 
+        this.graphs = {};
         this.highLightPhase = 1;
-        this.highLightAmplitude = 1;
+        this.highLfightAmplitude = 1;
         this.highLightFrequency = 1;
     }
 
@@ -49,6 +50,7 @@ export class XMLscene extends CGFscene {
         this.setPickEnabled(true);
 
         this.displayAxis = false;
+
         this.axis = new CGFaxis(this);
 
         this.visibleLights = true;
@@ -62,11 +64,21 @@ export class XMLscene extends CGFscene {
         this.fontShader.setUniformsValues({'dims': [16, 16]});
 
         this.setUpdatePeriod(20);
+        this.current_graph = this.graphs["camping"];
     }
 
 
 
+    changeScene(scene) {
+        this.current_graph = this.graphs[scene];
+        this.onGraphLoaded();
+        this.interface.onGraphLoaded();
+        this.sceneInited = true;
+    }
 
+    accessGraph() {
+        return this.current_graph;
+    }
 
     /**
      * Initializes the scene cameras.
@@ -111,12 +123,12 @@ export class XMLscene extends CGFscene {
         let i = 0;
 
         // Reads the lights from the scene graph.
-        for (let key in this.graph.lights) {
+        for (let key in this.accessGraph().lights) {
             if (i >= 8)
                 break;              // Only eight lights allowed by WebGL.
 
-            if (this.graph.lights.hasOwnProperty(key)) {
-                const light = this.graph.lights[key];
+            if (this.accessGraph().lights.hasOwnProperty(key)) {
+                const light = this.accessGraph().lights[key];
                 this.lights[i].name = key; // for interface dropdown
                 if (light[1] === "omni") {
                     this.parseOmniLight(this.lights[i], light[2], light[3], light[4], light[5], light[6]);
@@ -232,15 +244,15 @@ export class XMLscene extends CGFscene {
      * As loading is asynchronous, this may be called already after the application has started the run loop
      */
     onGraphLoaded() {
-        this.axis = new CGFaxis(this, this.graph.referenceLength);
+        this.axis = new CGFaxis(this, this.accessGraph().referenceLength);
 
-        this.gl.clearColor(this.graph.background[0], this.graph.background[1], this.graph.background[2], this.graph.background[3]);
+        this.gl.clearColor(this.accessGraph().background[0], this.accessGraph().background[1], this.accessGraph().background[2], this.accessGraph().background[3]);
 
-        this.setGlobalAmbientLight(this.graph.ambient[0], this.graph.ambient[1], this.graph.ambient[2], this.graph.ambient[3]);
+        this.setGlobalAmbientLight(this.accessGraph().ambient[0], this.accessGraph().ambient[1], this.accessGraph().ambient[2], this.accessGraph().ambient[3]);
 
         // map of ids to components in the graph.components
         this.components = new Map();
-        this.graph.components.forEach(component => {
+        this.accessGraph().components.forEach(component => {
             this.components.set(component.id, component);
         });
 
@@ -269,11 +281,11 @@ export class XMLscene extends CGFscene {
                         if(obj instanceof MyPieceView) {
                             const i = Math.floor(customId / 10) - 1;
                             const j = customId % 10 - 1;
-                            this.graph.board.gameLogic.selectPiece(i, j);
+                            this.accessGraph().board.gameLogic.selectPiece(i, j);
                         }
                         else if(obj instanceof MyRectangle || obj instanceof MyPatch) {
                             if(customId === 100) {
-                                this.graph.board.gameLogic.undo();
+                                this.accessGraph().board.gameLogic.undo();
 
                             }
                             else if(customId === 101) {
@@ -292,15 +304,15 @@ export class XMLscene extends CGFscene {
                                 ]
                                 let prevCamera = this.currentCamera;
                                 this.currentCamera == 2 ? this.currentCamera = 0 : this.currentCamera++;
-                                this.graph.board.boardView.updateCamera(cameras[prevCamera], cameras[this.currentCamera]);
+                                this.accessGraph().board.boardView.updateCamera(cameras[prevCamera], cameras[this.currentCamera]);
                             }
                             else if(customId === 102) {
-                                this.graph.board.gameLogic.gameMovie();
+                                this.accessGraph().board.gameLogic.gameMovie();
                             }
                             else{
                                 const i = Math.floor(customId / 10) - 1;
                                 const j = customId % 10 - 1;
-                                this.graph.board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
+                                this.accessGraph().board.gameLogic.movePieceFromInput(i, j); // TODO: if error is thrown, should we make something here
                             }
                         }
                     }
@@ -346,8 +358,8 @@ export class XMLscene extends CGFscene {
             // Draw axis
             this.setDefaultAppearance();
             // Displays the scene (MySceneGraph function).
-            this.graph.board.display();
-            this.graph.displayScene();
+            // this.accessGraph().board.display();
+            this.accessGraph().displayScene();
         }
 
         this.popMatrix();
@@ -364,9 +376,9 @@ export class XMLscene extends CGFscene {
 
         if (this.startTime === null) this.startTime = t;
 
-        if (this.graph.animations !== null && this.graph.animations !== undefined)
-            for (let key in this.graph.animations)
-                this.graph.animations[key].update((t - this.startTime) / 1000);
+        if (this.accessGraph().animations !== null && this.accessGraph().animations !== undefined)
+            for (let key in this.accessGraph().animations)
+                this.accessGraph().animations[key].update((t - this.startTime) / 1000);
 
         //const timeFactor = (Math.sin(t) + 1) / 2;
         //const timeFactor = (Math.sin(Math.floor(t%1000/100)) + 1) / 2;
@@ -375,9 +387,9 @@ export class XMLscene extends CGFscene {
     }
 
     updateViews() {
-        this.views = this.graph.views;
-        this.camera = this.graph.views[this.graph.defaultView];
-        this.init_camera = this.graph.defaultView;
+        this.views = this.accessGraph().views;
+        this.camera = this.accessGraph().views[this.accessGraph().defaultView];
+        this.init_camera = this.accessGraph().defaultView;
         this.interface.setActiveCamera(this.camera);
     }
 }

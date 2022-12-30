@@ -34,12 +34,13 @@ export class MySceneGraph {
     /**
      * @constructor
      */
-    constructor(filename, scene) {
+    constructor(filename, scene, name) {
         this.loadedOk = null;
 
         // Establish bidirectional references between scene and graph.
         this.scene = scene;
-        scene.graph = this;
+        scene.graphs[name] = this;
+        this.name = name;
 
         this.components = [];
 
@@ -296,7 +297,7 @@ export class MySceneGraph {
         console.log("Materials: " + materials); 
 
 
-        this.scene.graph.board = new Board(this.scene, textures, materials, position, size);
+        this.scene.graphs[this.name].board = new Board(this.scene, textures, materials, position, size);
     }
 
 

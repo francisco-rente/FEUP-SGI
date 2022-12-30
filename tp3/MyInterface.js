@@ -34,21 +34,43 @@ export class MyInterface extends CGFinterface {
         this.lightGUI();
         this.viewGUI();
         this.highlightGUI();
+        // this.selectSceneGUI();
+    }
+
+
+    selectSceneGUI() {
+        let selectSceneFolder = this.gui.addFolder("SelectSceneControl");
+
+        const graphs = this.scene.graph;
+        const scenes = graphs.map((graph) => graph.id);
+        selectSceneFolder.add(this.scene, 'init_camera', scenes).name("Views").onChange(function (value) {
+            this.scene.changeScene(value);
+        }.bind(this));
+
+        selectSceneFolder.open();
     }
 
 
     commandGUI() {
+        // check if folder already exists
+        if (this.gui.__folders["CommandControl"] !== undefined) return;
+
         let commandFolder = this.gui.addFolder("CommandControl");
         commandFolder.add(this.scene, 'displayAxis').name("Display Axis");
         commandFolder.add(this.scene, 'visibleLights').name("Display Lights");
-        commandFolder.add(this.scene, 'activeNormals').name("Display Normals")
+        commandFolder.add(this.scene, 'activeNormals').name("Display Normals");
         commandFolder.open();
     }
 
     viewGUI() {
+
+        if (this.gui.__folders["ViewControl"] !== undefined) {
+            this.gui.__folders["ViewControl"].remove();
+        }
+
         let viewFolder = this.gui.addFolder("ViewControl");
 
-        this.scene.camera = this.scene.graph.views[this.scene.graph.defaultView];
+        this.scene.camera = this.scene.accessGraph().views[this.scene.accessGraph().defaultView];
         this.setActiveCamera(this.scene.camera);
 
         let views = this.scene.views;
@@ -63,9 +85,14 @@ export class MyInterface extends CGFinterface {
     }
 
     lightGUI() {
+
+        if (this.gui.__folders["LightControl"] !== undefined) {
+            this.gui.__folders["LightControl"].remove();
+        }
+
         let lightFolder = this.gui.addFolder("LightControl");
         for (const light of this.scene.lights) {
-            if (this.scene.graph.lights[light.name] === undefined) continue;
+            if (this.scene.accessGraph().lights[light.name] === undefined) continue;
             if (light.enabled) lightFolder.add(light, 'enabled').name(light.name);
             else lightFolder.add(light, 'enabled').name(light.name).listen();
         }

@@ -28,14 +28,20 @@ function main() {
 
 	// get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml 
 	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor) 
-	
-    var filename=getUrlVars()['file'] || "SGI_TP1_XML_T01_G03_v03.xml";
 
-	// create and load graph, and associate it to scene. 
-	// Check console for loading errors
-	var myGraph = new MySceneGraph(filename, myScene);
-	
-	// start
+
+    const files = {
+        "camping": "SGI_TP1_XML_T01_G03_v03.xml",
+        "test": "new_file.xml",
+       //  "beach": "SGI_TP1_XML_T01_G03_v03.xml",
+    }
+
+    // const urlVars = getUrlVars(); urlVars["file"]
+
+    for (let file in files) new MySceneGraph(files[file], myScene, file);
+
+
+    // start
     app.run();
 }
 
