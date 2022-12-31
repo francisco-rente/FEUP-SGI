@@ -28,12 +28,7 @@ export class MyInterface extends CGFinterface {
         return true;
     }
 
-    updateInterface(resetApp=true) {
-        if(resetApp) {
-            this.gui.destroy();
-            this.gui = new dat.GUI();
-        }
-
+    updateInterface() {
         this.commandGUI();
         this.selectSceneGUI();
         this.lightGUI();
@@ -43,29 +38,36 @@ export class MyInterface extends CGFinterface {
 
 
     selectSceneGUI() {
-        let selectSceneFolder = this.gui.addFolder("SelectSceneControl");
+        if(this.selectSceneFolder) return;
+
+        this.selectSceneFolder = this.gui.addFolder("SelectSceneControl");
 
         const graphs = this.scene.graphs;
 
         const scenes = Object.keys(graphs);
-        selectSceneFolder.add(this.scene, 'init_camera', scenes).name("Scene").onChange(function (value) {
+        this.selectSceneFolder.add(this.scene, 'init_camera', scenes).name("Scene").onChange(function (value) {
             this.scene.changeScene(value);
         }.bind(this));
 
-        selectSceneFolder.open();
+        this.selectSceneFolder.open();
     }
 
 
     commandGUI() {
-        let commandFolder = this.gui.addFolder("CommandControl");
-        commandFolder.add(this.scene, 'displayAxis').name("Display Axis");
-        commandFolder.add(this.scene, 'visibleLights').name("Display Lights");
-        commandFolder.add(this.scene, 'activeNormals').name("Display Normals");
-        commandFolder.close();
+        if(this.commandFolder) return;
+
+        this.commandFolder = this.gui.addFolder("CommandControl");
+        this.commandFolder.add(this.scene, 'displayAxis').name("Display Axis");
+        this.commandFolder.add(this.scene, 'visibleLights').name("Display Lights");
+        this.commandFolder.add(this.scene, 'activeNormals').name("Display Normals");
+        this.commandFolder.close();
     }
 
     viewGUI() {
-        this.viewFolder = this.gui.addFolder("ViewControl");
+
+        if(this.viewFolder) this.emptyFolder(this.viewFolder);
+        else this.viewFolder = this.gui.addFolder("ViewControl");
+
         this.scene.camera = this.scene.accessGraph().views[this.scene.accessGraph().defaultView];
         this.setActiveCamera(this.scene.camera);
 
@@ -81,13 +83,42 @@ export class MyInterface extends CGFinterface {
     }
 
     lightGUI() {
-        this.lightFolder = this.gui.addFolder("LightControl");
+
+        if(this.lightFolder) this.emptyFolder(this.lightFolder);
+        else this.lightFolder = this.gui.addFolder("LightControl");
+
         for (const light of this.scene.lights) {
             if (this.scene.accessGraph().lights[light.name] === undefined) continue;
             if (light.enabled) this.lightFolder.add(light, 'enabled').name(light.name);
             else this.lightFolder.add(light, 'enabled').name(light.name).listen();
         }
         this.lightFolder.open();
+    }
+
+    highlightGUI() {
+        if(this.highlightFolder) this.emptyFolder(this.highlightFolder);
+        else this.highlightFolder = this.gui.addFolder("HighlightControl");
+
+        let highlightableObjects = this.scene.components;
+        highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.hasHighlight);
+
+        for (const component of highlightableObjects) {
+            const componentHighLightFolder = this.highlightFolder.addFolder(component.id);
+            if (component.hightlight) componentHighLightFolder.add(component, 'highlight').name(component.id);
+            else componentHighLightFolder.add(component, 'highlight').name(component.id).listen();
+
+            componentHighLightFolder.addColor(component, 'highlightColor').name("Color").onChange(function (value) {
+                component.highlightColor = value;
+            }.bind(component));
+
+            component.highlightColor = component.highlightColor.map((value) => value * 255);
+
+            componentHighLightFolder.add(component, 'highlightScale', 0.1, 4).name("Scale Factor").onChange(function (value) {
+                component.highlightScale = value;
+            }.bind(component));
+
+        }
+        this.highlightFolder.close();
     }
 
     /**
@@ -119,33 +150,12 @@ export class MyInterface extends CGFinterface {
         return this.activeKeys[keyCode] || false;
     }
 
-    highlightGUI() {
-        let highlightFolder = this.gui.addFolder("HighlightControl");
 
-        // highlightFolder.add(this.scene, 'highLightAmplitude', 0.1, 1).name("Amplitude");
-        // highlightFolder.add(this.scene, 'highLightFrequency', 0.1, 3).name("Frequency");
-        // highlightFolder.add(this.scene, 'highLightPhase', 0, 2 * Math.PI).name("Phase");
 
-        let highlightableObjects = this.scene.components;
-        highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.hasHighlight);
 
-        for (const component of highlightableObjects) {
-            const componentHighLightFolder = highlightFolder.addFolder(component.id);
-            if (component.hightlight) componentHighLightFolder.add(component, 'highlight').name(component.id);
-            else componentHighLightFolder.add(component, 'highlight').name(component.id).listen();
-
-            componentHighLightFolder.addColor(component, 'highlightColor').name("Color").onChange(function (value) {
-                // TODO: is the opacity necessary or even allowed in shader
-                component.highlightColor = value;
-            }.bind(component));
-
-            component.highlightColor = component.highlightColor.map((value) => value * 255);
-
-            componentHighLightFolder.add(component, 'highlightScale', 0.1, 4).name("Scale Factor").onChange(function (value) {
-                component.highlightScale = value;
-            }.bind(component));
-
-        }
-        highlightFolder.close();
+    emptyFolder(folder) {
+        while (folder.__controllers.length > 0) folder.remove(folder.__controllers[0]);
     }
+
+
 }
