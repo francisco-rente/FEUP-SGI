@@ -25,16 +25,20 @@ export class MyInterface extends CGFinterface {
         this.gui = new dat.GUI();
 
         this.initKeys();
-
         return true;
     }
 
-    updateInterface() {
+    updateInterface(resetApp=true) {
+        if(resetApp) {
+            this.gui.destroy();
+            this.gui = new dat.GUI();
+        }
+
         this.commandGUI();
+        this.selectSceneGUI();
         this.lightGUI();
         this.viewGUI();
         this.highlightGUI();
-        this.selectSceneGUI();
     }
 
 
@@ -44,8 +48,8 @@ export class MyInterface extends CGFinterface {
         const graphs = this.scene.graphs;
 
         const scenes = Object.keys(graphs);
-        selectSceneFolder.add(this.scene, 'init_camera', scenes).name("Views").onChange(function (value) {
-           this.scene.changeScene(value);
+        selectSceneFolder.add(this.scene, 'init_camera', scenes).name("Scene").onChange(function (value) {
+            this.scene.changeScene(value);
         }.bind(this));
 
         selectSceneFolder.open();
@@ -53,51 +57,37 @@ export class MyInterface extends CGFinterface {
 
 
     commandGUI() {
-        // check if folder already exists
-        if (this.gui.__folders["CommandControl"] !== undefined) return;
-
         let commandFolder = this.gui.addFolder("CommandControl");
         commandFolder.add(this.scene, 'displayAxis').name("Display Axis");
         commandFolder.add(this.scene, 'visibleLights').name("Display Lights");
         commandFolder.add(this.scene, 'activeNormals').name("Display Normals");
-        commandFolder.open();
+        commandFolder.close();
     }
 
     viewGUI() {
-
-        if (this.gui.__folders["ViewControl"] !== undefined) {
-            this.gui.__folders["ViewControl"].remove();
-        }
-
-        let viewFolder = this.gui.addFolder("ViewControl");
-
+        this.viewFolder = this.gui.addFolder("ViewControl");
         this.scene.camera = this.scene.accessGraph().views[this.scene.accessGraph().defaultView];
         this.setActiveCamera(this.scene.camera);
 
         let views = this.scene.views;
         let viewNames = [];
         for (let key in views) viewNames.push(key);
-        viewFolder.add(this.scene, 'init_camera', viewNames).name("Views").onChange(function (value) {
+        this.viewFolder.add(this.scene, 'init_camera', viewNames).name("Views").onChange(function (value) {
             this.scene.camera = this.scene.views[value];
             this.setActiveCamera(this.scene.camera);
         }.bind(this));
 
-        viewFolder.open();
+        this.viewFolder.close();
     }
 
     lightGUI() {
-
-        if (this.gui.__folders["LightControl"] !== undefined) {
-            this.gui.__folders["LightControl"].remove();
-        }
-
-        let lightFolder = this.gui.addFolder("LightControl");
+        this.lightFolder = this.gui.addFolder("LightControl");
         for (const light of this.scene.lights) {
             if (this.scene.accessGraph().lights[light.name] === undefined) continue;
-            if (light.enabled) lightFolder.add(light, 'enabled').name(light.name);
-            else lightFolder.add(light, 'enabled').name(light.name).listen();
+            if (light.enabled) this.lightFolder.add(light, 'enabled').name(light.name);
+            else this.lightFolder.add(light, 'enabled').name(light.name).listen();
         }
-        lightFolder.open();
+        this.lightFolder.open();
     }
 
     /**
@@ -156,5 +146,6 @@ export class MyInterface extends CGFinterface {
             }.bind(component));
 
         }
+        highlightFolder.close();
     }
 }

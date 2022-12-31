@@ -72,7 +72,6 @@ export class XMLscene extends CGFscene {
     changeScene(scene) {
         this.current_graph = this.graphs[scene];
         this.onGraphLoaded();
-        this.interface.onGraphLoaded();
         this.sceneInited = true;
     }
 
@@ -361,7 +360,7 @@ export class XMLscene extends CGFscene {
             // Draw axis
             this.setDefaultAppearance();
             // Displays the scene (MySceneGraph function).
-            // this.accessGraph().board.display();
+            this.accessGraph().board.display();
             this.accessGraph().displayScene();
         }
 
