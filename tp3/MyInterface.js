@@ -34,17 +34,18 @@ export class MyInterface extends CGFinterface {
         this.lightGUI();
         this.viewGUI();
         this.highlightGUI();
-        // this.selectSceneGUI();
+        this.selectSceneGUI();
     }
 
 
     selectSceneGUI() {
         let selectSceneFolder = this.gui.addFolder("SelectSceneControl");
 
-        const graphs = this.scene.graph;
-        const scenes = graphs.map((graph) => graph.id);
+        const graphs = this.scene.graphs;
+
+        const scenes = Object.keys(graphs);
         selectSceneFolder.add(this.scene, 'init_camera', scenes).name("Views").onChange(function (value) {
-            this.scene.changeScene(value);
+           this.scene.changeScene(value);
         }.bind(this));
 
         selectSceneFolder.open();

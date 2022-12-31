@@ -77,7 +77,7 @@ export class XMLscene extends CGFscene {
     }
 
     accessGraph() {
-        return this.current_graph;
+        return !this.current_graph ? this.graphs["camping"]:this.current_graph;
     }
 
     /**
@@ -262,6 +262,9 @@ export class XMLscene extends CGFscene {
         this.interface.updateInterface()
         this.sceneInited = true;
         this.startTime = null;
+
+        if(!this.current_graph) this.current_graph = this.accessGraph();
+
     }
 
 
