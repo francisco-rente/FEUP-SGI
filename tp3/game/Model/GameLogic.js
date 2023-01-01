@@ -30,8 +30,6 @@ export class GameLogic {
         [[], [], [], [], [], [], [], []],
         [[], [], [], [], [], [], [], []],
         ]
-        console.log("ran constructor, movesBoard is: ", this.movesBoard);
-
     }
 
 
@@ -212,7 +210,7 @@ export class GameLogic {
         if(this.movesBoard.length === 0) {
             this.movesBoard = this.getMovesBoard();
         }
-
+        console.log("getPossibleMovesFromSelection is about to return" + this.movesBoard[selectedX][selectedY])
         return this.movesBoard[selectedX][selectedY];
 
 
@@ -243,15 +241,20 @@ export class GameLogic {
     }
 
     getMovesBoard() {
+        console.loh("getMovesBoard is called")
         let canCapture = false;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
                 this.movesBoard[i][j] = [];
                 if(!canCapture){
+                    console.log("result of checkdiagonals is " + this.checkDiagonals(i, j, this.gameBoard));
+
                     this.movesBoard[i][j].push(this.checkDiagonals(i, j, this.gameBoard));
                 }
 
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
+
+                console.log("captureMoves is " + captureMoves);
                 if(captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
                     this.movesBoard[i][j] = [];
