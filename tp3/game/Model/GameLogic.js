@@ -22,6 +22,7 @@ export class GameLogic {
         this.capturedPieces = [];
         this.previousBoard = [];
         this.movesBoard = [];
+        console.log("ran constructor, movesBoard is: ", this.movesBoard);
 
     }
 
@@ -198,7 +199,8 @@ export class GameLogic {
     }
 
     getPossibleMovesFromSelection(selectedX, selectedY) {
-
+        console.log("movesBoard is ")
+        console.log(this.movesBoard)
         if(this.movesBoard.length === 0) {
             this.movesBoard = this.getMovesBoard();
         }
@@ -343,18 +345,30 @@ export class GameLogic {
 
 
     movePieceFromInput(x, y) {
+        if (this.selected[0] === -1 && this.selected[1] === -1){
+            console.log("inside return")
+            return
+        }
         const [selectedX, selectedY] = this.selected;
-        this.possible_moves = [];
-        this.movesBoard = [];
+        this.possible_moves = this.movesBoard[selectedX][selectedY];
+        
         let auxBoard = this.cloneGameBoard();
 
-        const move_result = this.movePiece(selectedX, selectedY, x, y);
+
+        for(let move of this.possible_moves){
+            console.log(move);
+        }
+        //const move_result = this.movePiece(selectedX, selectedY, x, y);
+        
+        
         if (move_result === State.ERROR) {
             this.errorOccurred();
             return State.ERROR;
         }
         this.previousBoard = auxBoard;
         this.changeTurn();
+        
+        //falta aqui quando é jogada complicada
         this.gameMoves.push({
             "old_pos": [selectedX, selectedY],
             "new_pos": [x, y],
@@ -362,16 +376,14 @@ export class GameLogic {
             "score_increased": move_result["ate"], // TODO: for now, only one piece can be eaten
             "board": this.cloneGameBoard()
         });
-
+        this.possible_moves = [];
+        this.movesBoard = [];
     }
 
 
 
-// TODO: ver quando queremos comer várias peças
-// TODO: add scoreboard updates in case of capture
-// TODO: something has to pass to boardView to force the player to eat
     movePiece(selectedX, selectedY, x, y) {
-        console.log("Turn: " + this.playerTurn);
+        /*JULGO QUE ISTO N DEVERIA SER AQUI
 
         if (!this.checkMovePieceConditions(selectedX, selectedY, x, y)) {
             console.log("invalid move");
@@ -385,8 +397,9 @@ export class GameLogic {
             this.errorOccurred();
             return State.ERROR;
         }
-
-
+*/
+        const dx = (selectedX - x);
+        const dy = (selectedY - y);
         let ate = 0;
         let isEatingKing = false;
         if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
@@ -454,11 +467,14 @@ export class GameLogic {
     eatPiece(selectedX, selectedY, dx, dy, gameBoard) {
         const [middle_x, middle_y, x_dir, y_dir] = this.getMiddlePiece(selectedX, selectedY, dx, dy);
 
+
+        //Julgo n ser preciso
+        /*
         if (!this.checkBounds(middle_x, middle_y) &&
             !this.checkBounds(middle_x + x_dir, middle_y + y_dir)) {
             this.errorOccurred();
             return State.ERROR;
-        }
+        }*/
 
         if (gameBoard[middle_x][middle_y] !== 0 && gameBoard[middle_x + x_dir][middle_y + y_dir] === 0) {
             // Will eat piece
