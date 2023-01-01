@@ -207,8 +207,6 @@ export class GameLogic {
     }
 
     getPossibleMovesFromSelection(selectedX, selectedY) {
-        console.log("movesBoard is ")
-        console.log(this.movesBoard)
 
         const d = this.movesBoard[selectedX][selectedY]
 
@@ -223,7 +221,6 @@ export class GameLogic {
         if (!hasMoves) {
             this.getMovesBoard();
         }
-        console.log("getPossibleMovesFromSelection is about to return" + this.movesBoard[selectedX][selectedY])
         return this.movesBoard[selectedX][selectedY];
 
 
@@ -254,7 +251,6 @@ export class GameLogic {
     }
 
     getMovesBoard() {
-        console.log("getMovesBoard is called")
         let canCapture = false;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
@@ -265,7 +261,6 @@ export class GameLogic {
                 }
 
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
-                console.log("captureMoves is " + captureMoves);
                 if (captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
                     this.movesBoard[i][j] = [];
@@ -369,20 +364,32 @@ export class GameLogic {
 
     movePieceFromInput(x, y) {
         if (this.selected[0] === -1 && this.selected[1] === -1) {
-            console.log("inside return")
             return
         }
         const [selectedX, selectedY] = this.selected;
         this.possible_moves = this.movesBoard[selectedX][selectedY];
 
         let auxBoard = this.cloneGameBoard();
-
-
-        for (let move of this.possible_moves) {
-            console.log(move);
-        }
+        let valid_move = [];
         //const move_result = this.movePiece(selectedX, selectedY, x, y);
 
+        console.log("possible moves: ", this.possible_moves)
+        for(let move of this.possible_moves){
+            if(move[1][0] === x && move[1][1] === y){
+                valid_move = move;
+            }
+        }
+        console.log("valid move: ", valid_move)
+        for(let i = 0; i <= valid_move.length; i = i + 2){
+
+            /*
+            if(this.possible_moves[i][1][0] === x && this.possible_moves[i][1][1] === y){
+                const move_result = this.movePiece(selectedX, selectedY, x, y, this.possible_moves[i]);
+            }
+            */
+           console.log(valid_move[i][0], valid_move[i][1], valid_move[i+1][0], valid_move[i+1][1])
+            let move_result = this.movePiece(valid_move[i][0], valid_move[i][1], valid_move[i+1][0], valid_move[i+1][1]);
+        }
 
         if (move_result === State.ERROR) {
             this.errorOccurred();
