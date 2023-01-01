@@ -66,16 +66,9 @@ export class MyBoardView {
         if (this.cameraAnimationProgress < 1) {
             this.cameraAnimationProgress += 0.1;
             let pos = vec3.fromValues(0, 0, 0);
-            console.log("about to set pos, params are:")
-            console.log("pos:" + pos);
-            console.log("vec3.fromValues(this.oldCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]));
-            console.log("vec3.fromValues(this.newCameraPosition) " + vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]))
-            console.log("this.cameraAnimationProgress is " + this.cameraAnimationProgress)
 
             vec3.lerp(pos, vec3.fromValues(this.oldCameraPosition[0], this.oldCameraPosition[1], this.oldCameraPosition[2]), vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]), this.cameraAnimationProgress);
-            console.log("pos is " + pos)
-            //new CGFcamera(0.8, 0.1, 500, vec3.fromValues(20, 30, 15), vec3.fromValues(18, 0, 15)),
-            this.scene.camera = new CGFcamera(0.8, 0.1, 500, pos, vec3.fromValues(18, 0, 15));
+            this.scene.camera = new CGFcamera(0.8, 0.1, 500, pos, vec3.fromValues(3+boardOffset, 0, 0+boardOffset));
         }
     }
 
@@ -283,8 +276,7 @@ export class MyBoardView {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
                 let color = currentBoard[i][j];
-
-                const appearance = this.getPieceAppearance(color, [i, j]);
+                const appearance = this.getPieceAppearance(color, [i, j], gameLogic.isPieceSelected([i, j]));
                 if (appearance === null) continue;
                 const newPiece = new MyPieceView(this.scene, this.size);
                 this.scene.registerForPick((i + 1) * 10 + (j + 1), newPiece);
@@ -467,10 +459,12 @@ export class MyBoardView {
     }
 
 
-    getPieceAppearance(color, square) {
+    getPieceAppearance(color, square, isSelected = false) {
         let appearance;
         let texture;
-
+        if(isSelected){
+            color = 5;
+        }
         switch (color) {
             case 1:
                 texture = this.textures["blackPiece"]["texture"];
@@ -493,6 +487,12 @@ export class MyBoardView {
             case 4:
                 texture = this.textures["whiteKing"]["texture"];
                 appearance = this.materials["whiteKing"];
+                appearance.setTexture(texture);
+                break;
+
+            case 5: //selected
+                texture = this.textures["highlighted"]["texture"];
+                appearance = this.materials["highlighted"];
                 appearance.setTexture(texture);
                 break;
 
