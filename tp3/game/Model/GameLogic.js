@@ -186,16 +186,10 @@ export class GameLogic {
 
 
     selectPiece(x, y) {
-
-        if (!(this.checkPiece(x, y))) {
-            this.errorOccurred();
-            return State.ERROR;
-        }
+        if (!(this.checkPiece(x, y))) this.errorOccurred();
         this.currentState = State.SELECT_SQUARE;
         this.selected = [x, y];
-
-        this.possible_moves = this.getPossibleMovesFromSelection(x, y);
-        return {"next_state": this.currentState, "possible_moves": this.possible_moves.slice()};
+        this.getPossibleMovesFromSelection(x, y);
     }
 
     // const possible_squares = this.movesBoard[selected_x][selected_y].map(move => move[move.length - 1]);
