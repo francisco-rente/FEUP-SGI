@@ -76,7 +76,7 @@ export class GameLogic {
         this.gameMoves = aux;
     }
 
-    
+
     getElapsedTime() {
         let time = new Date();
 
@@ -374,21 +374,23 @@ export class GameLogic {
         //const move_result = this.movePiece(selectedX, selectedY, x, y);
 
         console.log("possible moves: ", this.possible_moves)
-        for(let move of this.possible_moves){
-            if(move[1][0] === x && move[1][1] === y){
+        for (let move of this.possible_moves) {
+            if (move[1][0] === x && move[1][1] === y) {
                 valid_move = move;
             }
         }
         console.log("valid move: ", valid_move)
-        for(let i = 0; i <= valid_move.length; i = i + 2){
+        let move_result = State.ERROR;
+        for (let i = 0; i <= valid_move.length - 1; i = i + 2) {
 
             /*
             if(this.possible_moves[i][1][0] === x && this.possible_moves[i][1][1] === y){
                 const move_result = this.movePiece(selectedX, selectedY, x, y, this.possible_moves[i]);
             }
             */
-           console.log(valid_move[i][0], valid_move[i][1], valid_move[i+1][0], valid_move[i+1][1])
-            let move_result = this.movePiece(valid_move[i][0], valid_move[i][1], valid_move[i+1][0], valid_move[i+1][1]);
+            // console.log(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
+
+            move_result = this.movePiece(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
         }
 
         if (move_result === State.ERROR) {
