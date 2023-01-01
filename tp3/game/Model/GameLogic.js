@@ -21,7 +21,15 @@ export class GameLogic {
         this.startTime = new Date();
         this.capturedPieces = [];
         this.previousBoard = [];
-        this.movesBoard = [];
+        this.movesBoard = [
+        [[], [], [], [], [], [], [], []],
+        [[], [], [], [], [], [], [], []],
+        [[], [], [], [], [], [], [], []],
+        [[], [], [], [], [], [], [], []],
+        [[], [], [], [], [], [], [], []],
+        [[], [], [], [], [], [], [], []],
+        [[], [], [], [], [], [], [], []],
+        ]
         console.log("ran constructor, movesBoard is: ", this.movesBoard);
 
     }
@@ -237,18 +245,20 @@ export class GameLogic {
     getMovesBoard() {
         let canCapture = false;
         for (let i = 0; i < 8; i++) {
-            this.movesBoard.push([]);
             for (let j = 0; j < 8; j++) {
+                this.movesBoard[i][j] = [];
                 if(!canCapture){
-                    this.movesBoard.push(this.checkDiagonals(i, j, this.gameBoard));
+                    this.movesBoard[i][j].push(this.checkDiagonals(i, j, this.gameBoard));
                 }
 
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
-                if(captureMoves.length !== 0) {
+                if(captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
+                    this.movesBoard[i][j] = [];
                     
                 }
-                this.movesBoard.push(captureMoves);
+
+                this.movesBoard[i][j].push(captureMoves);
 
             }
         }
