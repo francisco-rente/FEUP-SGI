@@ -70,9 +70,13 @@
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
         
 
+        <texture id="emoji1" file="scenes/images/emoji1.png"/>
+        <texture id="emoji2" file="scenes/images/emoji2.png"/>
+        <texture id="emoji3" file="scenes/images/emoji3.png"/>
+        <texture id="emoji4" file="scenes/images/emoji4.png"/>
         <texture id="pink_tiles" file="scenes/images/pink_tiles.png"/>
         <texture id="blue_tiles" file="scenes/images/blue_tiles.png"/>
-        <texture id="green" file="scenes/images/green.jpg"/>
+        <!--<texture id="green" file="scenes/images/green.jpg"/>-->
         <texture id="disco_floor" file="scenes/images/disco_floor.jpg"/>
         <texture id="undo" file="scenes/images/disco_undo.png"/>
         <texture id="camera" file="scenes/images/swap_camera.png"/>
@@ -398,7 +402,7 @@
 
         <component id="floor">
             <transformation>
-                <scale x="30" y="30" z="30"/>
+                <scale x="15" y="15" z="15"/>
                 <rotate axis="x" angle="-90"/>
             </transformation>
             <materials>
@@ -412,11 +416,11 @@
 
         <component id="table">
             <transformation>
-                <translation x="0" y="0" z="0"/>
+                <translation x="0" y="-4" z="-2"/>
                 <rotation axis="x" angle="0"/>
                 <rotation axis="y" angle="0"/>
                 <rotation axis="z" angle="0"/>
-                <scale x="4" y="4" z="8"/>
+                <scale x="4" y="4" z="5"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -541,7 +545,7 @@
     </components>
 
     <board>
-        <size x="50" y="50" z="2"/>
+        <size x="15" y="15" z="2"/>
         <position x="0" y="-2" z="0"/>
         <materials>
             <material id="demoMaterial"/> <!-- black squares -->
@@ -562,10 +566,10 @@
         <textures>
             <texture id = "pink_tiles" length_s = "1.0" length_t = "1.0"/><!-- black squares -->
             <texture id = "blue_tiles" length_s = "1.0" length_t = "1.0"/><!-- white squares-->
-            <texture id="yellow" length_s="1.0" length_t = "1.0"/><!-- black pieces-->
-            <texture id="green" length_s="1.0" length_t = "1.0"/><!-- white pieces-->
-            <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black kings-->
-            <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white kings-->
+            <texture id="emoji1" length_s="1.0" length_t = "1.0"/><!-- black pieces-->
+            <texture id="emoji2" length_s="1.0" length_t = "1.0"/><!-- white pieces-->
+            <texture id="emoji3" length_s="1.0" length_t = "1.0"/><!-- black kings-->
+            <texture id="emoji4" length_s="1.0" length_t = "1.0"/><!-- white kings-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- board-->
             <texture id="highlight" length_s="1.0" length_t = "1.0"/><!-- highlighted square-->
             <texture id="font" length_s="1.0" length_t = "1.0"/><!-- timer-->
