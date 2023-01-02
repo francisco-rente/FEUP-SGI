@@ -71,14 +71,15 @@
         <texture id="painting" file="scenes/images/starry_night.jpg"/>
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
-        <texture id="undo" file="scenes/images/undo.png"/>
-        <texture id="camera" file="scenes/images/camera.png"/>
-        <texture id="gameMovie" file="scenes/images/gameMovie.png"/>
+        
 
         <texture id="pink_tiles" file="scenes/images/pink_tiles.png"/>
         <texture id="blue_tiles" file="scenes/images/blue_tiles.png"/>
         <texture id="green" file="scenes/images/green.jpg"/>
         <texture id="disco_floor" file="scenes/images/disco_floor.jpg"/>
+        <texture id="undo" file="scenes/images/disco_undo.png"/>
+        <texture id="camera" file="scenes/images/swap_camera.png"/>
+        <texture id="gameMovie" file="scenes/images/disco_game_movie.png"/>
     </textures>
 
     <materials>
@@ -307,6 +308,7 @@
             <children>
                 <componentref id="skyBox"/>
                 <componentref id="floor"/>
+                <componentref id="table"/>
             </children>
         </component>
 
@@ -417,6 +419,129 @@
                 <material id="demoMaterial"/>
             </materials>
             <texture id="disco_floor" length_s="1" length_t="1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="table">
+            <transformation>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="fire" length_t="1" length_s="1"/>
+            <children>
+                <componentref id="tableSide1"/>
+                <componentref id="tableSide2"/>
+                <componentref id="tableSide3"/>
+                <componentref id="tableSide4"/>
+                <componentref id="tableTop1"/>
+                <componentref id="tableTop2"/>
+            </children>
+        </component>
+
+
+        <component id="tableSide1">
+            <transformation>
+                <translation x="0" y="2" z="0"/>
+                <rotation axis="x" angle="0"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z" angle="-90"/>
+                <scale x="1" y="0.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="tableSide2">
+            <transformation>
+                <translation x="0" y="2" z="0"/>
+                <rotation axis="x" angle="180"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z" angle="0"/>
+                <scale x="1" y="0.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+
+        <component id="tableSide3">
+            <transformation>
+                <translation x="0" y="2" z="8"/>
+                <rotation axis="x" angle="0"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z" angle="-90"/>
+                <scale x="1" y="0.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="tableSide4">
+            <transformation>
+                <translation x="0" y="2" z="8"/>
+                <rotation axis="x" angle="180"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z" angle="0"/>
+                <scale x="1" y="0.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+
+        <component id="tableTop1">
+            <transformation>
+                <translation x="0" y="4" z="4"/>
+                <rotation axis="x" angle="90"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z" angle="-90"/>
+                <scale x="2" y="0.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
+            <children>
+                <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+
+        <component id="tableTop2">
+            <transformation>
+                <translation x="0" y="4" z="4"/>
+                <rotation axis="x" angle="90"/>
+                <rotation axis="y" angle="180"/>
+                <rotation axis="z" angle="-90"/>
+                <scale x="2" y="0.5" z="1"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="inherit" length_t="1" length_s="1"/>
             <children>
                 <primitiveref id="demoRectangle"/>
             </children>
