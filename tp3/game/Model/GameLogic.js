@@ -353,14 +353,7 @@ export class GameLogic {
         console.log("valid move: ", valid_move)
         console.log("Current turn: ", this.playerTurn)
         let move_result = State.ERROR;
-        for (let i = 0; i <= valid_move.length - 1; i = i + 2) {
-
-            /*
-            if(this.possible_moves[i][1][0] === x && this.possible_moves[i][1][1] === y){
-                const move_result = this.movePiece(selectedX, selectedY, x, y, this.possible_moves[i]);
-            }
-            */
-            // console.log(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
+        for (let i = 0; i <= valid_move.length - 2; ++i) {
 
             move_result = this.movePiece(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
 
