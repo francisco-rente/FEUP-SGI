@@ -81,6 +81,8 @@
         <texture id="undo" file="scenes/images/disco_undo.png"/>
         <texture id="camera" file="scenes/images/swap_camera.png"/>
         <texture id="gameMovie" file="scenes/images/disco_game_movie.png"/>
+
+        <texture id="vidral" file="scenes/images/vidral.jpg"/>
     </textures>
 
     <materials>
@@ -128,37 +130,6 @@
     </materials>
 
     <transformations>
-
-
-        <transformation id="raiseFoliage">
-            <translate x="0" y="0" z="4.5"/>
-        </transformation>
-
-
-        <transformation id="tentback">
-            <!--<translate x="-2" y="0" z="0"/>
-            <rotate axis="y" angle="-90"/>
-            <scale x="5.65" y="2.9" z="1"/>-->
-
-            <translate x="-2" y="0" z="0"/>
-            <scale x="4" y="4" z="4"/>
-        </transformation>
-
-        <transformation id="tentSide1">
-            <rotate axis="x" angle="45"/>
-            <translate x="0" y="2" z="0"/>
-        </transformation>
-
-        <transformation id="tentSide2">
-            <rotate axis="x" angle="-45"/>
-            <translate x="0" y="-2" z="4"/>
-        </transformation>
-
-        <transformation id="tentSwapSide">
-            <rotate axis="y" angle="180"/>
-        </transformation>
-
-
         <transformation id="scaleSkyBox">
             <scale x="15" y="15" z="15"/>
         </transformation>
@@ -416,7 +387,7 @@
 
         <component id="table">
             <transformation>
-                <translation x="0" y="-4" z="-2"/>
+                <translation x="-22" y="0" z="-10"/>
                 <rotation axis="x" angle="0"/>
                 <rotation axis="y" angle="0"/>
                 <rotation axis="z" angle="0"/>
@@ -425,7 +396,7 @@
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="wood" length_t="1" length_s="1"/>
+            <texture id="vidral" length_t="1" length_s="1"/>
             <children>
                 <componentref id="tableSide1"/>
                 <componentref id="tableSide2"/>
