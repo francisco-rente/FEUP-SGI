@@ -263,77 +263,53 @@ export class GameLogic {
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
                 if (captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
-                    // this.movesBoard[i][j] = [];
                     this.movesBoard[i][j] = captureMoves;
                 }
             }
         }
     }
 
-    checkCaptureMoves(selectedX, selectedY, cloneBoard, rec_depth = 0, prev_rec = []) {
+
+    checkCaptureCondition(selectedX, selectedY, i, j, board, playerTurn = this.playerTurn) {
+        return this.checkBounds(selectedX + i, selectedY + j)
+            && this.checkBounds(selectedX + 2 * i, selectedY + 2 * j)
+            && board[selectedX + i][selectedY + j] !== 0
+            && (board[selectedX + i][selectedY + j] !== playerTurn)
+            && (board[selectedX][selectedY] === playerTurn)
+            && board[selectedX + 2 * i][selectedY + 2 * j] === 0;
+    }
+
+
+    checkCaptureMoves(selectedX, selectedY, cloneBoard, rec_depth = 0, prev_rec = [[selectedX, selectedY]]) {
         if (rec_depth > 2) return [];
+
+        const direction = this.playerTurn === 1 ? 1 : -1;
+
+        let possibleOffsets;
+        if (this.isPieceKing(selectedX, selectedY)) possibleOffsets = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+        else possibleOffsets = [[direction, -1], [direction, 1]];
+
 
         let captureMoves = [];
 
-        let direction = this.playerTurn === 1 ? 1 : -1;
-        for (let i = -1; i <= 1; i += 2) {
+        for (let offset of possibleOffsets) {
+            const [i, j] = offset;
+            if (!this.checkCaptureCondition(selectedX, selectedY, i, j, cloneBoard)) continue;
 
-            if (this.checkBounds(selectedX + direction, selectedY + i)
-                && this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i)
-                && cloneBoard[selectedX + direction][selectedY + i] !== 0
-                && (cloneBoard[selectedX + direction][selectedY + i] !== this.playerTurn)
-                && (cloneBoard[selectedX][selectedY] === this.playerTurn)
-                && cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] === 0) {
+            const new_moves = prev_rec.concat([[selectedX + 2 * i, selectedY + 2 * j]]);
+            captureMoves.push(new_moves);
 
-                const new_moves = prev_rec.concat([[selectedX + 2 * direction, selectedY + 2 * i]]);
-                captureMoves.push(new_moves);
+            cloneBoard[selectedX + 2 * i][selectedY + 2 * j] = this.playerTurn +
+                (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) * 2;
 
-                if (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) {
-                    cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn + 2;
-                } else {
-                    cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn;
-                }
-                cloneBoard[selectedX + direction][selectedY + i] = 0;
-                cloneBoard[selectedX][selectedY] = 0;
+            cloneBoard[selectedX + i][selectedY + j] = 0;
+            cloneBoard[selectedX][selectedY] = 0;
 
-
-                let rest = this.checkCaptureMoves(selectedX + 2 * direction,
-                    selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1, new_moves);
-
-                if(rest.length !== 0) captureMoves = captureMoves.concat(rest);
-            }
+            let recursiveCaptures = this.checkCaptureMoves(selectedX + 2 * direction,
+                selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1, new_moves);
+            if (recursiveCaptures.length !== 0) captureMoves = captureMoves.concat(recursiveCaptures);
         }
-        if (this.isPieceKing(selectedX, selectedY)) {
-            //TODO: não repetir isto
-            direction === 1 ? direction = -1 : direction = 1;
-            for (let i = -1; i <= 1; i += 2) {
 
-                if (this.checkBounds(selectedX + direction, selectedY + i)
-                    && this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i)
-                    && cloneBoard[selectedX + direction][selectedY + i] !== 0
-                    && cloneBoard[selectedX + direction][selectedY + i] !== this.playerTurn
-                    && cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] === 0) {
-
-
-                    //aqui por algo caso a rec depth seja maior que zero
-                    if (rec_depth > 0) {
-                        captureMoves.push([selectedX, selectedY, selectedX + 2 * direction, selectedY + 2 * i]);
-                    } else {
-                        captureMoves.push([selectedX + 2 * direction, selectedY + 2 * i]);
-                    }
-
-
-                    if (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) {
-                        cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn + 2;
-                    } else {
-                        cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn;
-                    }
-                    cloneBoard[selectedX + direction][selectedY + i] = 0;
-                    cloneBoard[selectedX][selectedY] = 0;
-                    captureMoves.push(this.checkCaptureMoves(selectedX + 2 * direction, selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1));
-                }
-            }
-        }
         return captureMoves;
     }
 
@@ -412,21 +388,7 @@ export class GameLogic {
 
 
     movePiece(selectedX, selectedY, x, y) {
-        /*JULGO QUE ISTO N DEVERIA SER AQUI
 
-        if (!this.checkMovePieceConditions(selectedX, selectedY, x, y)) {
-            console.log("invalid move");
-            this.errorOccurred();
-            return State.ERROR;
-        }
-
-        const dx = (selectedX - x);
-        const dy = (selectedY - y);
-        if (dx * dy === 0) {
-            this.errorOccurred();
-            return State.ERROR;
-        }
-*/
         const dx = (selectedX - x);
         const dy = (selectedY - y);
         let ate = 0;
@@ -443,13 +405,7 @@ export class GameLogic {
             }
         }
 
-        if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
-            this.moveSelectedPiece(selectedX, selectedY, x, y, this.gameBoard);
-        else {
-            this.errorOccurred();
-            return State.ERROR;
-        }
-
+        this.moveSelectedPiece(selectedX, selectedY, x, y, this.gameBoard);
 
         if (ate !== 0) {
             // Just eats 1 for now
@@ -489,17 +445,7 @@ export class GameLogic {
     eatPiece(selectedX, selectedY, dx, dy, gameBoard) {
         const [middle_x, middle_y, x_dir, y_dir] = this.getMiddlePiece(selectedX, selectedY, dx, dy);
 
-
-        //Julgo n ser preciso
-        /*
-        if (!this.checkBounds(middle_x, middle_y) &&
-            !this.checkBounds(middle_x + x_dir, middle_y + y_dir)) {
-            this.errorOccurred();
-            return State.ERROR;
-        }*/
-
         if (gameBoard[middle_x][middle_y] !== 0 && gameBoard[middle_x + x_dir][middle_y + y_dir] === 0) {
-            // Will eat piece
             gameBoard[middle_x][middle_y] = 0;
             return 1;
         }
