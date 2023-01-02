@@ -150,104 +150,7 @@
         <primitive id="aSphere">
             <sphere radius="3" slices="12" stacks="12"/>
         </primitive>
-
-
-        <primitive id="treeCone">
-            <cylinder base="0.5" top="0.001" height="5" slices="20" stacks="20"/>
-        </primitive>
-
-        <primitive id="aCylinder">
-            <cylinder base="0.5" top="0.3" height="5" slices="20" stacks="20"/>
-        </primitive>
-
-        <primitive id="aTorus">
-            <torus inner="1" outer="3" slices="20" loops="20"/>
-        </primitive>
-
-        <primitive id="aSecondTriangle">
-            <triangle x1="0" y1="0" z1="0"
-                      x2="0" y2="0.707107" z2="0.707107"
-                      x3="0" y3="0" z3="1.414214"/>
-        </primitive>
-
-        <primitive id="aTriangle">
-            <triangle x1="0" y1="0" z1="0"
-                      x2="1" y2="0" z2="0"
-                      x3="0.5" y3="1" z3="0"/>
-        </primitive>
-
-        <primitive id="fireCone">
-            <cylinder base="0.5" top="0.00" height="0.8" slices="10" stacks="10"/>
-        </primitive>
-
-
-        <primitive id="curvedTent">
-            <patch degree_u="2" degree_v="1" parts_u="10" parts_v="10">
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-                <controlpoint x="6.0" y="0.0" z="0.0"/>
-
-                <controlpoint x="0.0" y="8.0" z="2.0"/>
-                <controlpoint x="6.0" y="8.0" z="2.0"/>
-
-                <controlpoint x="0.0" y="0.0" z="4.0"/>
-                <controlpoint x="6.0" y="0.0" z="4.0"/>
-            </patch>
-        </primitive>
-
-
-        <primitive id="innerCurvedTent">
-            <patch degree_u="2" degree_v="1" parts_u="10" parts_v="10">
-                <controlpoint x="0.0" y="0.0" z="4.0"/>
-                <controlpoint x="6.0" y="0.0" z="4.0"/>
-
-                <controlpoint x="0.0" y="8.0" z="2.0"/>
-                <controlpoint x="6.0" y="8.0" z="2.0"/>
-
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-                <controlpoint x="6.0" y="0.0" z="0.0"/>
-
-
-            </patch>
-        </primitive>
-
-
-        <primitive id="barrel_side">
-            <patch degree_u="2" degree_v="3" parts_u="20" parts_v="20">
-                <controlpoint x="0.0" y="-1.0" z="2.0"/>
-                <controlpoint x="1.333" y="-1.0" z="2.0"/>
-                <controlpoint x="1.333" y="1.0" z="2.0"/>
-                <controlpoint x="0.0" y="1.0" z="2.0"/>
-
-                <controlpoint x="0.0" y="-2.0" z="1.0"/>
-                <controlpoint x="2" y="-2.0" z="1.0"/>
-                <controlpoint x="2" y="2.0" z="1.0"/>
-                <controlpoint x="0.0" y="2.0" z="1.0"/>
-
-                <controlpoint x="0.0" y="-1.0" z="0.0"/>
-                <controlpoint x="1.333" y="-1.0" z="0.0"/>
-                <controlpoint x="1.333" y="1.0" z="0.0"/>
-                <controlpoint x="0.0" y="1.0" z="0.0"/>
-            </patch>
-        </primitive>
-
-        <primitive id="circle">
-            <patch degree_u="1" degree_v="3" parts_u="20" parts_v="20">
-
-                <controlpoint x="1.0" y="0" z="0.0"/>
-                <controlpoint x="1.0" y="0.6666" z="0.0"/>
-                
-                <controlpoint x="0.0" y="0.6666" z="0.0"/>
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-
-                <controlpoint x="1.0" y="0" z="0.0"/>
-                <controlpoint x="1.0" y="-0.6666" z="0.0"/>
-
-                <controlpoint x="0.0" y="-0.6666" z="0.0"/>
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-            </patch>
-        </primitive>
-
-        
+      
 
     </primitives>
 
@@ -270,6 +173,24 @@
                 <componentref id="skyBox"/>
                 <componentref id="floor"/>
                 <componentref id="table"/>
+            </children>
+        </component>
+
+        <component id="ball">
+            <transformation>
+                <translate x="0" y="0" z="0"/>
+                <rotate axis="x" angle="0"/>
+                <rotate axis="y" angle="0"/>
+                <rotate axis="z" angle="0"/>
+                <scale x="3" y="3" z="3"/>
+
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="vidral" length_s = "1.0" length_t = "1,0"/>
+            <children>
+                <primitiveref id="aSphere"/>
             </children>
         </component>
 
