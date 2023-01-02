@@ -3,7 +3,6 @@ export class MyPlayer {
         this.name = name;
         this.pieces = [];
         this.capturedPieces = [];
-        this.score = 0;
         this.time = new Date();
     }
 }

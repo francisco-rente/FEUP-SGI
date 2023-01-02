@@ -387,6 +387,14 @@ export class GameLogic {
             // console.log(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
 
             move_result = this.movePiece(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
+
+            this.gameMoves.push({
+                "old_pos": valid_move[i],
+                "new_pos": valid_move[i + 1],
+                "player": this.playerTurn,
+                "board": this.cloneGameBoard()
+            });
+
         }
 
         if (move_result === State.ERROR) {
@@ -397,13 +405,7 @@ export class GameLogic {
         this.changeTurn();
 
         //falta aqui quando é jogada complicada
-        this.gameMoves.push({
-            "old_pos": [selectedX, selectedY],
-            "new_pos": [x, y],
-            "player": this.playerTurn,
-            "score_increased": move_result["ate"], // TODO: for now, only one piece can be eaten
-            "board": this.cloneGameBoard()
-        });
+
         this.possible_moves = [];
         this.movesBoard = [...Array(8)].map(e => Array(8).fill([]));
     }
@@ -439,7 +441,6 @@ export class GameLogic {
                 this.errorOccurred();
                 return State.ERROR;
             }
-            this.incrementScore(this.playerTurn, ate);
         }
 
         if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
@@ -474,11 +475,6 @@ export class GameLogic {
 
 
         return {"gameBoard": this.gameBoard, "ate": ate};
-    }
-
-
-    incrementScore(player, score) {
-        if (player === 1) this.player1.score += score; else this.player2.score += score;
     }
 
     getMiddlePiece(selectedX, selectedY, dx, dy) {
