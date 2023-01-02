@@ -33,6 +33,7 @@ function main() {
     const files = {
         "camping": "SGI_TP1_XML_T01_G03_v03.xml",
         "beach": "beach.xml",
+        "disco": "disco.xml",
     }
 
     // const urlVars = getUrlVars(); urlVars["file"]

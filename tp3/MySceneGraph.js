@@ -1054,8 +1054,6 @@ export class MySceneGraph {
         let nodeNames = [];
 
 
-        if (children.length === 0) return "no animations";
-
 
         for (let i = 0; i < children.length; i++) {
             if (children[i].nodeName !== 'keyframeanim') {
