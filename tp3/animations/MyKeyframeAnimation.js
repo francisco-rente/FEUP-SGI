@@ -30,7 +30,6 @@ export class MyKeyframeAnimation extends MyAnimation {
             this.rotateMatrix(keyframes[0].rotation, keyframes[0].rotation, 0);
             this.scaleMatrix(keyframes[0].scale, keyframes[0].scale, 0);
         }
-        console.log(this.keyframes);
     }
 
     update(time) {

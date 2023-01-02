@@ -79,8 +79,7 @@ export class MyBoardView {
             [20, 30, 15]
             ]
 */
-            console.log(this.size)
-        
+
         let cameras = [
             [-this.size[0]/2, 3*this.size[0], 1.5*this.size[0]],
             [4.5*this.size[0], 3*this.size[0], 1.5*this.size[0]],
