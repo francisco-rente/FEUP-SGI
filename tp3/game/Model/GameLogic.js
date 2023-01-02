@@ -273,9 +273,8 @@ export class GameLogic {
     }
 
     checkCaptureMoves(selectedX, selectedY, cloneBoard, rec_depth = 0, initialX = -1, initialY = -1) {
-        if (rec_depth > 2) {
-            return [];
-        }
+        if (rec_depth > 2) return [];
+
         let captureMoves = [];
 
         let direction = this.playerTurn === 1 ? 1 : -1;
@@ -284,7 +283,8 @@ export class GameLogic {
             if (this.checkBounds(selectedX + direction, selectedY + i)
                 && this.checkBounds(selectedX + 2 * direction, selectedY + 2 * i)
                 && cloneBoard[selectedX + direction][selectedY + i] !== 0
-                && cloneBoard[selectedX + direction][selectedY + i] !== this.playerTurn
+                && (cloneBoard[selectedX + direction][selectedY + i] !== this.playerTurn)
+                && (cloneBoard[selectedX][selectedY] === this.playerTurn)
                 && cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] === 0) {
 
 
@@ -375,11 +375,12 @@ export class GameLogic {
 
         console.log("possible moves: ", this.possible_moves)
         for (let move of this.possible_moves) {
-            if (move[1][0] === x && move[1][1] === y) {
+            if (move[move.length - 1][0] === x && move[move.length - 1][1] === y) {
                 valid_move = move;
             }
         }
         console.log("valid move: ", valid_move)
+        console.log("Current turn: ", this.playerTurn)
         let move_result = State.ERROR;
         for (let i = 0; i <= valid_move.length - 1; i = i + 2) {
 
@@ -409,7 +410,7 @@ export class GameLogic {
             "board": this.cloneGameBoard()
         });
         this.possible_moves = [];
-        this.movesBoard = [];
+        this.movesBoard = [...Array(8)].map(e => Array(8).fill([]));
     }
 
 
@@ -525,10 +526,10 @@ export class GameLogic {
         return this.gameBoard[x][y] === player + 2;
     }
 
-    checkMovePieceConditions(selectedX, selectedY, x, y) {
+    checkMovePieceConditions(selectedX, selectedY, x, y, gameBoard = this.gameBoard) {
         if (selectedX === -1 || selectedY === -1) return false;
         if (this.currentState !== State.SELECT_SQUARE) return false;
-        if (!this.checkBounds(x, y) || this.gameBoard[x][y] !== 0) return false;
+        if (!this.checkBounds(x, y) || gameBoard[x][y] !== 0) return false;
         const isKing = this.isPieceKing(selectedX, selectedY);
         return !(!isKing && (x - selectedX) * (this.playerTurn === 1 ? 1 : -1) <= 0);
     }
