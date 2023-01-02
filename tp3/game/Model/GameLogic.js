@@ -264,15 +264,13 @@ export class GameLogic {
                 if (captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
                     this.movesBoard[i][j] = [];
+                    this.movesBoard[i][j].push(captureMoves);
                 }
-
-                this.movesBoard[i][j] = this.movesBoard[i][j].concat(captureMoves);
-
             }
         }
     }
 
-    checkCaptureMoves(selectedX, selectedY, cloneBoard, rec_depth = 0, initialX = -1, initialY = -1) {
+    checkCaptureMoves(selectedX, selectedY, cloneBoard, rec_depth = 0, prev_rec = []) {
         if (rec_depth > 2) return [];
 
         let captureMoves = [];
@@ -288,15 +286,8 @@ export class GameLogic {
                 && cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] === 0) {
 
 
-                //aqui por algo caso a rec depth seja maior que zero
-                if (rec_depth === 2) {
-                    captureMoves.push([initialX, initialY, selectedX, selectedY, selectedX + 2 * direction, selectedY + 2 * i]);
-                } else if (rec_depth === 1) {
-                    captureMoves.push([selectedX, selectedY, selectedX + 2 * direction, selectedY + 2 * i]);
-                } else {
-                    captureMoves.push([selectedX + 2 * direction, selectedY + 2 * i]);
-                }
-
+                let new_moves = prev_rec.concat([selectedX + 2 * direction, selectedY + 2 * i]);
+                captureMoves.push(new_moves);
 
                 if (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) {
                     cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn + 2;
@@ -305,8 +296,8 @@ export class GameLogic {
                 }
                 cloneBoard[selectedX + direction][selectedY + i] = 0;
                 cloneBoard[selectedX][selectedY] = 0;
-                captureMoves = captureMoves.concat(this.checkCaptureMoves(selectedX + 2 * direction, selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1, selectedX, selectedY));
-            }
+                captureMoves = captureMoves.concat(this.checkCaptureMoves(selectedX + 2 * direction,
+                    selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1, new_moves));}
         }
         if (this.isPieceKing(selectedX, selectedY)) {
             //TODO: não repetir isto
