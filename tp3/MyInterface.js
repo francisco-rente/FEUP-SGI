@@ -96,8 +96,9 @@ export class MyInterface extends CGFinterface {
     }
 
     highlightGUI() {
-        if(this.highlightFolder) this.emptyFolder(this.highlightFolder);
-        else this.highlightFolder = this.gui.addFolder("HighlightControl");
+        if (this.highlightFolder) {
+            this.emptyFolder(this.highlightFolder, true);
+        } else this.highlightFolder = this.gui.addFolder("HighlightControl");
 
         let highlightableObjects = this.scene.components;
         highlightableObjects = Array.from(highlightableObjects.values()).filter((component) => component.hasHighlight);
@@ -151,10 +152,14 @@ export class MyInterface extends CGFinterface {
     }
 
 
-
-
-    emptyFolder(folder) {
+    emptyFolder(folder, recursive = false) {
         while (folder.__controllers.length > 0) folder.remove(folder.__controllers[0]);
+
+        if (recursive) {
+            const keys = Object.keys(folder.__folders);
+            for (let key of keys) folder.removeFolder(folder.__folders[key]);
+        }
+
     }
 
 
