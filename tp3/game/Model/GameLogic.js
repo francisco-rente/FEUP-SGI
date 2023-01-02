@@ -187,9 +187,11 @@ export class GameLogic {
 
     selectPiece(x, y) {
         if (!(this.checkPiece(x, y))) this.errorOccurred();
-        this.currentState = State.SELECT_SQUARE;
-        this.selected = [x, y];
-        this.getPossibleMovesFromSelection(x, y);
+        else {
+            this.currentState = State.SELECT_SQUARE;
+            this.selected = [x, y];
+            this.getPossibleMovesFromSelection(x, y);
+        }
     }
 
     // const possible_squares = this.movesBoard[selected_x][selected_y].map(move => move[move.length - 1]);
@@ -255,16 +257,22 @@ export class GameLogic {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
                 this.movesBoard[i][j] = [];
+                console.log(canCapture)
+                console.log(this.movesBoard[i][j])
                 if (!canCapture) {
                     this.movesBoard[i][j] = this.movesBoard[i][j].concat(
                         this.checkDiagonals(i, j, this.gameBoard));
                 }
+                console.log(canCapture)
+                console.log(this.movesBoard[i][j])
 
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
                 if (captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
                     this.movesBoard[i][j] = captureMoves;
                 }
+                console.log(canCapture)
+                console.log(this.movesBoard[i][j])
             }
         }
     }
