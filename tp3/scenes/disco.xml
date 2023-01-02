@@ -61,11 +61,11 @@
         <texture id="rocks" file="scenes/images/rocks.jpg"/>
         <texture id="fire" file="scenes/images/fire.jpg"/>
         <texture id="wood" file="scenes/images/trunk-image.jpg"/>
-        <texture id="skybox1" file="scenes/images/camping_skybox/skybox1.png"/>
-        <texture id="skybox2" file="scenes/images/camping_skybox/skybox2.png"/>
-        <texture id="skybox3" file="scenes/images/camping_skybox/skybox2.png"/>
-        <texture id="skybox4" file="scenes/images/camping_skybox/skybox3.png"/>
-        <texture id="sky" file="scenes/images/camping_skybox/nightsky.jpg"/>
+        <texture id="skybox1" file="scenes/images/disco_skybox/top.png"/>
+        <texture id="skybox2" file="scenes/images/disco_skybox/black_color.jpg"/>
+        <texture id="skybox3" file="scenes/images/disco_skybox/side1.jpeg"/>
+        <texture id="skybox4" file="scenes/images/disco_skybox/side2.jpeg"/>
+        <texture id="sky" file="scenes/images/disco_skybox/top2.png"/>
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
         
