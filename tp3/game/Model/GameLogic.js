@@ -128,8 +128,6 @@ export class GameLogic {
 
 
     endGame() {
-        //TODO: Test this
-
         this.resetGame()
     }
 
@@ -148,9 +146,7 @@ export class GameLogic {
             [2, 2, 2, 2, 2, 2, 2, 2]];
 
         this.playerTurn = 1;
-        //this.player1 = player1;
         this.player1.time = new Date();
-        //this.player2 = player2;
         this.selected = [-1, -1];
         this.possible_moves = []; // Highlighted squares
         this.gameMoves = [];
@@ -194,8 +190,6 @@ export class GameLogic {
         }
     }
 
-    // const possible_squares = this.movesBoard[selected_x][selected_y].map(move => move[move.length - 1]);
-
     isSquareHighlighted(square) {
         const [x, y] = square;
         const [selected_x, selected_y] = this.selected;
@@ -229,22 +223,17 @@ export class GameLogic {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
                 this.movesBoard[i][j] = [];
-                console.log(canCapture)
-                console.log(this.movesBoard[i][j])
                 if (!canCapture) {
                     this.movesBoard[i][j] = this.movesBoard[i][j].concat(
                         this.checkDiagonals(i, j, this.gameBoard));
                 }
-                console.log(canCapture)
-                console.log(this.movesBoard[i][j])
+
 
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
                 if (captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
                     this.movesBoard[i][j] = captureMoves;
                 }
-                console.log(canCapture)
-                console.log(this.movesBoard[i][j])
             }
         }
     }
@@ -322,16 +311,13 @@ export class GameLogic {
 
         let auxBoard = this.cloneGameBoard();
         let valid_move = [];
-        //const move_result = this.movePiece(selectedX, selectedY, x, y);
 
-        console.log("possible moves: ", this.possible_moves)
         for (let move of this.possible_moves) {
             if (move[move.length - 1][0] === x && move[move.length - 1][1] === y) {
                 valid_move = move;
             }
         }
-        console.log("valid move: ", valid_move)
-        console.log("Current turn: ", this.playerTurn)
+
         let move_result = State.ERROR;
         for (let i = 0; i <= valid_move.length - 2; ++i) {
 
@@ -436,13 +422,6 @@ export class GameLogic {
         return this.gameBoard[x][y] === player + 2;
     }
 
-    checkMovePieceConditions(selectedX, selectedY, x, y, gameBoard = this.gameBoard) {
-        if (selectedX === -1 || selectedY === -1) return false;
-        if (this.currentState !== State.SELECT_SQUARE) return false;
-        if (!this.checkBounds(x, y) || gameBoard[x][y] !== 0) return false;
-        const isKing = this.isPieceKing(selectedX, selectedY);
-        return !(!isKing && (x - selectedX) * (this.playerTurn === 1 ? 1 : -1) <= 0);
-    }
 
     moveSelectedPiece(selected_x, selected_y, x, y, gameBoard) {
         this.fillSquare(x, y, gameBoard);
