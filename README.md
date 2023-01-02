@@ -31,5 +31,9 @@ is well-structured, easy to understand and change/scale.
 ----
 
 ### [TP3 - ...](tp3)
-- (items briefly describing main strong points)
+- Game of checkers with player vs player methodology, including all required features from the guidelines. 
+- MVC-type structure was used to separate the game logic from the display logic.
+- Scene changing allows the user to select from three different scenes (camping, beach, disco bar).
+- Several ways for the user to interact with the game and its features.
+- [Scenes](tp3/scenes)
 
