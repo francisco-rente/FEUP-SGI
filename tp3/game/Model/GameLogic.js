@@ -264,8 +264,10 @@ export class GameLogic {
                 if (captureMoves.length !== 0 && !canCapture) {
                     canCapture = true;
                     this.movesBoard[i][j] = [];
-                    this.movesBoard[i][j].push(captureMoves);
                 }
+
+                this.movesBoard[i][j] = this.movesBoard[i][j].concat(captureMoves);
+
             }
         }
     }
@@ -285,9 +287,9 @@ export class GameLogic {
                 && (cloneBoard[selectedX][selectedY] === this.playerTurn)
                 && cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] === 0) {
 
-
                 let new_moves = prev_rec.concat([selectedX + 2 * direction, selectedY + 2 * i]);
                 captureMoves.push(new_moves);
+
 
                 if (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) {
                     cloneBoard[selectedX + 2 * direction][selectedY + 2 * i] = this.playerTurn + 2;
@@ -296,8 +298,8 @@ export class GameLogic {
                 }
                 cloneBoard[selectedX + direction][selectedY + i] = 0;
                 cloneBoard[selectedX][selectedY] = 0;
-                captureMoves = captureMoves.concat(this.checkCaptureMoves(selectedX + 2 * direction,
-                    selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1, new_moves));}
+                captureMoves = captureMoves.concat(this.checkCaptureMoves(selectedX + 2 * direction, selectedY + 2 * i, this.cloneBoard(cloneBoard), rec_depth + 1, new_moves));
+            }
         }
         if (this.isPieceKing(selectedX, selectedY)) {
             //TODO: não repetir isto
@@ -383,6 +385,14 @@ export class GameLogic {
             // console.log(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
 
             move_result = this.movePiece(valid_move[i][0], valid_move[i][1], valid_move[i + 1][0], valid_move[i + 1][1]);
+            
+            this.gameMoves.push({
+                "old_pos": valid_move[i],
+                "new_pos": valid_move[i + 1],
+                "player": this.playerTurn,
+                "board": this.cloneGameBoard()
+            });
+        
         }
 
         if (move_result === State.ERROR) {
@@ -393,13 +403,7 @@ export class GameLogic {
         this.changeTurn();
 
         //falta aqui quando é jogada complicada
-        this.gameMoves.push({
-            "old_pos": [selectedX, selectedY],
-            "new_pos": [x, y],
-            "player": this.playerTurn,
-            "score_increased": move_result["ate"], // TODO: for now, only one piece can be eaten
-            "board": this.cloneGameBoard()
-        });
+        
         this.possible_moves = [];
         this.movesBoard = [...Array(8)].map(e => Array(8).fill([]));
     }
@@ -435,7 +439,6 @@ export class GameLogic {
                 this.errorOccurred();
                 return State.ERROR;
             }
-            this.incrementScore(this.playerTurn, ate);
         }
 
         if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2)
@@ -470,11 +473,6 @@ export class GameLogic {
 
 
         return {"gameBoard": this.gameBoard, "ate": ate};
-    }
-
-
-    incrementScore(player, score) {
-        if (player === 1) this.player1.score += score; else this.player2.score += score;
     }
 
     getMiddlePiece(selectedX, selectedY, dx, dy) {
