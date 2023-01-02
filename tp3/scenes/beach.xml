@@ -58,6 +58,7 @@
         <texture id="sky" file="scenes/images/beach_skybox/posy.jpg"/>
         <texture id="floor" file="scenes/images/beach_skybox/ocean.jpg"/>
         <texture id="sand" file="scenes/images/beach_skybox/negy.jpg"/>
+        <texture id="lifepreserver" file="scenes/images/lifepreserver.jpg"/>
 
 
         <texture id="leaves" file="scenes/images/leaves.jpg"/>
@@ -71,6 +72,7 @@
 
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
         <texture id="whiteShell" file="scenes/images/white_shell.png"/>
+        <texture id="blackObsidian" file="scenes/images/black_obsidian.png"/>
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
         <texture id="undo" file="scenes/images/undo.png"/>
         <texture id="camera" file="scenes/images/camera.png"/>
@@ -184,7 +186,7 @@
         </primitive>
 
         <primitive id="aTorus">
-            <torus inner="1" outer="3" slices="20" loops="20"/>
+            <torus inner="0.5" outer="2" slices="20" loops="20"/>
         </primitive>
 
         <primitive id="aSecondTriangle">
@@ -382,6 +384,7 @@
                 <componentref id="barrel"/>
                 <componentref id="kite"/>
                 <componentref id="sandPatch"/>
+                <componentref id="lifePreserver"/>
             </children>
         </component>
 
@@ -785,6 +788,21 @@
             </children>
         </component>
 
+        <component id="lifePreserver">
+            <transformation>
+                <translate x="-10" y="1" z="20"/>
+                <rotate axis="x" angle="90"/>
+            </transformation>
+            <materials>
+                <material id="demoMaterial"/>
+            </materials>
+            <texture id="lifepreserver" length_s="1.0" length_t="1.0"/>
+            <children>
+                <primitiveref id="aTorus"/>
+            </children>
+        </component>
+
+
     </components>
 
     <board>
@@ -809,7 +827,7 @@
         <textures>
             <texture id="wood" length_s="1.0" length_t = "1.0"/> <!-- black squares -->
             <texture id="rocks" length_s="1.0" length_t = "1.0"/><!-- white squares-->
-            <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black pieces-->
+            <texture id="blackObsidian" length_s="1.0" length_t = "1.0"/><!-- black pieces-->
             <texture id="whiteShell" length_s="1.0" length_t = "1.0"/><!-- white pieces-->
             <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black kings-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white kings-->
