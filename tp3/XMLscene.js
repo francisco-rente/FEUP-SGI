@@ -299,14 +299,10 @@ export class XMLscene extends CGFscene {
                                 ]
                                 */
 
-                                let cameras = [
-                                    [-5, 30, 15],
-                                    [45, 30, 15],
-                                    [20, 30, 15]
-                                ]
+
                                 let prevCamera = this.currentCamera;
                                 this.currentCamera == 2 ? this.currentCamera = 0 : this.currentCamera++;
-                                this.accessGraph().board.boardView.updateCamera(cameras[prevCamera], cameras[this.currentCamera]);
+                                this.accessGraph().board.boardView.updateCamera(prevCamera, this.currentCamera);
                             }
                             else if(customId === 102) {
                                 this.accessGraph().board.gameLogic.gameMovie();

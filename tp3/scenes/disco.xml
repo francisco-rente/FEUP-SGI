@@ -59,16 +59,13 @@
     <textures>
         <texture id="leaves" file="scenes/images/leaves.jpg"/>
         <texture id="rocks" file="scenes/images/rocks.jpg"/>
-        <texture id="grass" file="scenes/images/grass.jpg"/>
         <texture id="fire" file="scenes/images/fire.jpg"/>
-        <texture id="canvas" file="scenes/images/canvas.jpg"/>
         <texture id="wood" file="scenes/images/trunk-image.jpg"/>
         <texture id="skybox1" file="scenes/images/camping_skybox/skybox1.png"/>
         <texture id="skybox2" file="scenes/images/camping_skybox/skybox2.png"/>
         <texture id="skybox3" file="scenes/images/camping_skybox/skybox2.png"/>
         <texture id="skybox4" file="scenes/images/camping_skybox/skybox3.png"/>
         <texture id="sky" file="scenes/images/camping_skybox/nightsky.jpg"/>
-        <texture id="painting" file="scenes/images/starry_night.jpg"/>
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
         
@@ -206,17 +203,6 @@
 
         <primitive id="fireCone">
             <cylinder base="0.5" top="0.00" height="0.8" slices="10" stacks="10"/>
-        </primitive>
-
-        <primitive id="painting">
-            <!--TODO: add light in cordner to reflect on painting-->
-            <patch degree_u="1" degree_v="1" parts_u="10" parts_v="10">
-                <controlpoint x="0.0" y="0.0" z="0.0"/>
-                <controlpoint x="1.0" y="0.0" z="0.0"/>
-
-                <controlpoint x="0.0" y="0.0" z="1.0"/>
-                <controlpoint x="1.0" y="0.0" z="1.0"/>
-            </patch>
         </primitive>
 
 
@@ -412,7 +398,7 @@
 
         <component id="floor">
             <transformation>
-                <scale x="15" y="15" z="15"/>
+                <scale x="30" y="30" z="30"/>
                 <rotate axis="x" angle="-90"/>
             </transformation>
             <materials>
@@ -426,11 +412,16 @@
 
         <component id="table">
             <transformation>
+                <translation x="0" y="0" z="0"/>
+                <rotation axis="x" angle="0"/>
+                <rotation axis="y" angle="0"/>
+                <rotation axis="z" angle="0"/>
+                <scale x="4" y="4" z="8"/>
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
             </materials>
-            <texture id="fire" length_t="1" length_s="1"/>
+            <texture id="wood" length_t="1" length_s="1"/>
             <children>
                 <componentref id="tableSide1"/>
                 <componentref id="tableSide2"/>
@@ -550,8 +541,8 @@
     </components>
 
     <board>
-        <size x="10" y="10" z="2"/>
-        <position x="0" y="2" z="0"/>
+        <size x="50" y="50" z="2"/>
+        <position x="0" y="-2" z="0"/>
         <materials>
             <material id="demoMaterial"/> <!-- black squares -->
             <material id="fire"/><!-- white squares-->
