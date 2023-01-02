@@ -68,6 +68,7 @@
         <texture id="sky" file="scenes/images/disco_skybox/top2.png"/>
         <texture id="highlight" file="scenes/images/yellow.jpg"/>
         <texture id="font" file="scenes/images/oolite-font.trans.png"/>
+        <texture id="discoBall" file="scenes/images/discoBall.jpg"/>
         
 
         <texture id="emoji1" file="scenes/images/emoji1.png"/>
@@ -88,6 +89,12 @@
     <materials>
         <material id="demoMaterial" shininess="10">
             <emission r="0.1" g="0.1" b="0.1" a="1.0"/>
+            <ambient r="0.5" g="0.3" b="0.3" a="1.0"/>
+            <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
+            <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
+        </material>
+        <material id="discoBall" shininess="10">
+            <emission r="0.4" g="0.4" b="0.6" a="1.0"/>
             <ambient r="0.5" g="0.3" b="0.3" a="1.0"/>
             <diffuse r="0.5" g="0.5" b="0.5" a="1.0"/>
             <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
@@ -148,7 +155,7 @@
 
 
         <primitive id="aSphere">
-            <sphere radius="3" slices="12" stacks="12"/>
+            <sphere radius="1" slices="20" stacks="20"/>
         </primitive>
       
 
@@ -173,6 +180,7 @@
                 <componentref id="skyBox"/>
                 <componentref id="floor"/>
                 <componentref id="table"/>
+                <componentref id="discoBall"/>
             </children>
         </component>
 
@@ -183,7 +191,6 @@
                 <rotate axis="y" angle="0"/>
                 <rotate axis="z" angle="0"/>
                 <scale x="3" y="3" z="3"/>
-
             </transformation>
             <materials>
                 <material id="demoMaterial"/>
@@ -288,6 +295,21 @@
             <texture id="skybox4" length_t="1.0" length_s="1.0"/>
             <children>
                 <primitiveref id="demoRectangle"/>
+            </children>
+        </component>
+
+        <component id="discoBall">
+            <transformation>
+                <translate x="0" y="40" z="0"/>
+                <rotate axis="z" angle="90"/>
+                <scale x="4" y="4" z="4"/>
+            </transformation>
+            <materials>
+                <material id="discoBall"/>
+            </materials>
+            <texture id="discoBall" length_t="1.0" length_s="1.0"/>
+            <children>
+                <primitiveref id="aSphere"/>
             </children>
         </component>
 
