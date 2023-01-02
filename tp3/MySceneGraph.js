@@ -268,14 +268,9 @@ export class MySceneGraph {
         // black piece
         // white piece
 
-        console.log("Parsing board");
-
-        console.log(boardNode.children);
-
         for (let child of boardNode.children) {
             if (child.nodeName === "offset") {
                 let x = this.reader.getFloat(child, 'x');
-                console.log("READING OFFSET X: " + x);
                 if (x != null && !isNaN(x)) offset = x;
             }
             else if (child.nodeName === "size") size = this.parseCoordinates3D(child, "size");
@@ -293,13 +288,6 @@ export class MySceneGraph {
                 }
             } else this.onXMLMinorError("unknown tag <" + child.nodeName + "> inside <board>");
         }
-
-        console.log("Board parsed");
-        console.log("Offset: " + offset);
-        console.log("Size: " + size);
-        console.log("Textures: " + textures);
-        console.log("Materials: " + materials); 
-
 
         this.scene.graphs[this.name].board = new Board(this.scene, textures, materials, size, offset);
     }
