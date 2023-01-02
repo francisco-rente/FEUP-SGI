@@ -807,7 +807,7 @@
 
     <board>
         <size x="10" y="10" z="2"/>
-        <position x="0" y="2" z="0"/>
+        <offset x="15"/>
         <materials>
             <material id="demoMaterial"/> <!-- black squares -->
             <material id="fire"/><!-- white squares-->

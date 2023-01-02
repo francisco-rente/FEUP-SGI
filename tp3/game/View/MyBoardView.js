@@ -6,7 +6,6 @@ import {LightingControl} from "./LightingControl.js";
 import {State} from "../Model/GameLogic.js";
 
 
-const boardOffset = 15;
 
 /**
  * Board class, creating the objects
@@ -24,18 +23,18 @@ export class MyBoardView {
     board = [];
 
 
-    constructor(scene, textures, materials, position, size) {
+    constructor(scene, textures, materials, size, boardOffset=15) {
         this.scene = scene;
         this.initTextures(textures);
         this.initMaterials(materials);
-        this.position = position;
         this.size = size;
+        this.boardOffset = boardOffset;
 
-        this.stackXYWhite = [this.size[0] / 8 + boardOffset - 2.5 * (this.size[0] / 8), this.size[1] / 8 - boardOffset - 2, 1];
-        this.stackXYBlack = [this.size[0] / 8 + boardOffset + this.size[0], this.size[1] / 8 - boardOffset - 2, 1];
+        this.stackXYWhite = [this.size[0] / 8 + this.boardOffset - 2.5 * (this.size[0] / 8), this.size[1] / 8 - this.boardOffset - 2, 1];
+        this.stackXYBlack = [this.size[0] / 8 + this.boardOffset + this.size[0], this.size[1] / 8 - this.boardOffset - 2, 1];
 
         this.lightControl = new LightingControl(this.scene, this.size);
-        this.lightControl.createSpotLight(boardOffset);
+        this.lightControl.createSpotLight(this.boardOffset);
         this.animatingPieces = [];
 
         this.cameraAnimationProgress = 1;
@@ -68,7 +67,7 @@ export class MyBoardView {
             let pos = vec3.fromValues(0, 0, 0);
 
             vec3.lerp(pos, vec3.fromValues(this.oldCameraPosition[0], this.oldCameraPosition[1], this.oldCameraPosition[2]), vec3.fromValues(this.newCameraPosition[0], this.newCameraPosition[1], this.newCameraPosition[2]), this.cameraAnimationProgress);
-            this.scene.camera = new CGFcamera(0.8, 0.1, 500, pos, vec3.fromValues(3+boardOffset, 0, 0+boardOffset));
+            this.scene.camera = new CGFcamera(0.8, 0.1, 500, pos, vec3.fromValues(3+this.boardOffset, 0, 0+this.boardOffset));
         }
     }
 
@@ -101,7 +100,7 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(boardOffset, 1, this.size[0] / 2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.translate(this.boardOffset, 1, this.size[0] / 2 + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.registerForPick(100, undoButton);
         undoButton.display();
@@ -117,7 +116,7 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(boardOffset, 1, (7 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.translate(this.boardOffset, 1, (7 / 8) * this.size[0] + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.registerForPick(102, gameMovieButton);
         gameMovieButton.display();
@@ -134,7 +133,7 @@ export class MyBoardView {
         appearance.setTexture(texture);
         this.scene.pushAppearance(appearance);
         this.scene.applyAppearance();
-        this.scene.translate(this.size[0] * (1 / 2) + boardOffset, 1, this.size[0] / 2 + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+        this.scene.translate(this.size[0] * (1 / 2) + this.boardOffset, 1, this.size[0] / 2 + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
         this.scene.registerForPick(101, changeCameraButton);
         changeCameraButton.display();
@@ -169,9 +168,9 @@ export class MyBoardView {
                 this.scene.pushMatrix();
 
                 if (i == 1) {
-                    this.scene.translate((j - 6) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+                    this.scene.translate((j - 6) * this.size[0] / 4 + this.boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
                 } else {
-                    this.scene.translate((j + 5) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+                    this.scene.translate((j + 5) * this.size[0] / 4 + this.boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
                 }
 
                 timer.display();
@@ -208,7 +207,7 @@ export class MyBoardView {
             }
             this.scene.pushMatrix();
 
-            this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, this.size[0] / 4 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+            this.scene.translate((i - 0.5) * this.size[0] / 4 + this.boardOffset, this.size[0] / 4 + 1, -(1 + 1 / 8) * this.size[0] + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
             scoreboard.display();
             this.scene.popMatrix();
             this.scene.resetShader();
@@ -236,7 +235,7 @@ export class MyBoardView {
                 this.scene.setFontShaderNumber(time[i]);
             }
             this.scene.pushMatrix();
-            this.scene.translate((i - 0.5) * this.size[0] / 4 + boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + boardOffset); //TODO: tirar o +boardOffset -1 e o +boardOffset
+            this.scene.translate((i - 0.5) * this.size[0] / 4 + this.boardOffset, 0 + 1, -(1 + 1 / 8) * this.size[0] + this.boardOffset); //TODO: tirar o +this.boardOffset -1 e o +this.boardOffset
             timer.display();
             this.scene.popMatrix();
             this.scene.resetShader();
@@ -273,7 +272,7 @@ export class MyBoardView {
                 this.scene.pushAppearance(appearance);
                 this.scene.applyAppearance();
                 this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-                this.scene.translate(i * this.size[0] / 8 + boardOffset, j * this.size[1] / 8 - boardOffset, 1); //TODO: tirar o +boardOffset -boardOffset e o +1
+                this.scene.translate(i * this.size[0] / 8 + this.boardOffset, j * this.size[1] / 8 - this.boardOffset, 1); //TODO: tirar o +this.boardOffset -this.boardOffset e o +1
                 this.scene.registerForPick((i + 1) * 10 + (j + 1), square);
                 square.display();
                 this.scene.clearPickRegistration();
@@ -298,8 +297,8 @@ export class MyBoardView {
                 const hasSelectedPiece = gameLogic.anyPieceSelected();
                 if (hasSelectedPiece && gameLogic.isPieceSelected([i, j]))
                     this.lightControl.redirectSpotLight(
-                        [(i + 0.5) * this.size[0] / 8 + boardOffset,
-                            -((j + 0.5) * this.size[1] / 8) + boardOffset])
+                        [(i + 0.5) * this.size[0] / 8 + this.boardOffset,
+                            -((j + 0.5) * this.size[1] / 8) + this.boardOffset])
 
 
                 let offsetX = 0, offsetY = 0;
@@ -312,7 +311,7 @@ export class MyBoardView {
                         && !hasSelectedPiece);
                 }
 
-                newPiece.displayInBoard([i - offsetX, j - offsetY], appearance);
+                newPiece.displayInBoard([i - offsetX, j - offsetY], appearance, this.boardOffset);
                 this.scene.clearPickRegistration();
             }
         }
@@ -335,8 +334,8 @@ export class MyBoardView {
 
             if (spotLight) {
                 this.lightControl.redirectSpotLight([
-                    (final_pos[0] - offsetX + 0.5) * this.size[0] / 8 + boardOffset,
-                    -((final_pos[1] - offsetY + 0.5) * this.size[1] / 8) + boardOffset,
+                    (final_pos[0] - offsetX + 0.5) * this.size[0] / 8 + this.boardOffset,
+                    -((final_pos[1] - offsetY + 0.5) * this.size[1] / 8) + this.boardOffset,
                 ])
             }
 
@@ -368,8 +367,8 @@ export class MyBoardView {
 
             let initial_pos = piece["initial_pos"];
             let exact_initial_pos = []
-            exact_initial_pos[0] = initial_pos[0] * this.size[0] / 8 + boardOffset;
-            exact_initial_pos[1] = initial_pos[1] * this.size[1] / 8 - boardOffset;
+            exact_initial_pos[0] = initial_pos[0] * this.size[0] / 8 + this.boardOffset;
+            exact_initial_pos[1] = initial_pos[1] * this.size[1] / 8 - this.boardOffset;
             exact_initial_pos[2] = 1;
 
 

@@ -56,7 +56,7 @@ Textures/materials ordering for customization:
 ```xml
 <board>
     <size x="X" y="Y" z="Z"/>
-    <position x="X" y="Y" z="Z"/>
+    <offset x="X"/>
     <materials>
         .... Materials' id 
         

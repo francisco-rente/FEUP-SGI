@@ -259,7 +259,7 @@ export class MySceneGraph {
     parseBoard(boardNode) {
         let materials = [];
         let textures = [];
-        let position = [0, 0, 0];
+        let offset = 15;
         let size = [1, 1, 1];
 
         // order of the elements
@@ -273,7 +273,11 @@ export class MySceneGraph {
         console.log(boardNode.children);
 
         for (let child of boardNode.children) {
-            if (child.nodeName === "position") position = this.parseCoordinates3D(child, "position");
+            if (child.nodeName === "offset") {
+                let x = this.reader.getFloat(child, 'x');
+                console.log("READING OFFSET X: " + x);
+                if (x != null && !isNaN(x)) offset = x;
+            }
             else if (child.nodeName === "size") size = this.parseCoordinates3D(child, "size");
             else if (child.nodeName === "textures") {
                 for (let textureNode of child.children)
@@ -291,13 +295,13 @@ export class MySceneGraph {
         }
 
         console.log("Board parsed");
-        console.log("Position: " + position);
+        console.log("Offset: " + offset);
         console.log("Size: " + size);
         console.log("Textures: " + textures);
         console.log("Materials: " + materials); 
 
 
-        this.scene.graphs[this.name].board = new Board(this.scene, textures, materials, position, size);
+        this.scene.graphs[this.name].board = new Board(this.scene, textures, materials, size, offset);
     }
 
 
