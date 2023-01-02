@@ -55,7 +55,7 @@ export class MyPieceView {
         //this.scene.popMatrix();
     }
 
-    displayInBoard(position, appearance) {
+    displayInBoard(position, appearance, boardOffset=15) {
         const [i, j] = position;
         const squareSize = this.boardSize[0] / 8;
 
@@ -67,8 +67,8 @@ export class MyPieceView {
 
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
 
-        const x = (i + 0.5) * squareSize + 15;
-        const y = (j + 0.5) * squareSize - 15;
+        const x = (i + 0.5) * squareSize + boardOffset;
+        const y = (j + 0.5) * squareSize - boardOffset;
         const z = 1;
         this.scene.translate(x, y, z);
         this.pieceSide.display();

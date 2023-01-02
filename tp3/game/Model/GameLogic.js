@@ -210,8 +210,6 @@ export class GameLogic {
 
     getPossibleMovesFromSelection(selectedX, selectedY) {
 
-        const d = this.movesBoard[selectedX][selectedY]
-
         // if any of the 3d arrays are not empty, then there are moves
 
         const hasMoves = this.movesBoard.some((row) => {
@@ -224,32 +222,6 @@ export class GameLogic {
             this.getMovesBoard();
         }
         return this.movesBoard[selectedX][selectedY];
-
-
-        /*
-                let possibleMoves = []; // {begin [x, y], end [x, y], capture false/true}
-                let cloneBoard = this.cloneGameBoard();
-
-                let diagonalMoves = this.checkDiagonals(selectedX, selectedY, cloneBoard);
-                if (diagonalMoves.length !== 0) {
-                    possibleMoves = possibleMoves.concat(diagonalMoves.map((move) => {
-                        return {"begin": [selectedX, selectedY], "end": move, "capture": false}
-                    }));
-                }
-
-                // TODO: if the recursive call is made, a normal diagonal move is not possible
-                // TODO: the board should be updated after the move call, for each instance of the move
-                let captureMoves = this.checkCaptureMoves(selectedX, selectedY, cloneBoard);
-                if (captureMoves.length !== 0) {
-                    possibleMoves = [];
-                    possibleMoves = possibleMoves.concat(captureMoves.map((move) => {
-                        return {"begin": [selectedX, selectedY], "end": move, "capture": false}
-                    }));
-
-                }
-
-                return possibleMoves;
-                */
     }
 
     getMovesBoard() {
