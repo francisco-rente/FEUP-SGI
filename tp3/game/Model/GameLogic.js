@@ -124,6 +124,31 @@ export class GameLogic {
             this.player1.time = new Date();
             this.playerTurn = 1;
         }
+
+        const [player1Score, player2Score] = this.getScore(false);
+        if(player1Score === 16){
+            alert("Player 1 wins!");
+            this.endGame();
+        } else if (player2Score === 16){
+            alert("Player 2 wins!");
+            this.endGame();
+        }
+
+        this.getMovesBoard();
+        const hasMoves = this.movesBoard.some((row) => {
+            return row.some((col) => {
+                return col.length > 0
+            })
+        });
+
+        if(!hasMoves){
+            const winner = this.playerTurn === 1 ? "2" : "1";
+            alert("Player " + winner  + " wins!");
+            this.endGame();
+        }
+        this.movesBoard = [...Array(8)].map(e => Array(8).fill([]));
+
+
     }
 
 
@@ -228,10 +253,14 @@ export class GameLogic {
                         this.checkDiagonals(i, j, this.gameBoard));
                 }
 
-
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
-                if (captureMoves.length !== 0 && !canCapture) {
-                    canCapture = true;
+                if (captureMoves.length !== 0) {
+                    if (!canCapture) {
+                        this.movesBoard = [...Array(8)].map(() =>
+                            Array(8).fill([]));
+                        canCapture = true;
+                    }
+
                     this.movesBoard[i][j] = captureMoves;
                 }
             }
@@ -243,8 +272,8 @@ export class GameLogic {
         return this.checkBounds(selectedX + i, selectedY + j)
             && this.checkBounds(selectedX + 2 * i, selectedY + 2 * j)
             && board[selectedX + i][selectedY + j] !== 0
-            && (board[selectedX + i][selectedY + j] !== playerTurn)
-            && (board[selectedX][selectedY] === playerTurn)
+            && (board[selectedX + i][selectedY + j] !== playerTurn && board[selectedX + i][selectedY + j] !== playerTurn + 2)
+            && (board[selectedX][selectedY] === playerTurn || board[selectedX][selectedY] === (playerTurn + 2))
             && board[selectedX + 2 * i][selectedY + 2 * j] === 0;
     }
 
@@ -269,7 +298,8 @@ export class GameLogic {
             captureMoves.push(new_moves);
 
             cloneBoard[selectedX + 2 * i][selectedY + 2 * j] = this.playerTurn +
-                (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) * 2;
+                (selectedY + 2 * i === 0 || selectedY + 2 * i === 7 ||
+                    this.isPieceKing(selectedX, selectedY, cloneBoard)) * 2;
 
             cloneBoard[selectedX + i][selectedY + j] = 0;
             cloneBoard[selectedX][selectedY] = 0;
@@ -355,7 +385,11 @@ export class GameLogic {
         if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
 
             const [middleX, middleY, _, __] = this.getMiddlePiece(selectedX, selectedY, x, y);
-            isEatingKing = this.isPieceKing(middleX, middleY, this.playerTurn === 1 ? 2 : 1);
+
+            if (this.checkBounds(middleX, middleY)
+                && this.isPieceKing(middleX, middleY, this.playerTurn === 1 ? 2 : 1))
+                isEatingKing = true;
+
 
             ate = this.eatPiece(selectedX, selectedY, dx, dy, this.gameBoard);
             if (ate === State.ERROR || ate === 0) {// no capture was made from a [2,2] move
@@ -404,6 +438,9 @@ export class GameLogic {
     eatPiece(selectedX, selectedY, dx, dy, gameBoard) {
         const [middle_x, middle_y, x_dir, y_dir] = this.getMiddlePiece(selectedX, selectedY, dx, dy);
 
+        if (!this.checkBounds(middle_x, middle_y)) return 0;
+        if (!this.checkBounds(middle_x + x_dir, middle_y + y_dir)) return 0;
+
         if (gameBoard[middle_x][middle_y] !== 0 && gameBoard[middle_x + x_dir][middle_y + y_dir] === 0) {
             gameBoard[middle_x][middle_y] = 0;
             return 1;
@@ -418,23 +455,24 @@ export class GameLogic {
         this.currentState = State.ERROR;
     }
 
-    isPieceKing(x, y, player = this.playerTurn) {
-        return this.gameBoard[x][y] === player + 2;
+    isPieceKing(x, y, player = this.playerTurn, gameBoard = this.gameBoard) {
+        if (!this.checkBounds(x, y)) return false;
+        return gameBoard[x][y] === player + 2;
     }
 
 
     moveSelectedPiece(selected_x, selected_y, x, y, gameBoard) {
-        this.fillSquare(x, y, gameBoard);
+        this.fillSquare(x, y, gameBoard, this.isPieceKing(selected_x, selected_y));
         gameBoard[selected_x][selected_y] = 0;
         this.selected = [-1, -1];
     }
 
 
-    fillSquare(x, y, gameBoard) {
+    fillSquare(x, y, gameBoard, isPieceKing = false) {
         if ((this.playerTurn === 1 && x === 7) || (this.playerTurn === 2 && x === 0)) {
             gameBoard[x][y] = this.playerTurn + 2; // turn to king
         } else {
-            gameBoard[x][y] = this.playerTurn;
+            gameBoard[x][y] = this.playerTurn +  2 * isPieceKing;
         }
     }
 
