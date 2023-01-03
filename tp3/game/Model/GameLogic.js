@@ -272,8 +272,8 @@ export class GameLogic {
         return this.checkBounds(selectedX + i, selectedY + j)
             && this.checkBounds(selectedX + 2 * i, selectedY + 2 * j)
             && board[selectedX + i][selectedY + j] !== 0
-            && (board[selectedX + i][selectedY + j] !== playerTurn)
-            && (board[selectedX][selectedY] === playerTurn)
+            && (board[selectedX + i][selectedY + j] !== playerTurn && board[selectedX + i][selectedY + j] !== playerTurn + 2)
+            && (board[selectedX][selectedY] === playerTurn || board[selectedX][selectedY] === (playerTurn + 2))
             && board[selectedX + 2 * i][selectedY + 2 * j] === 0;
     }
 
@@ -455,6 +455,7 @@ export class GameLogic {
     }
 
     isPieceKing(x, y, player = this.playerTurn) {
+        if(!this.checkBounds(x, y)) return false;
         return this.gameBoard[x][y] === player + 2;
     }
 
