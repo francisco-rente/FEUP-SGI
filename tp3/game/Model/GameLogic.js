@@ -298,7 +298,8 @@ export class GameLogic {
             captureMoves.push(new_moves);
 
             cloneBoard[selectedX + 2 * i][selectedY + 2 * j] = this.playerTurn +
-                (selectedY + 2 * i === 0 || selectedY + 2 * i === 7) * 2;
+                (selectedY + 2 * i === 0 || selectedY + 2 * i === 7 ||
+                    this.isPieceKing(selectedX, selectedY, cloneBoard)) * 2;
 
             cloneBoard[selectedX + i][selectedY + j] = 0;
             cloneBoard[selectedX][selectedY] = 0;
@@ -385,7 +386,7 @@ export class GameLogic {
 
             const [middleX, middleY, _, __] = this.getMiddlePiece(selectedX, selectedY, x, y);
 
-            if(this.checkBounds(middleX, middleY)
+            if (this.checkBounds(middleX, middleY)
                 && this.isPieceKing(middleX, middleY, this.playerTurn === 1 ? 2 : 1))
                 isEatingKing = true;
 
@@ -437,8 +438,8 @@ export class GameLogic {
     eatPiece(selectedX, selectedY, dx, dy, gameBoard) {
         const [middle_x, middle_y, x_dir, y_dir] = this.getMiddlePiece(selectedX, selectedY, dx, dy);
 
-        if(!this.checkBounds(middle_x, middle_y)) return 0;
-        if(!this.checkBounds(middle_x + x_dir, middle_y + y_dir)) return 0;
+        if (!this.checkBounds(middle_x, middle_y)) return 0;
+        if (!this.checkBounds(middle_x + x_dir, middle_y + y_dir)) return 0;
 
         if (gameBoard[middle_x][middle_y] !== 0 && gameBoard[middle_x + x_dir][middle_y + y_dir] === 0) {
             gameBoard[middle_x][middle_y] = 0;
@@ -454,9 +455,9 @@ export class GameLogic {
         this.currentState = State.ERROR;
     }
 
-    isPieceKing(x, y, player = this.playerTurn) {
-        if(!this.checkBounds(x, y)) return false;
-        return this.gameBoard[x][y] === player + 2;
+    isPieceKing(x, y, player = this.playerTurn, gameBoard = this.gameBoard) {
+        if (!this.checkBounds(x, y)) return false;
+        return gameBoard[x][y] === player + 2;
     }
 
 
