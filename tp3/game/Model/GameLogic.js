@@ -228,10 +228,14 @@ export class GameLogic {
                         this.checkDiagonals(i, j, this.gameBoard));
                 }
 
-
                 let captureMoves = this.checkCaptureMoves(i, j, this.cloneGameBoard());
-                if (captureMoves.length !== 0 && !canCapture) {
-                    canCapture = true;
+                if (captureMoves.length !== 0) {
+                    if (!canCapture) {
+                        this.movesBoard = [...Array(8)].map(() =>
+                            Array(8).fill([]));
+                        canCapture = true;
+                    }
+
                     this.movesBoard[i][j] = captureMoves;
                 }
             }
