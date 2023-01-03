@@ -84,7 +84,7 @@
             <specular r="0.5" g="0.5" b="0.5" a="1.0"/>
         </material>
         <material id="fire" shininess="5">
-            <emission r="1.0" g="0.64" b="0.0" a="0.45"/>
+            <emission r="1.0" g="0.54" b="0.0" a="0.45"/>
             <ambient r="1.0" g="0.64" b="0.9" a="0.0"/>
             <diffuse r="1.0" g="0.64" b="0.3" a="0.0"/>
             <specular r="0.7" g="0.7" b="0.7" a="0.3"/>
@@ -1009,7 +1009,7 @@
             <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black pieces-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white pieces-->
             <texture id="leaves" length_s="1.0" length_t = "1.0"/><!-- black kings-->
-            <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- white kings-->
+            <texture id="fireStrong" length_s="1.0" length_t = "1.0"/><!-- white kings-->
             <texture id="fire" length_s="1.0" length_t = "1.0"/><!-- board-->
             <texture id="highlight" length_s="1.0" length_t = "1.0"/><!-- highlighted square-->
             <texture id="font" length_s="1.0" length_t = "1.0"/><!-- timer-->
