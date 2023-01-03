@@ -124,6 +124,31 @@ export class GameLogic {
             this.player1.time = new Date();
             this.playerTurn = 1;
         }
+
+        const [player1Score, player2Score] = this.getScore(false);
+        if(player1Score === 16){
+            alert("Player 1 wins!");
+            this.endGame();
+        } else if (player2Score === 16){
+            alert("Player 2 wins!");
+            this.endGame();
+        }
+
+        this.getMovesBoard();
+        const hasMoves = this.movesBoard.some((row) => {
+            return row.some((col) => {
+                return col.length > 0
+            })
+        });
+
+        if(!hasMoves){
+            const winner = this.playerTurn === 1 ? "2" : "1";
+            alert("Player " + winner  + " wins!");
+            this.endGame();
+        }
+        this.movesBoard = [...Array(8)].map(e => Array(8).fill([]));
+
+
     }
 
 
