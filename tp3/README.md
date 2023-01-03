@@ -29,7 +29,7 @@ These change the overall elements of the surroundings as well as the board and p
 - [Screenshots](tp3/screenshots)
 
 
-![Scene camping](./scene.png)
+![Scene beach](./scene.png)
 
 
 A new xml tag, the <board> was added to the new scene files: 
