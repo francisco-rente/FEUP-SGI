@@ -1,5 +1,7 @@
 # SGI 2022/2023
 
+Scene creation project developed in the context of the Interactive Graphics Systems's unit at FEUP.
+
 ## Group T01G03
 | Name             | Number    | E-Mail             |
 | ---------------- | --------- | ------------------ |
